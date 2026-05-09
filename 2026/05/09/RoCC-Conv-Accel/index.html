@@ -225,7 +225,7 @@
   <div class="post-toc" id="post-toc">
     <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Background-Brief"><span class="toc-number">1.</span> <span class="toc-text">Background &amp; Brief</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-Project-Planning-Protocal-Design"><span class="toc-number">2.</span> <span class="toc-text">0.Project Planning &amp; Protocal Design</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RoCC-Instruction-Coding"><span class="toc-number">2.1.</span> <span class="toc-text">RoCC Instruction Coding</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1%EF%BC%9ARoCC-Instruction-dispatch-infrastructure"><span class="toc-number">3.</span> <span class="toc-text">1：RoCC Instruction dispatch infrastructure</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-2%EF%BC%9ADMA-%E5%9C%B0%E5%9D%80%E5%AF%B9%E9%BD%90%E4%B8%8E%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B"><span class="toc-number">4.</span> <span class="toc-text">Phase 2：DMA 地址对齐与异常检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-3%EF%BC%9ALoad-Store-FSM-%E5%8F%8D%E5%8E%8B%E6%9C%BA%E5%88%B6"><span class="toc-number">5.</span> <span class="toc-text">Phase 3：Load&#x2F;Store FSM + 反压机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-4%EF%BC%9A5%C3%975-MAC-%E4%B9%98%E5%8A%A0%E6%A0%91"><span class="toc-number">6.</span> <span class="toc-text">Phase 4：5×5 MAC 乘加树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-5%EF%BC%9A%E5%AE%9A%E7%82%B9%E6%95%B0%E9%A5%B1%E5%92%8C%E5%A4%84%E7%90%86"><span class="toc-number">7.</span> <span class="toc-text">Phase 5：定点数饱和处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-6%EF%BC%9A5%C3%975-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%AE%8C%E6%95%B4%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="toc-number">8.</span> <span class="toc-text">Phase 6：5×5 滑动窗口完整流水线</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B8%A9%E5%9D%91%EF%BC%9AVerilator-j-0-%E6%8A%A5%E9%94%99"><span class="toc-number">8.1.</span> <span class="toc-text">踩坑：Verilator -j 0 报错</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E7%BB%AD%E8%AE%A1%E5%88%92"><span class="toc-number">9.</span> <span class="toc-text">后续计划</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Background-Brief"><span class="toc-number">1.</span> <span class="toc-text">Background &amp; Brief</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-Project-Planning-Protocal-Design"><span class="toc-number">2.</span> <span class="toc-text">0.Project Planning &amp; Protocal Design</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Protocal-Design-RoCC-Instruction-Coding"><span class="toc-number">2.1.</span> <span class="toc-text">Protocal Design:RoCC Instruction Coding</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Project-Planning"><span class="toc-number">2.2.</span> <span class="toc-text">Project Planning</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1%EF%BC%9ARoCC-Instruction-dispatch-infrastructure"><span class="toc-number">3.</span> <span class="toc-text">1：RoCC Instruction dispatch infrastructure</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-2%EF%BC%9ADMA-%E5%9C%B0%E5%9D%80%E5%AF%B9%E9%BD%90%E4%B8%8E%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B"><span class="toc-number">4.</span> <span class="toc-text">Phase 2：DMA 地址对齐与异常检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-3%EF%BC%9ALoad-Store-FSM-%E5%8F%8D%E5%8E%8B%E6%9C%BA%E5%88%B6"><span class="toc-number">5.</span> <span class="toc-text">Phase 3：Load&#x2F;Store FSM + 反压机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-4%EF%BC%9A5%C3%975-MAC-%E4%B9%98%E5%8A%A0%E6%A0%91"><span class="toc-number">6.</span> <span class="toc-text">Phase 4：5×5 MAC 乘加树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-5%EF%BC%9A%E5%AE%9A%E7%82%B9%E6%95%B0%E9%A5%B1%E5%92%8C%E5%A4%84%E7%90%86"><span class="toc-number">7.</span> <span class="toc-text">Phase 5：定点数饱和处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-6%EF%BC%9A5%C3%975-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%AE%8C%E6%95%B4%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="toc-number">8.</span> <span class="toc-text">Phase 6：5×5 滑动窗口完整流水线</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B8%A9%E5%9D%91%EF%BC%9AVerilator-j-0-%E6%8A%A5%E9%94%99"><span class="toc-number">8.1.</span> <span class="toc-text">踩坑：Verilator -j 0 报错</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E7%BB%AD%E8%AE%A1%E5%88%92"><span class="toc-number">9.</span> <span class="toc-text">后续计划</span></a></li></ol>
     </div>
   </div>
   
@@ -238,7 +238,7 @@
 <li>Warehouse：<a target="_blank" rel="noopener" href="https://github.com/Peanut-321/MyConvAccel">MyConvAccel</a></li>
 </ul>
 <h2 id="0-Project-Planning-Protocal-Design"><a href="#0-Project-Planning-Protocal-Design" class="headerlink" title="0.Project Planning &amp; Protocal Design"></a>0.Project Planning &amp; Protocal Design</h2><p>Before coding, we should figure out some fundamental questions.</p>
-<h3 id="RoCC-Instruction-Coding"><a href="#RoCC-Instruction-Coding" class="headerlink" title="RoCC Instruction Coding"></a>RoCC Instruction Coding</h3><p>Rocket Core communicate with Accelerator by RoCC.</p>
+<h3 id="Protocal-Design-RoCC-Instruction-Coding"><a href="#Protocal-Design-RoCC-Instruction-Coding" class="headerlink" title="Protocal Design:RoCC Instruction Coding"></a>Protocal Design:RoCC Instruction Coding</h3><p>Rocket Core communicate with Accelerator by RoCC.</p>
 <table>
 <thead>
 <tr>
@@ -279,6 +279,20 @@
 <td>Reading state register to rd</td>
 </tr>
 </tbody></table>
+<p>Each explanation of state register is supposed to define in advance. It is convenience for software polling.</p>
+<h3 id="Project-Planning"><a href="#Project-Planning" class="headerlink" title="Project Planning"></a>Project Planning</h3><p>There are some questions that should figure out before stating this project.</p>
+<ol>
+<li><p>Is the convolution kernel size fixed or configurable?</p>
+</li>
+<li><p>How to handle boundary pixels?</p>
+</li>
+<li><p>Fixed-point number precision trade-off</p>
+</li>
+<li><p>Blocking or Non-blocking?</p>
+</li>
+<li><p>Why have alignment constraint?</p>
+</li>
+</ol>
 <table>
 <thead>
 <tr>
