@@ -23,6 +23,11 @@
   margin: 0 auto;
 }
 
+.post-content h2 {
+  border-bottom: 2px solid #e6e6e6;
+  padding-bottom: 8px;
+}
+
 /*! normalize.css v3.0.2 | MIT License | git.io/normalize */
 /**
  * 1. Set default font family to sans-serif.
@@ -413,7 +418,7 @@ html {
 body {
   padding: 0;
   margin: 0;
-  font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
+  font-family: "Times New Roman", Georgia, serif;
   font-weight: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -451,32 +456,32 @@ a {
 
 h1 {
   font-size: 26px;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 
 h2 {
   font-size: 24px;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 
 h3 {
   font-size: 20px;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 
 h4 {
   font-size: 16px;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 
 h5 {
   font-size: 14px;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 
 h6 {
   font-size: 14px;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 
 .container {
@@ -524,7 +529,7 @@ h6 {
 }
 .header .logo-wrapper .logo {
   font-size: 48px;
-  font-family: "Chancery", cursive, LiSu, sans-serif;
+  font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
 }
 @media screen and (max-width: 800px) {
   .header .logo-wrapper {
@@ -539,7 +544,7 @@ h6 {
   position: relative;
   padding-left: 0;
   padding-right: 25px;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .header .site-navbar .menu .menu-item {
   display: inline-block;
@@ -605,7 +610,7 @@ h6 {
   margin: 0;
   font-size: 27px;
   font-weight: 400;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .post .post-header .post-link {
   display: inline-block;
@@ -669,7 +674,7 @@ h6 {
   width: 200px;
   margin-left: 785px;
   padding: 10px;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
   border-radius: 5px;
   background: rgba(248, 245, 245, 0.6);
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.125);
@@ -706,27 +711,27 @@ h6 {
 }
 .post .post-content h1 {
   font-weight: 400;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .post .post-content h2 {
   font-weight: 400;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .post .post-content h3 {
   font-weight: 400;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .post .post-content h4 {
   font-weight: 400;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .post .post-content h5 {
   font-weight: 400;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .post .post-content h6 {
   font-weight: 400;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .post .post-content .headerlink:hover {
   border-bottom: 0;
@@ -1112,7 +1117,7 @@ h6 {
 .post .post-content .read-more .read-more-link {
   color: #FF69B4;
   font-size: 1.1em;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .post .post-content .read-more .read-more-link:hover {
   border-bottom: 1px solid #FF69B4;
@@ -1173,7 +1178,7 @@ h6 {
 .post .post-footer {
   margin-top: 20px;
   border-top: 1px solid #e6e6e6;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .post .post-footer .post-tags {
   padding: 15px 0;
@@ -1200,7 +1205,7 @@ h6 {
 .post .post-footer .post-nav .next {
   font-weight: 600;
   font-size: 18px;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
   transition-property: transform;
   transition-timing-function: ease-out;
   transition-duration: 0.3s;
@@ -1245,7 +1250,7 @@ h6 {
 .pagination .next {
   font-weight: 600;
   font-size: 20px;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
   transition-property: transform;
   transition-timing-function: ease-out;
   transition-duration: 0.3s;
@@ -1284,7 +1289,7 @@ h6 {
   margin: 10px 0;
   color: #8a8a8a;
   text-align: center;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .footer .copyright .hexo-link,
 .footer .copyright .theme-link {
@@ -1302,7 +1307,7 @@ h6 {
   max-width: 550px;
 }
 .archive .archive-title {
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .archive .archive-title.tag, .archive .archive-title.category {
   margin: 15px 0;
@@ -1319,7 +1324,7 @@ h6 {
   color: #8a8a8a;
 }
 .archive .collection-title {
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .archive .collection-title .archive-year {
   margin: 15px 0;
@@ -1376,7 +1381,7 @@ h6 {
 .tag-cloud {
   margin: 2em 0 3em;
   text-align: center;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .tag-cloud .tag-cloud-title {
   display: inline-block;
@@ -1404,7 +1409,7 @@ h6 {
 .categories {
   margin: 2em 0 3em;
   text-align: center;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .categories .categories-title {
   display: inline-block;
@@ -1602,7 +1607,7 @@ h6 {
 .mobile-navbar .mobile-header-logo .logo {
   font-size: 22px;
   line-height: 50px;
-  font-family: "Chancery", cursive, LiSu, sans-serif;
+  font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
 }
 .mobile-navbar .mobile-navbar-icon {
   color: #FF69B4;
@@ -1723,7 +1728,7 @@ h6 {
 }
 .mobile-menu .mobile-menu-list a {
   font-size: 18px;
-  font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 .mobile-menu .mobile-menu-list a:hover {
   color: #FF69B4;
