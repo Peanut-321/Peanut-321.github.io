@@ -238,7 +238,7 @@
 <li>Warehouse：<a target="_blank" rel="noopener" href="https://github.com/Peanut-321/MyConvAccel">MyConvAccel</a></li>
 </ul>
 <h2 id="Phase-0-Project-Planning-Protocal-Design"><a href="#Phase-0-Project-Planning-Protocal-Design" class="headerlink" title="Phase.0: Project Planning &amp; Protocal Design"></a>Phase.0: Project Planning &amp; Protocal Design</h2><p>Before coding, we should figure out some fundamental questions.</p>
-<h3 id="Protocal-Design-RoCC-Instruction-Coding"><a href="#Protocal-Design-RoCC-Instruction-Coding" class="headerlink" title="Protocal Design:RoCC Instruction Coding"></a>Protocal Design:RoCC Instruction Coding</h3><p>Rocket Core communicate with Accelerator by RoCC.</p>
+<h3 id="Protocal-Design-RoCC-Instruction-Coding"><a href="#Protocal-Design-RoCC-Instruction-Coding" class="headerlink" title="Protocal Design:RoCC Instruction Coding"></a>Protocal Design:RoCC Instruction Coding</h3><p>Rocket Core communicates with Accelerator by RoCC.</p>
 <table>
 <thead>
 <tr>
@@ -283,6 +283,7 @@
 <h3 id="Project-Planning"><a href="#Project-Planning" class="headerlink" title="Project Planning"></a>Project Planning</h3><p>There are some questions that should figure out before stating this project.</p>
 <ol>
 <li><p>Is the convolution kernel size fixed or configurable?</p>
+<p> Supports variable kernel size will increase a lot of control logics. In the end, choosing fixed 5x5 of hardware. Kernel smaller than 5x5 are pre-zero-padded by software.</p>
 </li>
 <li><p>How to handle boundary pixels?</p>
 </li>
