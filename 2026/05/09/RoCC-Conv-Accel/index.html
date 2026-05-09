@@ -18,12 +18,12 @@
 
 <!-- Website description -->
 
-<meta name="description" content="RoCC-Conv-Accel" />
+<meta name="description" content="RoCC 矩阵卷积加速器：从零搭建 RISC-V 硬件加速器" />
 
 
 <!-- Website keywords -->
 
-<meta name="keywords" content="RISC-V, DMA, Hardware, Pipeline, Peanut&#39;s Blog" />
+<meta name="keywords" content="RISC-V, Chisel, RoCC, 硬件加速, Peanut&#39;s Blog" />
 
 
 
@@ -67,7 +67,7 @@
   window.config = {"leancloud":{"app_id":null,"app_key":null,"server_url":null,"cdn":null},"toc":true,"fancybox":true,"latex":false};
 </script>
   
-  <title>RoCC-Conv-Accel - Peanut&#39;s Blog</title>
+  <title>RoCC 矩阵卷积加速器：从零搭建 RISC-V 硬件加速器 - Peanut&#39;s Blog</title>
 
 <meta name="generator" content="Hexo 8.1.2"></head>
 
@@ -207,7 +207,7 @@
   <header class="post-header">
     <h1 class="post-title">
       
-      RoCC-Conv-Accel
+      RoCC 矩阵卷积加速器：从零搭建 RISC-V 硬件加速器
       
     </h1>
 
@@ -217,15 +217,179 @@
       </span>
       
       
+      <span class="post-category">
+        
+        <a href="/categories/MyConvAccel/">MyConvAccel</a>
+        
+      </span>
+      
       
     </div>
   </header>
 
   
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">项目概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-1%EF%BC%9ARoCC-%E6%8C%87%E4%BB%A4%E8%B0%83%E5%BA%A6%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD"><span class="toc-number">2.</span> <span class="toc-text">Phase 1：RoCC 指令调度基础设施</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-2%EF%BC%9ADMA-%E5%9C%B0%E5%9D%80%E5%AF%B9%E9%BD%90%E4%B8%8E%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B"><span class="toc-number">3.</span> <span class="toc-text">Phase 2：DMA 地址对齐与异常检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-3%EF%BC%9ALoad-Store-FSM-%E5%8F%8D%E5%8E%8B%E6%9C%BA%E5%88%B6"><span class="toc-number">4.</span> <span class="toc-text">Phase 3：Load&#x2F;Store FSM + 反压机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-4%EF%BC%9A5%C3%975-MAC-%E4%B9%98%E5%8A%A0%E6%A0%91"><span class="toc-number">5.</span> <span class="toc-text">Phase 4：5×5 MAC 乘加树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-5%EF%BC%9A%E5%AE%9A%E7%82%B9%E6%95%B0%E9%A5%B1%E5%92%8C%E5%A4%84%E7%90%86"><span class="toc-number">6.</span> <span class="toc-text">Phase 5：定点数饱和处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-6%EF%BC%9A5%C3%975-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%AE%8C%E6%95%B4%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="toc-number">7.</span> <span class="toc-text">Phase 6：5×5 滑动窗口完整流水线</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B8%A9%E5%9D%91%EF%BC%9AVerilator-j-0-%E6%8A%A5%E9%94%99"><span class="toc-number">7.1.</span> <span class="toc-text">踩坑：Verilator -j 0 报错</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E7%BB%AD%E8%AE%A1%E5%88%92"><span class="toc-number">8.</span> <span class="toc-text">后续计划</span></a></li></ol>
+    </div>
+  </div>
+  
 
   <div class="post-content">
     
-    
+    <h2 id="项目概述"><a href="#项目概述" class="headerlink" title="项目概述"></a>项目概述</h2><p>基于 <strong>RISC-V RoCC (Rocket Custom Coprocessor)</strong> 接口的 5×5 滑动窗口矩阵卷积加速器。使用 <strong>Chisel</strong> 编写，Verilator 仿真验证。</p>
+<ul>
+<li>仓库：<a target="_blank" rel="noopener" href="https://github.com/Peanut-321/MyConvAccel">MyConvAccel</a></li>
+<li>当前进度：36 个测试全部通过</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>输入矩阵</td>
+<td>32×32</td>
+</tr>
+<tr>
+<td>最大卷积核</td>
+<td>5×5</td>
+</tr>
+<tr>
+<td>数据格式</td>
+<td>Q8.8 定点数（16-bit）</td>
+</tr>
+<tr>
+<td>累加器</td>
+<td>32-bit</td>
+</tr>
+<tr>
+<td>输出</td>
+<td>同尺寸 zero-padding</td>
+</tr>
+<tr>
+<td>性能目标</td>
+<td>&lt;2500 周期，≥40x 加速</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="Phase-1：RoCC-指令调度基础设施"><a href="#Phase-1：RoCC-指令调度基础设施" class="headerlink" title="Phase 1：RoCC 指令调度基础设施"></a>Phase 1：RoCC 指令调度基础设施</h2><p>搭建 RoCC custom0 指令调度框架，让 Rocket Core 能够向加速器发送指令。</p>
+<table>
+<thead>
+<tr>
+<th>funct7</th>
+<th>指令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>SET_ADDR_IN</td>
+<td>设置输入矩阵基地址（8 字节对齐）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>SET_ADDR_KER</td>
+<td>设置 5×5 卷积核基地址（2 字节对齐）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>SET_ADDR_OUT</td>
+<td>设置输出矩阵基地址（8 字节对齐）</td>
+</tr>
+<tr>
+<td>3</td>
+<td>START_ACCEL</td>
+<td>非阻塞启动加速器</td>
+</tr>
+<tr>
+<td>4</td>
+<td>POLL_STATUS</td>
+<td>查询状态（busy&#x2F;done&#x2F;overflow&#x2F;addr_err）</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    CPU[Rocket Core] --&gt;|RoCC cmd| DEC[指令译码]</span><br><span class="line">    DEC --&gt;|funct7| REG[控制寄存器]</span><br><span class="line">    REG --&gt; FSM[状态机]</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>TODO: 贴关键代码</p>
+</blockquote>
+<hr>
+<h2 id="Phase-2：DMA-地址对齐与异常检测"><a href="#Phase-2：DMA-地址对齐与异常检测" class="headerlink" title="Phase 2：DMA 地址对齐与异常检测"></a>Phase 2：DMA 地址对齐与异常检测</h2><p>实现 DMA 地址设置与对齐检查，非法地址触发 addr_err 并中止。</p>
+<table>
+<thead>
+<tr>
+<th>地址类型</th>
+<th>对齐要求</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ADDR_IN</td>
+<td>8 字节</td>
+</tr>
+<tr>
+<td>ADDR_KER</td>
+<td>2 字节</td>
+</tr>
+<tr>
+<td>ADDR_OUT</td>
+<td>8 字节</td>
+</tr>
+</tbody></table>
+<p>状态寄存器 bit 位：</p>
+<ul>
+<li><strong>bit[0]</strong> — Busy（加速器运行中）</li>
+<li><strong>bit[1]</strong> — Done（计算完成）</li>
+<li><strong>bit[2]</strong> — Overflow（计算中出现饱和）</li>
+<li><strong>bit[3]</strong> — Addr_Err（地址未对齐或为空）</li>
+</ul>
+<blockquote>
+<p>TODO: 贴关键代码</p>
+</blockquote>
+<hr>
+<h2 id="Phase-3：Load-Store-FSM-反压机制"><a href="#Phase-3：Load-Store-FSM-反压机制" class="headerlink" title="Phase 3：Load&#x2F;Store FSM + 反压机制"></a>Phase 3：Load&#x2F;Store FSM + 反压机制</h2><p>实现数据加载&#x2F;存回的状态机，支持 DMA 反压（backpressure）。10 个测试全部通过。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    DMA[DMA] --&gt;|load| SRAM[输入 SRAM]</span><br><span class="line">    SRAM --&gt; MAC[MAC 树]</span><br><span class="line">    MAC --&gt; SRAM2[输出 SRAM]</span><br><span class="line">    SRAM2 --&gt;|store| DMA</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>TODO: 状态转移图 + 关键代码</p>
+</blockquote>
+<hr>
+<h2 id="Phase-4：5×5-MAC-乘加树"><a href="#Phase-4：5×5-MAC-乘加树" class="headerlink" title="Phase 4：5×5 MAC 乘加树"></a>Phase 4：5×5 MAC 乘加树</h2><p>25 个乘法器 + 加法树，完成 5×5 权重 × 5×5 数据窗口的单周期累加。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    W[5×5 权重] --&gt; MUL[25 个乘法器]</span><br><span class="line">    D[5×5 窗口] --&gt; MUL</span><br><span class="line">    MUL --&gt; ADD[加法树]</span><br><span class="line">    ADD --&gt; SAT[饱和处理]</span><br><span class="line">    SAT --&gt; OUT[16-bit 输出]</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>TODO: 贴关键代码</p>
+</blockquote>
+<hr>
+<h2 id="Phase-5：定点数饱和处理"><a href="#Phase-5：定点数饱和处理" class="headerlink" title="Phase 5：定点数饱和处理"></a>Phase 5：定点数饱和处理</h2><p>MAC 树输出右移 8 位后饱和到 16-bit 有符号范围。</p>
+<ul>
+<li>上溢 → 输出 <code>0x7FFF</code>（32767）</li>
+<li>下溢 → 输出 <code>0x8000</code>（-32768）</li>
+<li>正常 → 输出低 16 位</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    ACC[32-bit 累加] --&gt;|&gt;&gt; 8| SFT[右移 8 位]</span><br><span class="line">    SFT --&gt;|clamp| SAT[饱和到 ±32767]</span><br><span class="line">    SAT --&gt; OUT[16-bit 输出]</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>TODO: 贴关键代码</p>
+</blockquote>
+<hr>
+<h2 id="Phase-6：5×5-滑动窗口完整流水线"><a href="#Phase-6：5×5-滑动窗口完整流水线" class="headerlink" title="Phase 6：5×5 滑动窗口完整流水线"></a>Phase 6：5×5 滑动窗口完整流水线</h2><p>整合所有模块，实现完整 32×32 输入、5×5 滑窗卷积流水线。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    DMA[DMA 加载 32×32] --&gt; SRAM[输入 SRAM]</span><br><span class="line">    SRAM --&gt; WINDOW[5×5 滑动窗口]</span><br><span class="line">    WINDOW --&gt; MAC[MAC 树]</span><br><span class="line">    KERN[5×5 卷积核] --&gt; MAC</span><br><span class="line">    MAC --&gt; SAT[定点数饱和]</span><br><span class="line">    SAT --&gt; SRAM2[输出 SRAM]</span><br><span class="line">    SRAM2 --&gt; DMA2[DMA 存回]</span><br></pre></td></tr></table></figure>
+
+<h3 id="踩坑：Verilator-j-0-报错"><a href="#踩坑：Verilator-j-0-报错" class="headerlink" title="踩坑：Verilator -j 0 报错"></a>踩坑：Verilator <code>-j 0</code> 报错</h3><p>单核 VM 上 Verilator 线程数检测失败，报 <code>-j 0</code> 错误。</p>
+<p><strong>解决</strong>：<code>.jvmopts</code> 设置 <code>ActiveProcessorCount=2</code> 强制指定线程数。</p>
+<blockquote>
+<p>TODO: 贴关键代码 + 测试结果</p>
+</blockquote>
+<hr>
+<h2 id="后续计划"><a href="#后续计划" class="headerlink" title="后续计划"></a>后续计划</h2><ul>
+<li>性能计数器与 DMA 延迟优化</li>
+<li>对接真实 Rocket Chip SoC</li>
+<li>Benchmark 对比（硬件加速 vs 纯软件）</li>
+</ul>
+
     
   </div>
 
@@ -259,22 +423,16 @@
       
       <a href="/tags/RISC-V/">RISC-V</a>
       
-      <a href="/tags/DMA/">DMA</a>
+      <a href="/tags/Chisel/">Chisel</a>
       
-      <a href="/tags/Hardware/">Hardware</a>
+      <a href="/tags/RoCC/">RoCC</a>
       
-      <a href="/tags/Pipeline/">Pipeline</a>
+      <a href="/tags/%E7%A1%AC%E4%BB%B6%E5%8A%A0%E9%80%9F/">硬件加速</a>
       
     </div>
     
       
   <nav class="post-nav">  
-      
-      <a class="prev" href="/2026/05/09/Phase1-RoCC-Command-Scheduler/">  
-        <i class="iconfont icon-left"></i>  
-        <span class="prev-text nav-default">[Phase 1] RoCC 指令调度基础设施</span>  
-        <span class="prev-text nav-mobile">上一篇</span>  
-      </a>  
       
       
       <a class="next" href="/2026/05/09/hello-world/">  
