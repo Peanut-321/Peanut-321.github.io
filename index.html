@@ -207,6 +207,484 @@
   <header class="post-header">
     <h1 class="post-title">
       
+      <a class="post-link" href="/2026/05/09/Phase6-Sliding-Window-Pipeline/">[Phase 6] 5×5 滑动窗口完整流水线</a>
+      
+    </h1>
+
+    <div class="post-meta">
+      <span class="post-time">
+        2026-05-09
+      </span>
+      
+      
+      <span class="post-category">
+        
+        <a href="/categories/MyConvAccel/">MyConvAccel</a>
+        
+        <a href="/categories/MyConvAccel/Phase6/">Phase6</a>
+        
+      </span>
+      
+      
+    </div>
+  </header>
+
+  
+
+  <div class="post-content">
+    
+    
+    
+
+    
+    <h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>整合所有模块，实现完整的 32×32 输入、5×5 滑动窗口卷积流水线。</p>
+<h2 id="数据流"><a href="#数据流" class="headerlink" title="数据流"></a>数据流</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    DMA[DMA 加载 32×32] --&gt; SRAM[输入 SRAM]</span><br><span class="line">    SRAM --&gt; WINDOW[5×5 滑动窗口]</span><br><span class="line">    WINDOW --&gt; MAC[MAC 树]</span><br><span class="line">    KERN[5×5 卷积核] --&gt; MAC</span><br><span class="line">    MAC --&gt; SAT[定点数饱和]</span><br><span class="line">    SAT --&gt; SRAM2[输出 SRAM]</span><br><span class="line">    SRAM2 --&gt; DMA2[DMA 存回]</span><br></pre></td></tr></table></figure>
+
+<h2 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h2><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>目标</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>延迟</td>
+<td>&lt; 2500 周期</td>
+</tr>
+<tr>
+<td>加速比</td>
+<td>≥ 40x（vs 纯软件）</td>
+</tr>
+</tbody></table>
+<h2 id="关键代码"><a href="#关键代码" class="headerlink" title="关键代码"></a>关键代码</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+<h2 id="测试要点"><a href="#测试要点" class="headerlink" title="测试要点"></a>测试要点</h2><ul>
+<li>36 个测试用例全部通过</li>
+</ul>
+<h2 id="踩坑记录"><a href="#踩坑记录" class="headerlink" title="踩坑记录"></a>踩坑记录</h2><ul>
+<li>Verilator 单核 VM 上 <code>-j 0</code> 报错 → 通过 <code>.jvmopts</code> 设置 <code>ActiveProcessorCount=2</code> 解决</li>
+</ul>
+
+    
+    
+  </div>
+
+  
+
+  
+
+</article>
+  
+  <article class="post">
+  <header class="post-header">
+    <h1 class="post-title">
+      
+      <a class="post-link" href="/2026/05/09/Phase5-Fixed-Point-Saturate/">[Phase 5] 定点数饱和处理</a>
+      
+    </h1>
+
+    <div class="post-meta">
+      <span class="post-time">
+        2026-05-09
+      </span>
+      
+      
+      <span class="post-category">
+        
+        <a href="/categories/MyConvAccel/">MyConvAccel</a>
+        
+        <a href="/categories/MyConvAccel/Phase5/">Phase5</a>
+        
+      </span>
+      
+      
+    </div>
+  </header>
+
+  
+
+  <div class="post-content">
+    
+    
+    
+
+    
+    <h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>MAC 树输出右移 8 位后饱和到 16-bit 有符号范围。</p>
+<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    ACC[32-bit 累加] --&gt;|&gt;&gt; 8| SFT[右移 8 位]</span><br><span class="line">    SFT --&gt;|clamp| SAT[饱和到 ±32767]</span><br><span class="line">    SAT --&gt; OUT[16-bit 输出]</span><br></pre></td></tr></table></figure>
+
+<h2 id="饱和逻辑"><a href="#饱和逻辑" class="headerlink" title="饱和逻辑"></a>饱和逻辑</h2><ul>
+<li>上溢 → 输出 <code>0x7FFF</code>（32767）</li>
+<li>下溢 → 输出 <code>0x8000</code>（-32768）</li>
+<li>正常 → 输出低 16 位</li>
+</ul>
+<h2 id="关键代码"><a href="#关键代码" class="headerlink" title="关键代码"></a>关键代码</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+<h2 id="测试要点"><a href="#测试要点" class="headerlink" title="测试要点"></a>测试要点</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+<h2 id="踩坑记录"><a href="#踩坑记录" class="headerlink" title="踩坑记录"></a>踩坑记录</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+
+    
+    
+  </div>
+
+  
+
+  
+
+</article>
+  
+  <article class="post">
+  <header class="post-header">
+    <h1 class="post-title">
+      
+      <a class="post-link" href="/2026/05/09/Phase4-MAC-Tree/">[Phase 4] 5×5 MAC 乘加树</a>
+      
+    </h1>
+
+    <div class="post-meta">
+      <span class="post-time">
+        2026-05-09
+      </span>
+      
+      
+      <span class="post-category">
+        
+        <a href="/categories/MyConvAccel/">MyConvAccel</a>
+        
+        <a href="/categories/MyConvAccel/Phase4/">Phase4</a>
+        
+      </span>
+      
+      
+    </div>
+  </header>
+
+  
+
+  <div class="post-content">
+    
+    
+    
+
+    
+    <h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>实现 5×5 权重 × 5×5 数据窗口的乘法累加树。</p>
+<h2 id="数据格式"><a href="#数据格式" class="headerlink" title="数据格式"></a>数据格式</h2><ul>
+<li>输入：Q8.8（16-bit 有符号定点数）</li>
+<li>权重：Q8.8</li>
+<li>累加器：32-bit</li>
+</ul>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    W[5×5 权重] --&gt; MUL[25 个乘法器]</span><br><span class="line">    D[5×5 窗口] --&gt; MUL</span><br><span class="line">    MUL --&gt; ADD[加法树]</span><br><span class="line">    ADD --&gt; SAT[饱和处理]</span><br><span class="line">    SAT --&gt; OUT[16-bit 输出]</span><br></pre></td></tr></table></figure>
+
+<h2 id="关键代码"><a href="#关键代码" class="headerlink" title="关键代码"></a>关键代码</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+<h2 id="测试要点"><a href="#测试要点" class="headerlink" title="测试要点"></a>测试要点</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+<h2 id="踩坑记录"><a href="#踩坑记录" class="headerlink" title="踩坑记录"></a>踩坑记录</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+
+    
+    
+  </div>
+
+  
+
+  
+
+</article>
+  
+  <article class="post">
+  <header class="post-header">
+    <h1 class="post-title">
+      
+      <a class="post-link" href="/2026/05/09/Phase3-Load-Store-FSM/">[Phase 3] Load/Store FSM + 反压机制</a>
+      
+    </h1>
+
+    <div class="post-meta">
+      <span class="post-time">
+        2026-05-09
+      </span>
+      
+      
+      <span class="post-category">
+        
+        <a href="/categories/MyConvAccel/">MyConvAccel</a>
+        
+        <a href="/categories/MyConvAccel/Phase3/">Phase3</a>
+        
+      </span>
+      
+      
+    </div>
+  </header>
+
+  
+
+  <div class="post-content">
+    
+    
+    
+
+    
+    <h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>实现数据加载&#x2F;存回的有限状态机，支持 DMA 反压（backpressure）。</p>
+<h2 id="状态机"><a href="#状态机" class="headerlink" title="状态机"></a>状态机</h2><blockquote>
+<p>TODO: 画状态转移图</p>
+</blockquote>
+<h2 id="数据路径"><a href="#数据路径" class="headerlink" title="数据路径"></a>数据路径</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    DMA[DMA] --&gt;|load| SRAM[输入 SRAM]</span><br><span class="line">    SRAM --&gt; MAC[MAC 树]</span><br><span class="line">    MAC --&gt; SRAM2[输出 SRAM]</span><br><span class="line">    SRAM2 --&gt;|store| DMA</span><br></pre></td></tr></table></figure>
+
+<h2 id="关键代码"><a href="#关键代码" class="headerlink" title="关键代码"></a>关键代码</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+<h2 id="测试要点"><a href="#测试要点" class="headerlink" title="测试要点"></a>测试要点</h2><ul>
+<li>10 个测试用例全部通过</li>
+</ul>
+<h2 id="踩坑记录"><a href="#踩坑记录" class="headerlink" title="踩坑记录"></a>踩坑记录</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+
+    
+    
+  </div>
+
+  
+
+  
+
+</article>
+  
+  <article class="post">
+  <header class="post-header">
+    <h1 class="post-title">
+      
+      <a class="post-link" href="/2026/05/09/Phase2-DMA-Alignment/">[Phase 2] DMA 地址对齐与异常检测</a>
+      
+    </h1>
+
+    <div class="post-meta">
+      <span class="post-time">
+        2026-05-09
+      </span>
+      
+      
+      <span class="post-category">
+        
+        <a href="/categories/MyConvAccel/">MyConvAccel</a>
+        
+        <a href="/categories/MyConvAccel/Phase2/">Phase2</a>
+        
+      </span>
+      
+      
+    </div>
+  </header>
+
+  
+
+  <div class="post-content">
+    
+    
+    
+
+    
+    <h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>实现 DMA 地址设置与对齐检查逻辑，非法地址时触发错误并中止。</p>
+<h2 id="对齐规则"><a href="#对齐规则" class="headerlink" title="对齐规则"></a>对齐规则</h2><table>
+<thead>
+<tr>
+<th>地址类型</th>
+<th>对齐要求</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ADDR_IN</td>
+<td>8 字节</td>
+</tr>
+<tr>
+<td>ADDR_KER</td>
+<td>2 字节</td>
+</tr>
+<tr>
+<td>ADDR_OUT</td>
+<td>8 字节</td>
+</tr>
+</tbody></table>
+<h2 id="状态寄存器"><a href="#状态寄存器" class="headerlink" title="状态寄存器"></a>状态寄存器</h2><table>
+<thead>
+<tr>
+<th>bit</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bit[0]</td>
+<td>Busy</td>
+</tr>
+<tr>
+<td>bit[1]</td>
+<td>Done</td>
+</tr>
+<tr>
+<td>bit[2]</td>
+<td>Overflow</td>
+</tr>
+<tr>
+<td>bit[3]</td>
+<td>Addr_Err</td>
+</tr>
+</tbody></table>
+<h2 id="关键代码"><a href="#关键代码" class="headerlink" title="关键代码"></a>关键代码</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+<h2 id="测试要点"><a href="#测试要点" class="headerlink" title="测试要点"></a>测试要点</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+<h2 id="踩坑记录"><a href="#踩坑记录" class="headerlink" title="踩坑记录"></a>踩坑记录</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+
+    
+    
+  </div>
+
+  
+
+  
+
+</article>
+  
+  <article class="post">
+  <header class="post-header">
+    <h1 class="post-title">
+      
+      <a class="post-link" href="/2026/05/09/Phase1-RoCC-Command-Scheduler/">[Phase 1] RoCC 指令调度基础设施</a>
+      
+    </h1>
+
+    <div class="post-meta">
+      <span class="post-time">
+        2026-05-09
+      </span>
+      
+      
+      <span class="post-category">
+        
+        <a href="/categories/MyConvAccel/">MyConvAccel</a>
+        
+        <a href="/categories/MyConvAccel/Phase1/">Phase1</a>
+        
+      </span>
+      
+      
+    </div>
+  </header>
+
+  
+
+  <div class="post-content">
+    
+    
+    
+
+    
+    <h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>搭建 RoCC custom0 指令调度框架，让 Rocket Core 能够向加速器发送指令。</p>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    CPU[Rocket Core] --&gt;|RoCC cmd| Decoder[指令译码]</span><br><span class="line">    Decoder --&gt;|funct7| Reg[控制寄存器]</span><br><span class="line">    Reg --&gt; FSM[状态机]</span><br></pre></td></tr></table></figure>
+
+<h2 id="指令格式"><a href="#指令格式" class="headerlink" title="指令格式"></a>指令格式</h2><table>
+<thead>
+<tr>
+<th>funct7</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>SET_ADDR_IN</td>
+</tr>
+<tr>
+<td>1</td>
+<td>SET_ADDR_KER</td>
+</tr>
+<tr>
+<td>2</td>
+<td>SET_ADDR_OUT</td>
+</tr>
+<tr>
+<td>3</td>
+<td>START_ACCEL</td>
+</tr>
+<tr>
+<td>4</td>
+<td>POLL_STATUS</td>
+</tr>
+</tbody></table>
+<h2 id="关键代码"><a href="#关键代码" class="headerlink" title="关键代码"></a>关键代码</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+<h2 id="测试要点"><a href="#测试要点" class="headerlink" title="测试要点"></a>测试要点</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+<h2 id="踩坑记录"><a href="#踩坑记录" class="headerlink" title="踩坑记录"></a>踩坑记录</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+
+    
+    
+  </div>
+
+  
+
+  
+
+</article>
+  
+  <article class="post">
+  <header class="post-header">
+    <h1 class="post-title">
+      
+      <a class="post-link" href="/2026/05/09/RoCC-Conv-Accel/">RoCC-Conv-Accel</a>
+      
+    </h1>
+
+    <div class="post-meta">
+      <span class="post-time">
+        2026-05-09
+      </span>
+      
+      
+      
+    </div>
+  </header>
+
+  
+
+  <div class="post-content">
+    
+    
+    
+
+    
+    
+    
+    
+  </div>
+
+  
+
+  
+
+</article>
+  
+  <article class="post">
+  <header class="post-header">
+    <h1 class="post-title">
+      
       <a class="post-link" href="/2026/05/09/hello-world/">Hello World</a>
       
     </h1>

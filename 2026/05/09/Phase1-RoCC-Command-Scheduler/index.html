@@ -18,8 +18,12 @@
 
 <!-- Website description -->
 
+<meta name="description" content="[Phase 1] RoCC 指令调度基础设施" />
+
 
 <!-- Website keywords -->
+
+<meta name="keywords" content="RISC-V, Chisel, RoCC, Peanut&#39;s Blog" />
 
 
 
@@ -35,7 +39,7 @@
 
 
 <!-- Canonical, good for google search engine -->
-<link rel="canonical" href="https://peanut-321.github.io/archives/2026/05/" />
+<link rel="canonical" href="https://peanut-321.github.io/2026/05/09/Phase1-RoCC-Command-Scheduler/" />
 
 <!-- Fancybox styling -->
 
@@ -63,7 +67,7 @@
   window.config = {"leancloud":{"app_id":null,"app_key":null,"server_url":null,"cdn":null},"toc":true,"fancybox":true,"latex":false};
 </script>
   
-  <title>归档 - 2026/5 · Peanut&#39;s Blog</title>
+  <title>[Phase 1] RoCC 指令调度基础设施 - Peanut&#39;s Blog</title>
 
 <meta name="generator" content="Hexo 8.1.2"></head>
 
@@ -199,183 +203,152 @@
     <main id="main" class="main">
       <div class="content-wrapper">
         <div id="content" class="content">
-          
+          <article class="post">
+  <header class="post-header">
+    <h1 class="post-title">
+      
+      [Phase 1] RoCC 指令调度基础设施
+      
+    </h1>
 
-<section id="archive" class="archive">
+    <div class="post-meta">
+      <span class="post-time">
+        2026-05-09
+      </span>
+      
+      
+      <span class="post-category">
+        
+        <a href="/categories/MyConvAccel/">MyConvAccel</a>
+        
+        <a href="/categories/MyConvAccel/Phase1/">Phase1</a>
+        
+      </span>
+      
+      
+    </div>
+  </header>
+
   
-  
-  <div class="archive-title">
-    <span class="archive-post-counter">
-      目前共计 8 篇日志
-    </span>
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87"><span class="toc-number">1.</span> <span class="toc-text">目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E6%A0%BC%E5%BC%8F"><span class="toc-number">3.</span> <span class="toc-text">指令格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81"><span class="toc-number">4.</span> <span class="toc-text">关键代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E8%A6%81%E7%82%B9"><span class="toc-number">5.</span> <span class="toc-text">测试要点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">6.</span> <span class="toc-text">踩坑记录</span></a></li></ol>
+    </div>
   </div>
   
-  
 
-  
-  
-  
-  
-  
-  
-  <div class="collection-title">
-    <h2 class="archive-year">
-      <a href="/archives/2026" class="archive-year">2026</a>
-    </h2>
+  <div class="post-content">
+    
+    <h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>搭建 RoCC custom0 指令调度框架，让 Rocket Core 能够向加速器发送指令。</p>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    CPU[Rocket Core] --&gt;|RoCC cmd| Decoder[指令译码]</span><br><span class="line">    Decoder --&gt;|funct7| Reg[控制寄存器]</span><br><span class="line">    Reg --&gt; FSM[状态机]</span><br></pre></td></tr></table></figure>
+
+<h2 id="指令格式"><a href="#指令格式" class="headerlink" title="指令格式"></a>指令格式</h2><table>
+<thead>
+<tr>
+<th>funct7</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>SET_ADDR_IN</td>
+</tr>
+<tr>
+<td>1</td>
+<td>SET_ADDR_KER</td>
+</tr>
+<tr>
+<td>2</td>
+<td>SET_ADDR_OUT</td>
+</tr>
+<tr>
+<td>3</td>
+<td>START_ACCEL</td>
+</tr>
+<tr>
+<td>4</td>
+<td>POLL_STATUS</td>
+</tr>
+</tbody></table>
+<h2 id="关键代码"><a href="#关键代码" class="headerlink" title="关键代码"></a>关键代码</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+<h2 id="测试要点"><a href="#测试要点" class="headerlink" title="测试要点"></a>测试要点</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+<h2 id="踩坑记录"><a href="#踩坑记录" class="headerlink" title="踩坑记录"></a>踩坑记录</h2><blockquote>
+<p>TODO</p>
+</blockquote>
+
+    
   </div>
-  
-  
-
-  <div class="archive-post">
-    <span class="archive-post-time">
-      
-      05-09
-      
-    </span>
-    <span class="archive-post-title">
-      <a href="/2026/05/09/Phase6-Sliding-Window-Pipeline/" class="archive-post-link">
-        [Phase 6] 5×5 滑动窗口完整流水线
-      </a>
-    </span>
-  </div>
-  
-  
-  
-  
-  
-
-  <div class="archive-post">
-    <span class="archive-post-time">
-      
-      05-09
-      
-    </span>
-    <span class="archive-post-title">
-      <a href="/2026/05/09/Phase5-Fixed-Point-Saturate/" class="archive-post-link">
-        [Phase 5] 定点数饱和处理
-      </a>
-    </span>
-  </div>
-  
-  
-  
-  
-  
-
-  <div class="archive-post">
-    <span class="archive-post-time">
-      
-      05-09
-      
-    </span>
-    <span class="archive-post-title">
-      <a href="/2026/05/09/Phase4-MAC-Tree/" class="archive-post-link">
-        [Phase 4] 5×5 MAC 乘加树
-      </a>
-    </span>
-  </div>
-  
-  
-  
-  
-  
-
-  <div class="archive-post">
-    <span class="archive-post-time">
-      
-      05-09
-      
-    </span>
-    <span class="archive-post-title">
-      <a href="/2026/05/09/Phase3-Load-Store-FSM/" class="archive-post-link">
-        [Phase 3] Load/Store FSM + 反压机制
-      </a>
-    </span>
-  </div>
-  
-  
-  
-  
-  
-
-  <div class="archive-post">
-    <span class="archive-post-time">
-      
-      05-09
-      
-    </span>
-    <span class="archive-post-title">
-      <a href="/2026/05/09/Phase2-DMA-Alignment/" class="archive-post-link">
-        [Phase 2] DMA 地址对齐与异常检测
-      </a>
-    </span>
-  </div>
-  
-  
-  
-  
-  
-
-  <div class="archive-post">
-    <span class="archive-post-time">
-      
-      05-09
-      
-    </span>
-    <span class="archive-post-title">
-      <a href="/2026/05/09/Phase1-RoCC-Command-Scheduler/" class="archive-post-link">
-        [Phase 1] RoCC 指令调度基础设施
-      </a>
-    </span>
-  </div>
-  
-  
-  
-  
-  
-
-  <div class="archive-post">
-    <span class="archive-post-time">
-      
-      05-09
-      
-    </span>
-    <span class="archive-post-title">
-      <a href="/2026/05/09/RoCC-Conv-Accel/" class="archive-post-link">
-        RoCC-Conv-Accel
-      </a>
-    </span>
-  </div>
-  
-  
-  
-  
-  
-
-  <div class="archive-post">
-    <span class="archive-post-time">
-      
-      05-09
-      
-    </span>
-    <span class="archive-post-title">
-      <a href="/2026/05/09/hello-world/" class="archive-post-link">
-        Hello World
-      </a>
-    </span>
-  </div>
-  
-</section>
 
   
-  <nav class="pagination">  
+  <!-- Post Copyright -->
+
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span>原文作者: </span>
+    <a href="https://peanut-321.github.io">Peanut-321</a>
+  </p>
+  <p class="copyright-item">
+    <span>原文链接: </span>
+    <a href="https://peanut-321.github.io/2026/05/09/Phase1-RoCC-Command-Scheduler/">https://peanut-321.github.io/2026/05/09/Phase1-RoCC-Command-Scheduler/</a>
+  </p>
+  <p class="copyright-item">
+    <span>许可协议: </span>
+    
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+  </p>
+</div>
+
+    
+
+  
+
+  
+  <footer class="post-footer">
+    
+    <div class="post-tags">
       
+      <a href="/tags/RISC-V/">RISC-V</a>
+      
+      <a href="/tags/Chisel/">Chisel</a>
+      
+      <a href="/tags/RoCC/">RoCC</a>
+      
+    </div>
+    
+      
+  <nav class="post-nav">  
+      
+      <a class="prev" href="/2026/05/09/Phase2-DMA-Alignment/">  
+        <i class="iconfont icon-left"></i>  
+        <span class="prev-text nav-default">[Phase 2] DMA 地址对齐与异常检测</span>  
+        <span class="prev-text nav-mobile">上一篇</span>  
+      </a>  
+      
+      
+      <a class="next" href="/2026/05/09/RoCC-Conv-Accel/">  
+        <span class="next-text nav-default">RoCC-Conv-Accel</span>  
+        <span class="prev-text nav-mobile">下一篇</span>  
+        <i class="iconfont icon-right"></i>  
+      </a>  
       
   </nav>  
   
 
+  </footer>
+  
+
+</article>
         </div>
           
+  <div class="comments" id="comments">  
+      
+  </div>  
+  
 
       </div>
     </main>
@@ -474,6 +447,13 @@
     <div class="back-to-top" id="back-to-top"> <i class="iconfont icon-up"></i> </div>
   </div>
     
+    
+    
+    
+    
+    
+    
+  
 
   
 
