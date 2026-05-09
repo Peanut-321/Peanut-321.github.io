@@ -225,7 +225,7 @@
   <div class="post-toc" id="post-toc">
     <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Background-Brief"><span class="toc-number">1.</span> <span class="toc-text">Background &amp; Brief</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-0-Project-Planning-Protocol-Design"><span class="toc-number">2.</span> <span class="toc-text">Phase 0: Project Planning &amp; Protocol Design</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Protocol-Design-RoCC-Instruction-Encoding"><span class="toc-number">2.1.</span> <span class="toc-text">Protocol Design: RoCC Instruction Encoding</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Key-Design-Decisions"><span class="toc-number">2.2.</span> <span class="toc-text">Key Design Decisions</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-1-RoCC-Instruction-Dispatch-Infrastructure"><span class="toc-number">3.</span> <span class="toc-text">Phase 1: RoCC Instruction Dispatch Infrastructure</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-2%EF%BC%9ADMA-%E5%9C%B0%E5%9D%80%E5%AF%B9%E9%BD%90%E4%B8%8E%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B"><span class="toc-number">4.</span> <span class="toc-text">Phase 2：DMA 地址对齐与异常检测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-3%EF%BC%9ALoad-Store-FSM-%E5%8F%8D%E5%8E%8B%E6%9C%BA%E5%88%B6"><span class="toc-number">5.</span> <span class="toc-text">Phase 3：Load&#x2F;Store FSM + 反压机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-4%EF%BC%9A5%C3%975-MAC-%E4%B9%98%E5%8A%A0%E6%A0%91"><span class="toc-number">6.</span> <span class="toc-text">Phase 4：5×5 MAC 乘加树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-5%EF%BC%9A%E5%AE%9A%E7%82%B9%E6%95%B0%E9%A5%B1%E5%92%8C%E5%A4%84%E7%90%86"><span class="toc-number">7.</span> <span class="toc-text">Phase 5：定点数饱和处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-6%EF%BC%9A5%C3%975-%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%AE%8C%E6%95%B4%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="toc-number">8.</span> <span class="toc-text">Phase 6：5×5 滑动窗口完整流水线</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B8%A9%E5%9D%91%EF%BC%9AVerilator-j-0-%E6%8A%A5%E9%94%99"><span class="toc-number">8.1.</span> <span class="toc-text">踩坑：Verilator -j 0 报错</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E7%BB%AD%E8%AE%A1%E5%88%92"><span class="toc-number">9.</span> <span class="toc-text">后续计划</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Background-Brief"><span class="toc-number">1.</span> <span class="toc-text">Background &amp; Brief</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-0-Project-Planning-Protocol-Design"><span class="toc-number">2.</span> <span class="toc-text">Phase 0: Project Planning &amp; Protocol Design</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Protocol-Design-RoCC-Instruction-Encoding"><span class="toc-number">2.1.</span> <span class="toc-text">Protocol Design: RoCC Instruction Encoding</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Key-Design-Decisions"><span class="toc-number">2.2.</span> <span class="toc-text">Key Design Decisions</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-1-RoCC-Instruction-Dispatch-Infrastructure"><span class="toc-number">3.</span> <span class="toc-text">Phase 1: RoCC Instruction Dispatch Infrastructure</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-2-DMA-Address-Alignment-Error-Detection"><span class="toc-number">4.</span> <span class="toc-text">Phase 2: DMA Address Alignment &amp; Error Detection</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-3-Load-Store-FSM-Backpressure"><span class="toc-number">5.</span> <span class="toc-text">Phase 3: Load&#x2F;Store FSM &amp; Backpressure</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-4-5%C3%975-MAC-Tree"><span class="toc-number">6.</span> <span class="toc-text">Phase 4: 5×5 MAC Tree</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-5-Fixed-Point-Saturation"><span class="toc-number">7.</span> <span class="toc-text">Phase 5: Fixed-Point Saturation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-6-5%C3%975-Sliding-Window-Pipeline"><span class="toc-number">8.</span> <span class="toc-text">Phase 6: 5×5 Sliding Window Pipeline</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Future-Work"><span class="toc-number">9.</span> <span class="toc-text">Future Work</span></a></li></ol>
     </div>
   </div>
   
@@ -337,85 +337,33 @@
 </tr>
 </tbody></table>
 <hr>
-<h2 id="Phase-1-RoCC-Instruction-Dispatch-Infrastructure"><a href="#Phase-1-RoCC-Instruction-Dispatch-Infrastructure" class="headerlink" title="Phase 1: RoCC Instruction Dispatch Infrastructure"></a>Phase 1: RoCC Instruction Dispatch Infrastructure</h2><p>搭建 RoCC custom0 指令调度框架，让 Rocket Core 能够向加速器发送指令。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    CPU[Rocket Core] --&gt;|RoCC cmd| DEC[指令译码]</span><br><span class="line">    DEC --&gt;|funct7| REG[控制寄存器]</span><br><span class="line">    REG --&gt; FSM[状态机]</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>TODO: 贴关键代码</p>
+<h2 id="Phase-1-RoCC-Instruction-Dispatch-Infrastructure"><a href="#Phase-1-RoCC-Instruction-Dispatch-Infrastructure" class="headerlink" title="Phase 1: RoCC Instruction Dispatch Infrastructure"></a>Phase 1: RoCC Instruction Dispatch Infrastructure</h2><blockquote>
+<p>TODO</p>
 </blockquote>
 <hr>
-<h2 id="Phase-2：DMA-地址对齐与异常检测"><a href="#Phase-2：DMA-地址对齐与异常检测" class="headerlink" title="Phase 2：DMA 地址对齐与异常检测"></a>Phase 2：DMA 地址对齐与异常检测</h2><p>实现 DMA 地址设置与对齐检查，非法地址触发 addr_err 并中止。</p>
-<table>
-<thead>
-<tr>
-<th>地址类型</th>
-<th>对齐要求</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>ADDR_IN</td>
-<td>8 字节</td>
-</tr>
-<tr>
-<td>ADDR_KER</td>
-<td>2 字节</td>
-</tr>
-<tr>
-<td>ADDR_OUT</td>
-<td>8 字节</td>
-</tr>
-</tbody></table>
-<p>状态寄存器 bit 位：</p>
-<ul>
-<li><strong>bit[0]</strong> — Busy（加速器运行中）</li>
-<li><strong>bit[1]</strong> — Done（计算完成）</li>
-<li><strong>bit[2]</strong> — Overflow（计算中出现饱和）</li>
-<li><strong>bit[3]</strong> — Addr_Err（地址未对齐或为空）</li>
-</ul>
-<blockquote>
-<p>TODO: 贴关键代码</p>
+<h2 id="Phase-2-DMA-Address-Alignment-Error-Detection"><a href="#Phase-2-DMA-Address-Alignment-Error-Detection" class="headerlink" title="Phase 2: DMA Address Alignment &amp; Error Detection"></a>Phase 2: DMA Address Alignment &amp; Error Detection</h2><blockquote>
+<p>TODO</p>
 </blockquote>
 <hr>
-<h2 id="Phase-3：Load-Store-FSM-反压机制"><a href="#Phase-3：Load-Store-FSM-反压机制" class="headerlink" title="Phase 3：Load&#x2F;Store FSM + 反压机制"></a>Phase 3：Load&#x2F;Store FSM + 反压机制</h2><p>实现数据加载&#x2F;存回的状态机，支持 DMA 反压（backpressure）。10 个测试全部通过。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    DMA[DMA] --&gt;|load| SRAM[输入 SRAM]</span><br><span class="line">    SRAM --&gt; MAC[MAC 树]</span><br><span class="line">    MAC --&gt; SRAM2[输出 SRAM]</span><br><span class="line">    SRAM2 --&gt;|store| DMA</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>TODO: 状态转移图 + 关键代码</p>
+<h2 id="Phase-3-Load-Store-FSM-Backpressure"><a href="#Phase-3-Load-Store-FSM-Backpressure" class="headerlink" title="Phase 3: Load&#x2F;Store FSM &amp; Backpressure"></a>Phase 3: Load&#x2F;Store FSM &amp; Backpressure</h2><blockquote>
+<p>TODO</p>
 </blockquote>
 <hr>
-<h2 id="Phase-4：5×5-MAC-乘加树"><a href="#Phase-4：5×5-MAC-乘加树" class="headerlink" title="Phase 4：5×5 MAC 乘加树"></a>Phase 4：5×5 MAC 乘加树</h2><p>25 个乘法器 + 加法树，完成 5×5 权重 × 5×5 数据窗口的单周期累加。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    W[5×5 权重] --&gt; MUL[25 个乘法器]</span><br><span class="line">    D[5×5 窗口] --&gt; MUL</span><br><span class="line">    MUL --&gt; ADD[加法树]</span><br><span class="line">    ADD --&gt; SAT[饱和处理]</span><br><span class="line">    SAT --&gt; OUT[16-bit 输出]</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>TODO: 贴关键代码</p>
+<h2 id="Phase-4-5×5-MAC-Tree"><a href="#Phase-4-5×5-MAC-Tree" class="headerlink" title="Phase 4: 5×5 MAC Tree"></a>Phase 4: 5×5 MAC Tree</h2><blockquote>
+<p>TODO</p>
 </blockquote>
 <hr>
-<h2 id="Phase-5：定点数饱和处理"><a href="#Phase-5：定点数饱和处理" class="headerlink" title="Phase 5：定点数饱和处理"></a>Phase 5：定点数饱和处理</h2><p>MAC 树输出右移 8 位后饱和到 16-bit 有符号范围。</p>
-<ul>
-<li>上溢 → 输出 <code>0x7FFF</code>（32767）</li>
-<li>下溢 → 输出 <code>0x8000</code>（-32768）</li>
-<li>正常 → 输出低 16 位</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    ACC[32-bit 累加] --&gt;|&gt;&gt; 8| SFT[右移 8 位]</span><br><span class="line">    SFT --&gt;|clamp| SAT[饱和到 ±32767]</span><br><span class="line">    SAT --&gt; OUT[16-bit 输出]</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>TODO: 贴关键代码</p>
+<h2 id="Phase-5-Fixed-Point-Saturation"><a href="#Phase-5-Fixed-Point-Saturation" class="headerlink" title="Phase 5: Fixed-Point Saturation"></a>Phase 5: Fixed-Point Saturation</h2><blockquote>
+<p>TODO</p>
 </blockquote>
 <hr>
-<h2 id="Phase-6：5×5-滑动窗口完整流水线"><a href="#Phase-6：5×5-滑动窗口完整流水线" class="headerlink" title="Phase 6：5×5 滑动窗口完整流水线"></a>Phase 6：5×5 滑动窗口完整流水线</h2><p>整合所有模块，实现完整 32×32 输入、5×5 滑窗卷积流水线。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    DMA[DMA 加载 32×32] --&gt; SRAM[输入 SRAM]</span><br><span class="line">    SRAM --&gt; WINDOW[5×5 滑动窗口]</span><br><span class="line">    WINDOW --&gt; MAC[MAC 树]</span><br><span class="line">    KERN[5×5 卷积核] --&gt; MAC</span><br><span class="line">    MAC --&gt; SAT[定点数饱和]</span><br><span class="line">    SAT --&gt; SRAM2[输出 SRAM]</span><br><span class="line">    SRAM2 --&gt; DMA2[DMA 存回]</span><br></pre></td></tr></table></figure>
-
-<h3 id="踩坑：Verilator-j-0-报错"><a href="#踩坑：Verilator-j-0-报错" class="headerlink" title="踩坑：Verilator -j 0 报错"></a>踩坑：Verilator <code>-j 0</code> 报错</h3><p>单核 VM 上 Verilator 线程数检测失败，报 <code>-j 0</code> 错误。</p>
-<p><strong>解决</strong>：<code>.jvmopts</code> 设置 <code>ActiveProcessorCount=2</code> 强制指定线程数。</p>
-<blockquote>
-<p>TODO: 贴关键代码 + 测试结果</p>
+<h2 id="Phase-6-5×5-Sliding-Window-Pipeline"><a href="#Phase-6-5×5-Sliding-Window-Pipeline" class="headerlink" title="Phase 6: 5×5 Sliding Window Pipeline"></a>Phase 6: 5×5 Sliding Window Pipeline</h2><blockquote>
+<p>TODO</p>
 </blockquote>
 <hr>
-<h2 id="后续计划"><a href="#后续计划" class="headerlink" title="后续计划"></a>后续计划</h2><ul>
-<li>性能计数器与 DMA 延迟优化</li>
-<li>对接真实 Rocket Chip SoC</li>
-<li>Benchmark 对比（硬件加速 vs 纯软件）</li>
-</ul>
+<h2 id="Future-Work"><a href="#Future-Work" class="headerlink" title="Future Work"></a>Future Work</h2><blockquote>
+<p>TODO</p>
+</blockquote>
 
     
   </div>
