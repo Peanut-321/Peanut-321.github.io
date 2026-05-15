@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en,zh-CN,default">
 
 <head>
   <!-- Website mata -->
@@ -123,48 +123,53 @@
   <a href="/." class="logo">Peanut's Notebook</a>  
 </div>  
   
-<nav class="site-navbar">  
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              Home
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              Archives
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about/">
+            
+            
+              About
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+  <div class="lang-switch">
     
-    <ul id="menu" class="menu">  
-        
-        <li class="menu-item">  
-          <a class="menu-item-link" href="/">  
-              
-              
-              Home  
-              
-          </a>  
-        </li>  
-        
-        <li class="menu-item">  
-          <a class="menu-item-link" href="/archives/">  
-              
-              
-              Archives  
-              
-          </a>  
-        </li>  
-        
-        <li class="menu-item">  
-          <a class="menu-item-link" href="/about/">  
-              
-              
-              About  
-              
-          </a>  
-        </li>  
-        
-        <li class="menu-item">  
-          <a class="menu-item-link" href="/friends/">  
-              
-              
-              Friends  
-              
-          </a>  
-        </li>  
-        
-    </ul>  
+      <a class="lang-switch-link" href="/zh-CN/2026/05/09/RoCC-Conv-Accel/">中文</a>
     
+  </div>
 </nav>  
 
     </header>
@@ -212,7 +217,11 @@
 <li>Repository: <a target="_blank" rel="noopener" href="https://github.com/Peanut-321/MyConvAccel">MyConvAccel</a></li>
 </ul>
 <h2 id="Phase-0-Project-Planning-Protocol-Design"><a href="#Phase-0-Project-Planning-Protocol-Design" class="headerlink" title="Phase 0: Project Planning &amp; Protocol Design"></a>Phase 0: Project Planning &amp; Protocol Design</h2><p>Before writing any code, we need to settle a few fundamental questions.</p>
-<h3 id="Protocol-Design-RoCC-Instruction-Encoding"><a href="#Protocol-Design-RoCC-Instruction-Encoding" class="headerlink" title="Protocol Design: RoCC Instruction Encoding"></a>Protocol Design: RoCC Instruction Encoding</h3><p>The Rocket Core communicates with the accelerator via the RoCC interface. Each custom instruction carries <code>funct7</code>, <code>rs1</code>, <code>rs2</code>, and <code>rd</code> fields.</p>
+<h3 id="Protocol-Design-RoCC-Instruction-Encoding"><a href="#Protocol-Design-RoCC-Instruction-Encoding" class="headerlink" title="Protocol Design: RoCC Instruction Encoding"></a>Protocol Design: RoCC Instruction Encoding</h3><p>The RoCC protocol is straightforward: the CPU passes register values to the accelerator via custom instructions, and the accelerator responds with a result.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Rocket Core (CPU)                      Accelerator</span><br><span class="line">      |                                      |</span><br><span class="line">      |  custom inst (rs1=addr, rs2=data)    |</span><br><span class="line">      | -----------------------------------&gt; |</span><br><span class="line">      |                                      |</span><br><span class="line">      |  resp.data = status / result         |</span><br><span class="line">      | &lt;----------------------------------- |</span><br></pre></td></tr></table></figure>
+
+<p>Our accelerator uses a three-step flow: <strong>set addresses → trigger → poll</strong>. First, the CPU tells the accelerator where the input matrix, kernel, and output reside in memory. Then it fires a start signal. Finally, it polls a status register to know when the computation is done.</p>
+<p>The Rocket Core communicates with the accelerator via the RoCC interface. Each custom instruction carries <code>funct7</code>, <code>rs1</code>, <code>rs2</code>, and <code>rd</code> fields.</p>
 <table>
 <thead>
 <tr>
