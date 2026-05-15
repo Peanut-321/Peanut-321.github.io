@@ -218,7 +218,7 @@
 </ul>
 <h2 id="Phase-0-Project-Planning-Protocol-Design"><a href="#Phase-0-Project-Planning-Protocol-Design" class="headerlink" title="Phase 0: Project Planning &amp; Protocol Design"></a>Phase 0: Project Planning &amp; Protocol Design</h2><p>Before writing any code, we need to settle a few fundamental questions.</p>
 <h3 id="Protocol-Design-RoCC-Instruction-Encoding"><a href="#Protocol-Design-RoCC-Instruction-Encoding" class="headerlink" title="Protocol Design: RoCC Instruction Encoding"></a>Protocol Design: RoCC Instruction Encoding</h3><p>The RoCC protocol is straightforward: the CPU passes register values to the accelerator via custom instructions, and the accelerator responds with a result.</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Rocket Core (CPU)                      Accelerator</span><br><span class="line">      |                                      |</span><br><span class="line">      |  custom inst (rs1=addr, rs2=data)    |</span><br><span class="line">      | -----------------------------------&gt; |</span><br><span class="line">      |                                      |</span><br><span class="line">      |  resp.data = status / result         |</span><br><span class="line">      | &lt;----------------------------------- |</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Rocket Core (CPU)                      Accelerator</span><br><span class="line">      |                                      |</span><br><span class="line">      |  custom inst (rs1=addr, rs2=data)    |   ← RoCC interface: control</span><br><span class="line">      | -----------------------------------&gt; |</span><br><span class="line">      |                                      |</span><br><span class="line">      |  DMA read / write                    |   ← TileLink bus: data</span><br><span class="line">      | &lt;==================================&gt; |</span><br><span class="line">      |                                      |</span><br><span class="line">      |  resp.data = status / result         |   ← RoCC interface: status</span><br><span class="line">      | &lt;----------------------------------- |</span><br></pre></td></tr></table></figure>
 
 <p>Our accelerator uses a three-step flow: <strong>set addresses → trigger → poll</strong>. First, the CPU tells the accelerator where the input matrix, kernel, and output reside in memory. Then it fires a start signal. Finally, it polls a status register to know when the computation is done.</p>
 <p>The Rocket Core communicates with the accelerator via the RoCC interface. Each custom instruction carries <code>funct7</code>, <code>rs1</code>, <code>rs2</code>, and <code>rd</code> fields.</p>
@@ -283,19 +283,17 @@
 <p> Zero-padding is the simplest approach — no special edge-case logic is needed in the sliding-window FSM.</p>
 </li>
 <li><p><strong>Fixed-point precision trade-off.</strong></p>
-<blockquote>
-<p>TODO</p>
-</blockquote>
+<ul>
+<li><p><strong>Why not floating-point?</strong> IEEE 754 multipliers are expensive — they consume significant area and add pipeline stages. A Q8.8 fixed-point multiplier is just a 16-bit × 16-bit integer multiplier, producing a result in a single cycle with no extra hardware.</p>
 </li>
-<li><p><strong>Blocking or non-blocking?</strong></p>
-<blockquote>
-<p>TODO</p>
-</blockquote>
+<li><p><strong>Why not plain integer?</strong> Convolution weights are naturally fractional (e.g. 0.125, -0.5). Plain integers can’t represent them. Q8.8 splits 16 bits evenly: 8 bits for the integer part (±128 range), 8 bits for the fractional part (1&#x2F;256 precision).</p>
+</li>
+<li><p><strong>Why a 32-bit accumulator?</strong> A 5×5 convolution sums 25 Q8.8 products. Each 16-bit × 16-bit multiply produces up to 32 bits. A 32-bit accumulator holds the full sum without overflow, and no wider.</p>
+</li>
+</ul>
 </li>
 <li><p><strong>Why alignment constraints?</strong></p>
-<blockquote>
-<p>TODO</p>
-</blockquote>
+<p> TileLink DMA works best when addresses are word-aligned. An unaligned address forces the bus to split a single transfer into multiple chunks, and the hardware has to shift and stitch bytes back together. We skip all of that — the accelerator just checks the address on every <code>SET_ADDR_*</code> and rejects unaligned ones. Software’s problem, not ours.</p>
 </li>
 </ol>
 <table>
