@@ -204,7 +204,7 @@
   <div class="post-toc" id="post-toc">
     <h2 class="post-toc-title">Contents</h2>
     <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Background-Brief"><span class="toc-number">1.</span> <span class="toc-text">Background &amp; Brief</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-0-Project-Planning-Protocol-Design"><span class="toc-number">2.</span> <span class="toc-text">Phase 0: Project Planning &amp; Protocol Design</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Protocol-Design-RoCC-Instruction-Encoding"><span class="toc-number">2.1.</span> <span class="toc-text">Protocol Design: RoCC Instruction Encoding</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Design-Rationale"><span class="toc-number">2.2.</span> <span class="toc-text">Design Rationale</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Key-Design-Decisions"><span class="toc-number">2.3.</span> <span class="toc-text">Key Design Decisions</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-1-Architecture-Overview"><span class="toc-number">3.</span> <span class="toc-text">Phase 1: Architecture Overview</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Problem-Running-Convolution-on-a-CPU"><span class="toc-number">3.1.</span> <span class="toc-text">The Problem: Running Convolution on a CPU</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Fix-Offload-to-an-Accelerator"><span class="toc-number">3.2.</span> <span class="toc-text">The Fix: Offload to an Accelerator</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-2-DMA-Address-Alignment-Error-Detection"><span class="toc-number">4.</span> <span class="toc-text">Phase 2: DMA Address Alignment &amp; Error Detection</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-3-Load-Store-FSM-Backpressure"><span class="toc-number">5.</span> <span class="toc-text">Phase 3: Load&#x2F;Store FSM &amp; Backpressure</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-4-5%C3%975-MAC-Tree"><span class="toc-number">6.</span> <span class="toc-text">Phase 4: 5×5 MAC Tree</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-5-Fixed-Point-Saturation"><span class="toc-number">7.</span> <span class="toc-text">Phase 5: Fixed-Point Saturation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-6-5%C3%975-Sliding-Window-Pipeline"><span class="toc-number">8.</span> <span class="toc-text">Phase 6: 5×5 Sliding Window Pipeline</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Future-Work"><span class="toc-number">9.</span> <span class="toc-text">Future Work</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Background-Brief"><span class="toc-number">1.</span> <span class="toc-text">Background &amp; Brief</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-0-Project-Planning-Protocol-Design"><span class="toc-number">2.</span> <span class="toc-text">Phase 0: Project Planning &amp; Protocol Design</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Protocol-Design-RoCC-Instruction-Encoding"><span class="toc-number">2.1.</span> <span class="toc-text">Protocol Design: RoCC Instruction Encoding</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Design-Rationale"><span class="toc-number">2.2.</span> <span class="toc-text">Design Rationale</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Key-Design-Decisions"><span class="toc-number">2.3.</span> <span class="toc-text">Key Design Decisions</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-1-Architecture-Overview"><span class="toc-number">3.</span> <span class="toc-text">Phase 1: Architecture Overview</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Problem-Running-Convolution-on-a-CPU"><span class="toc-number">3.1.</span> <span class="toc-text">The Problem: Running Convolution on a CPU</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Fix-Offload-to-an-Accelerator"><span class="toc-number">3.2.</span> <span class="toc-text">The Fix: Offload to an Accelerator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Module-Map"><span class="toc-number">3.3.</span> <span class="toc-text">Module Map</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-2-DMA-Address-Alignment-Error-Detection"><span class="toc-number">4.</span> <span class="toc-text">Phase 2: DMA Address Alignment &amp; Error Detection</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-3-Load-Store-FSM-Backpressure"><span class="toc-number">5.</span> <span class="toc-text">Phase 3: Load&#x2F;Store FSM &amp; Backpressure</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-4-5%C3%975-MAC-Tree"><span class="toc-number">6.</span> <span class="toc-text">Phase 4: 5×5 MAC Tree</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-5-Fixed-Point-Saturation"><span class="toc-number">7.</span> <span class="toc-text">Phase 5: Fixed-Point Saturation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-6-5%C3%975-Sliding-Window-Pipeline"><span class="toc-number">8.</span> <span class="toc-text">Phase 6: 5×5 Sliding Window Pipeline</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Future-Work"><span class="toc-number">9.</span> <span class="toc-text">Future Work</span></a></li></ol>
     </div>
   </div>
   
@@ -331,7 +331,45 @@
 <hr>
 <h2 id="Phase-1-Architecture-Overview"><a href="#Phase-1-Architecture-Overview" class="headerlink" title="Phase 1: Architecture Overview"></a>Phase 1: Architecture Overview</h2><h3 id="The-Problem-Running-Convolution-on-a-CPU"><a href="#The-Problem-Running-Convolution-on-a-CPU" class="headerlink" title="The Problem: Running Convolution on a CPU"></a>The Problem: Running Convolution on a CPU</h3><p>A 5×5 convolution over a 32×32 matrix means sliding a 5×5 window across 1024 output positions. Each output pixel requires 25 multiplies and 24 additions — 25,000 multiply-accumulates in total. On a general-purpose CPU, the arithmetic itself is not the bottleneck. The real bottleneck is the sliding. Every slide requires computing address offsets, updating loop counters, loading pixels and weights from memory, and storing results back. Most instructions are spent on loop control and address bookkeeping, not math.</p>
 <p>A rough estimate: on a simple in-order RISC-V core, each output pixel costs ~100–150 cycles (two loads, one store, ~50 arithmetic ops, plus loop branches). Across 1024 pixels, that adds up to <strong>100,000–150,000 cycles</strong>. Our accelerator does the same job in <strong>2428 cycles</strong> — roughly a 50× speedup.</p>
-<h3 id="The-Fix-Offload-to-an-Accelerator"><a href="#The-Fix-Offload-to-an-Accelerator" class="headerlink" title="The Fix: Offload to an Accelerator"></a>The Fix: Offload to an Accelerator</h3><p>(TO BE CONTINUED)</p>
+<h3 id="The-Fix-Offload-to-an-Accelerator"><a href="#The-Fix-Offload-to-an-Accelerator" class="headerlink" title="The Fix: Offload to an Accelerator"></a>The Fix: Offload to an Accelerator</h3><p>The CPU is not built for sliding-window number crunching — so we hand that job to a RoCC accelerator. The accelerator does three things: fetch data from SRAM, run the convolution, and write results back. The CPU’s role shrinks to three steps: set addresses, issue START, and poll.</p>
+<p>What does the accelerator look like inside?</p>
+<p>The naive approach is a serial pipeline: DMA load → MAC compute → DMA store. Simple, but wasteful. The DMA waits for the MAC. The MAC waits for the DMA. Only one piece of hardware is active at any moment.</p>
+<p>What we actually built overlaps all three. An inputQueue preloads the entire matrix, freeing the DMA to stream results back while the ConvEngine is still crunching pixels. The ConvEngine runs a 6-stage pipeline, producing one result per cycle once full. A storeQueue absorbs results and applies backpressure upstream when it fills. The result: load, compute, and store all run concurrently — 2428 cycles end to end.</p>
+<h3 id="Module-Map"><a href="#Module-Map" class="headerlink" title="Module Map"></a>Module Map</h3><table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Role</th>
+<th>Phase</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ConvControl</td>
+<td>RoCC decode + 5-state master FSM + status register</td>
+<td>2</td>
+</tr>
+<tr>
+<td>ConvDMA</td>
+<td>7-state DMA engine over TileLink</td>
+<td>3, 4</td>
+</tr>
+<tr>
+<td>LineBuffer</td>
+<td>5×32×16 sliding window with zero-padding</td>
+<td>5</td>
+</tr>
+<tr>
+<td>InputQueue + StoreQueue</td>
+<td>Elastic buffers with backpressure</td>
+<td>7</td>
+</tr>
+<tr>
+<td>ConvEngine</td>
+<td>ShiftWindow + KernelROM + ConvUnit, 6-stage MAC pipeline</td>
+<td>6</td>
+</tr>
+</tbody></table>
+<p>The following phases walk through each module in detail.</p>
 <hr>
 <h2 id="Phase-2-DMA-Address-Alignment-Error-Detection"><a href="#Phase-2-DMA-Address-Alignment-Error-Detection" class="headerlink" title="Phase 2: DMA Address Alignment &amp; Error Detection"></a>Phase 2: DMA Address Alignment &amp; Error Detection</h2><blockquote>
 <p>TODO</p>
