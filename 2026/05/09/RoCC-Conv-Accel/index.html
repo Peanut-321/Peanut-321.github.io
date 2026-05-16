@@ -204,16 +204,14 @@
   <div class="post-toc" id="post-toc">
     <h2 class="post-toc-title">Contents</h2>
     <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Background-Brief"><span class="toc-number">1.</span> <span class="toc-text">Background &amp; Brief</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-0-Project-Planning-Protocol-Design"><span class="toc-number">2.</span> <span class="toc-text">Phase 0: Project Planning &amp; Protocol Design</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Protocol-Design-RoCC-Instruction-Encoding"><span class="toc-number">2.1.</span> <span class="toc-text">Protocol Design: RoCC Instruction Encoding</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Design-Rationale"><span class="toc-number">2.2.</span> <span class="toc-text">Design Rationale</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Key-Design-Decisions"><span class="toc-number">2.3.</span> <span class="toc-text">Key Design Decisions</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-1-Architecture-Overview"><span class="toc-number">3.</span> <span class="toc-text">Phase 1: Architecture Overview</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Problem-Running-Convolution-on-a-CPU"><span class="toc-number">3.1.</span> <span class="toc-text">The Problem: Running Convolution on a CPU</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Fix-Offload-to-an-Accelerator"><span class="toc-number">3.2.</span> <span class="toc-text">The Fix: Offload to an Accelerator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Module-Map"><span class="toc-number">3.3.</span> <span class="toc-text">Module Map</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-2-ConvControl-%E2%80%94-Instruction-Decode-FSM"><span class="toc-number">4.</span> <span class="toc-text">Phase 2: ConvControl — Instruction Decode &amp; FSM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Interface"><span class="toc-number">4.1.</span> <span class="toc-text">Interface</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Instruction-Decode"><span class="toc-number">4.2.</span> <span class="toc-text">Instruction Decode</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-3-ConvDMA-%E2%80%94-TileLink-DMA-Engine"><span class="toc-number">5.</span> <span class="toc-text">Phase 3: ConvDMA — TileLink DMA Engine</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-4-ConvDMA-%E2%80%94-Load-Pipeline"><span class="toc-number">6.</span> <span class="toc-text">Phase 4: ConvDMA — Load Pipeline</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-5-LineBuffer-%E2%80%94-5%C3%9732-Sliding-Window"><span class="toc-number">7.</span> <span class="toc-text">Phase 5: LineBuffer — 5×32 Sliding Window</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-6-ConvEngine-%E2%80%94-5%C3%975-MAC-Pipeline"><span class="toc-number">8.</span> <span class="toc-text">Phase 6: ConvEngine — 5×5 MAC Pipeline</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-7-Top-Level-Integration-Master-FSM"><span class="toc-number">9.</span> <span class="toc-text">Phase 7: Top-Level Integration &amp; Master FSM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-8-Chipyard-Integration-Verilator-Build"><span class="toc-number">10.</span> <span class="toc-text">Phase 8: Chipyard Integration &amp; Verilator Build</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-9-Bare-Metal-C-Test-Program"><span class="toc-number">11.</span> <span class="toc-text">Phase 9: Bare-Metal C Test Program</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-10-Performance-Report-Summary"><span class="toc-number">12.</span> <span class="toc-text">Phase 10: Performance Report &amp; Summary</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-0-Project-Planning-Protocol-Design"><span class="toc-number">1.</span> <span class="toc-text">Phase 0: Project Planning &amp; Protocol Design</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Protocol-Design-RoCC-Instruction-Encoding"><span class="toc-number">1.1.</span> <span class="toc-text">Protocol Design: RoCC Instruction Encoding</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Design-Rationale"><span class="toc-number">1.2.</span> <span class="toc-text">Design Rationale</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Key-Design-Decisions"><span class="toc-number">1.3.</span> <span class="toc-text">Key Design Decisions</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-1-Architecture-Overview"><span class="toc-number">2.</span> <span class="toc-text">Phase 1: Architecture Overview</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Problem-Running-Convolution-on-a-CPU"><span class="toc-number">2.1.</span> <span class="toc-text">The Problem: Running Convolution on a CPU</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Fix-Offload-to-an-Accelerator"><span class="toc-number">2.2.</span> <span class="toc-text">The Fix: Offload to an Accelerator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Module-Map"><span class="toc-number">2.3.</span> <span class="toc-text">Module Map</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-2-ConvControl-%E2%80%94-Instruction-Decode-FSM"><span class="toc-number">3.</span> <span class="toc-text">Phase 2: ConvControl — Instruction Decode &amp; FSM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Interface"><span class="toc-number">3.1.</span> <span class="toc-text">Interface</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Instruction-Decode"><span class="toc-number">3.2.</span> <span class="toc-text">Instruction Decode</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-3-ConvDMA-%E2%80%94-TileLink-DMA-Engine"><span class="toc-number">4.</span> <span class="toc-text">Phase 3: ConvDMA — TileLink DMA Engine</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-4-ConvDMA-%E2%80%94-Load-Pipeline"><span class="toc-number">5.</span> <span class="toc-text">Phase 4: ConvDMA — Load Pipeline</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-5-LineBuffer-%E2%80%94-5%C3%9732-Sliding-Window"><span class="toc-number">6.</span> <span class="toc-text">Phase 5: LineBuffer — 5×32 Sliding Window</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-6-ConvEngine-%E2%80%94-5%C3%975-MAC-Pipeline"><span class="toc-number">7.</span> <span class="toc-text">Phase 6: ConvEngine — 5×5 MAC Pipeline</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-7-Top-Level-Integration-Master-FSM"><span class="toc-number">8.</span> <span class="toc-text">Phase 7: Top-Level Integration &amp; Master FSM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-8-Chipyard-Integration-Verilator-Build"><span class="toc-number">9.</span> <span class="toc-text">Phase 8: Chipyard Integration &amp; Verilator Build</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-9-Bare-Metal-C-Test-Program"><span class="toc-number">10.</span> <span class="toc-text">Phase 9: Bare-Metal C Test Program</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-10-Performance-Report-Summary"><span class="toc-number">11.</span> <span class="toc-text">Phase 10: Performance Report &amp; Summary</span></a></li></ol>
     </div>
   </div>
   
 
   <div class="post-content">
     
-    <h2 id="Background-Brief"><a href="#Background-Brief" class="headerlink" title="Background &amp; Brief"></a>Background &amp; Brief</h2><p>Convolution is one of the most fundamental operations in deep learning and image processing. Performing a 5×5 convolution over a 32×32 matrix on a general-purpose CPU incurs thousands of instructions for the sliding-window traversal, leading to significant power consumption and latency.</p>
-<p>RISC-V’s RoCC (Rocket Custom Coprocessor) interface provides an elegant solution — custom instructions offload compute-intensive tasks to dedicated hardware. The CPU issues a single instruction, and the accelerator handles the rest in the background.</p>
-<ul>
+    <ul>
 <li>Repository: <a target="_blank" rel="noopener" href="https://github.com/Peanut-321/MyConvAccel">MyConvAccel</a></li>
 </ul>
 <h2 id="Phase-0-Project-Planning-Protocol-Design"><a href="#Phase-0-Project-Planning-Protocol-Design" class="headerlink" title="Phase 0: Project Planning &amp; Protocol Design"></a>Phase 0: Project Planning &amp; Protocol Design</h2><p>Before writing any code, we need to settle a few fundamental questions.</p>
@@ -221,7 +219,6 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Rocket Core (CPU)                      Accelerator</span><br><span class="line">      |                                      |</span><br><span class="line">      |  custom inst (rs1=addr, rs2=data)    |   ← RoCC interface: control</span><br><span class="line">      | -----------------------------------&gt; |</span><br><span class="line">      |                                      |</span><br><span class="line">      |  DMA read / write                    |   ← TileLink bus: data</span><br><span class="line">      | &lt;==================================&gt; |</span><br><span class="line">      |                                      |</span><br><span class="line">      |  resp.data = status / result         |   ← RoCC interface: status</span><br><span class="line">      | &lt;----------------------------------- |</span><br></pre></td></tr></table></figure>
 
 <p>Our accelerator uses a three-step flow: <strong>set addresses → trigger → poll</strong>. First, the CPU tells the accelerator where the input matrix, kernel, and output reside in memory. Then it fires a start signal. Finally, it polls a status register to know when the computation is done.</p>
-<p>The Rocket Core communicates with the accelerator via the RoCC interface. Each custom instruction carries <code>funct7</code>, <code>rs1</code>, <code>rs2</code>, and <code>rd</code> fields.</p>
 <table>
 <thead>
 <tr>
@@ -262,7 +259,36 @@
 <td>Read status register to rd</td>
 </tr>
 </tbody></table>
-<p>The status register bit assignments must be defined in advance — this makes software polling straightforward.</p>
+<p>The status register packs four bits for software polling:</p>
+<table>
+<thead>
+<tr>
+<th>Bit</th>
+<th>Name</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>busy</td>
+<td>Accelerator is computing</td>
+</tr>
+<tr>
+<td>1</td>
+<td>done</td>
+<td>Computation complete</td>
+</tr>
+<tr>
+<td>2</td>
+<td>overflow</td>
+<td>Accumulator overflow</td>
+</tr>
+<tr>
+<td>3</td>
+<td>addr_err</td>
+<td>Address check failed</td>
+</tr>
+</tbody></table>
 <h3 id="Design-Rationale"><a href="#Design-Rationale" class="headerlink" title="Design Rationale"></a>Design Rationale</h3><ol>
 <li><p><strong>Why split addresses into three separate instructions?</strong></p>
 <p> A single RoCC instruction only carries two source operands (<code>rs1</code> and <code>rs2</code>) — not enough to pass three base addresses at once. The alternative is passing a struct pointer, but that forces the accelerator to issue its own DMA read just to fetch the configuration, adding complexity and latency. Three independent instructions pass one address each, keeping the hardware interface as simple as possible.</p>
