@@ -408,7 +408,7 @@
 <li><strong>START (3):</strong> 仅在 sIdle 或 sDone 状态下接受。不能启动已在运行的加速器。</li>
 <li><strong>POLL (4):</strong> 始终接受。这是一个纯读取操作——不会对任何操作进行干扰。</li>
 </ul>
-<h3 id="SET-ADDR：存储三个基地址"><a href="#SET-ADDR：存储三个基地址" class="headerlink" title="SET_ADDR：存储三个基地址"></a>SET_ADDR：存储三个基地址</h3><p>根据 <code>funct7</code> 的值，<code>rs1</code> 被写入 <code>addrIn</code>、<code>addrKer</code> 或 <code>addrOut</code>。如果加速器处于 <code>sError</code> 状态，任何 SET 都会将其清除并回到 <code>sIdle</code>。</p>
+<h3 id="SET-ADDR：存储三个基地址"><a href="#SET-ADDR：存储三个基地址" class="headerlink" title="SET_ADDR：存储三个基地址"></a>SET_ADDR：存储三个基地址</h3><p>根据 <code>funct7</code> 的值，<code>rs1</code> 被写入 <code>addrIn</code>、<code>addrKer</code>、<code>addrOut</code> 中。如果加速器处于 <code>sError</code> 状态，任何 SET 都会将其清除并回到 <code>sIdle</code>。</p>
 <hr>
 <h2 id="Phase-3：读写-FSM-反压"><a href="#Phase-3：读写-FSM-反压" class="headerlink" title="Phase 3：读写 FSM &amp; 反压"></a>Phase 3：读写 FSM &amp; 反压</h2><blockquote>
 <p>TODO</p>
