@@ -28,6 +28,27 @@
   padding-bottom: 8px;
 }
 
+.lang-switch {
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.lang-switch-link {
+  font-size: 0.85em;
+  color: #8a8a8a;
+  text-decoration: none;
+  padding: 4px 8px;
+  border: 1px solid #8a8a8a;
+  border-radius: 3px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.lang-switch-link:hover {
+  color: #333;
+  border-color: #333;
+}
+
 /*! normalize.css v3.0.2 | MIT License | git.io/normalize */
 /**
  * 1. Set default font family to sans-serif.
