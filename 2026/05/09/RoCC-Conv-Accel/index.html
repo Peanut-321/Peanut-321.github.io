@@ -427,7 +427,7 @@
 <li><strong>SimpleMemResp</strong> — L1’s reply. Returns 64-bit read data and echoes the request’s tag.</li>
 <li><strong>SimpleMemIO</strong> — bundles <code>req</code> (DMA→L1) and <code>resp</code> (L1→DMA, <code>Flipped</code>) into one port.</li>
 </ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  ConvDMA                  SimpleMemIO            L1 data cache</span><br><span class="line">┌─────────┐              ┌─────────────┐         ┌──────────┐</span><br><span class="line">│         │── req ──────►│ req (output) │────────►│          │</span><br><span class="line">│  FSM    │              │             │         │  L1 D$   │</span><br><span class="line">│         │◄─ resp ──────│ resp (input) │◄────────│          │</span><br><span class="line">└─────────┘              └─────────────┘         └──────────┘</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  ConvDMA                  SimpleMemIO            L1 data cache</span><br><span class="line">┌─────────┐              ┌─────────────┐          ┌──────────┐</span><br><span class="line">│         │── req ──────►│ req (output) │────────►│          │</span><br><span class="line">│  FSM    │              │             │          │  L1 D$   │</span><br><span class="line">│         │◄─ resp ──────│ resp (input) │◄────────│          │</span><br><span class="line">└─────────┘              └─────────────┘          └──────────┘</span><br></pre></td></tr></table></figure>
 
 <h3 id="Serial-FSM"><a href="#Serial-FSM" class="headerlink" title="Serial FSM"></a>Serial FSM</h3><p>ConvDMA moves data between SRAM and the compute unit through two paths:</p>
 <ul>
@@ -435,9 +435,52 @@
 <li><strong>Store path</strong> (sIdle → sGather → sIssue → loop): collects four 16-bit elements from the compute unit, packs them into a 64-bit word, writes it to memory.</li>
 </ul>
 <p>Both paths share <code>sIssue</code>, branching on <code>opReg</code>. At most one request is in flight at any time — issue one, wait for the response, finish unpacking&#x2F;packing, then issue the next.</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">┌── sIdle ────────────────────► sError</span><br><span class="line">│    │                            ▲</span><br><span class="line">│    │ load / store               │ SET addr</span><br><span class="line">│    ▼                            │</span><br><span class="line">│  sIssue ────────────────────────┘</span><br><span class="line">│    │</span><br><span class="line">│    ├── read ──► sWaitResp ──► sUnpack(×4) ──┐</span><br><span class="line">│    │                                         │</span><br><span class="line">│    │              ◄──────────────────────────┘ loop until bytesIssued ≥ length</span><br><span class="line">│    │</span><br><span class="line">│    └── write ──► sGather(×4) ──────────────► sIssue (loop)</span><br><span class="line">│</span><br><span class="line">└─────────────────────────────────────────────► sDone</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">┌── sIdle ────────────────────► sError</span><br><span class="line">│    │                            ▲</span><br><span class="line">│    │ load / store               │ SET addr</span><br><span class="line">│    ▼                            │</span><br><span class="line">│  sIssue ────────────────────────┘</span><br><span class="line">│    │</span><br><span class="line">│    ├── read ──► sWaitResp ──► sUnpack(×4)  ──┐</span><br><span class="line">│    │                                         │</span><br><span class="line">│    │              ◄──────────────────────────┘ loop until bytesIssued ≥ length</span><br><span class="line">│    │</span><br><span class="line">│    └── write ──► sGather(×4) ──────────────► sIssue (loop)</span><br><span class="line">│</span><br><span class="line">└─────────────────────────────────────────────► sDone</span><br></pre></td></tr></table></figure>
 
-<p>┌───────────┬────────────────────────────────────────────────────┬──────────┐<br>│   State   │                   Responsibility                   │   Path   │<br>├───────────┼────────────────────────────────────────────────────┼──────────┤<br>│ sIdle     │ Accept command, latch baseAddr and length, check   │ common   │<br>│           │ alignment                                          │          │<br>├───────────┼────────────────────────────────────────────────────┼──────────┤<br>│ sIssue    │ Fire mem.req (read or write, depending on opReg)   │ shared   │<br>├───────────┼────────────────────────────────────────────────────┼──────────┤<br>│ sWaitResp │ Wait for mem.resp.valid, latch response data       │ load     │<br>├───────────┼────────────────────────────────────────────────────┼──────────┤<br>│ sUnpack   │ 4 cycles: slice 64-bit word into 4 × 16-bit        │ load     │<br>│           │ elements, push into elemQueue                      │          │<br>├───────────┼────────────────────────────────────────────────────┼──────────┤<br>│ sGather   │ 4 cycles: collect 4 × 16-bit elements from         │ store    │<br>│           │ elemQueue, pack into 64-bit word                   │          │<br>├───────────┼────────────────────────────────────────────────────┼──────────┤<br>│ sDone     │ Transfer complete, waiting for upper layer to      │ common   │<br>│           │ consume result                                     │          │<br>├───────────┼────────────────────────────────────────────────────┼──────────┤<br>│ sError    │ Address misaligned, waiting for a valid address    │ common   │<br>│           │ to be written                                      │          │<br>└───────────┴────────────────────────────────────────────────────┴──────────┘</p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Responsibility</th>
+<th>Path</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>sIdle</td>
+<td>Accept command, latch baseAddr and length, check alignment</td>
+<td>common</td>
+</tr>
+<tr>
+<td>sIssue</td>
+<td>Fire mem.req (read or write, depending on opReg)</td>
+<td>shared</td>
+</tr>
+<tr>
+<td>sWaitResp</td>
+<td>Wait for mem.resp.valid, latch response data</td>
+<td>load</td>
+</tr>
+<tr>
+<td>sUnpack</td>
+<td>4 cycles: slice 64-bit word into 4 × 16-bit elements, push into elemQueue</td>
+<td>load</td>
+</tr>
+<tr>
+<td>sGather</td>
+<td>4 cycles: collect 4 × 16-bit elements from elemQueue, pack into 64-bit word</td>
+<td>store</td>
+</tr>
+<tr>
+<td>sDone</td>
+<td>Transfer complete, waiting for upper layer to consume result</td>
+<td>common</td>
+</tr>
+<tr>
+<td>sError</td>
+<td>Address misaligned, waiting for a valid address to be written</td>
+<td>common</td>
+</tr>
+</tbody></table>
 <h3 id="Bottleneck-6-cycles-word"><a href="#Bottleneck-6-cycles-word" class="headerlink" title="Bottleneck: 6 cycles&#x2F;word"></a>Bottleneck: 6 cycles&#x2F;word</h3><p>Take the load path. One word goes through sIssue → sWaitResp → sUnpack×4 → back to sIssue — exactly 6 cycles. Memory sits idle for 4 of those 6 cycles during unpack. The bottleneck is not memory latency, it’s the FSM refusing to overlap issue with unpack.</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cyc |     state |     mem.req    |   mem.resp   | loadStream</span><br><span class="line">  0 |    sIssue | fire(rd)       |              |</span><br><span class="line">  1 | sWaitResp |                | fire         |</span><br><span class="line">  2 |   sUnpack |                               |</span><br><span class="line">  3 |   sUnpack |                               | deq elem[0]</span><br><span class="line">  4 |   sUnpack |                               | deq elem[1]</span><br><span class="line">  5 |   sUnpack |                               | deq elem[2]</span><br><span class="line">  6 |    sIssue | fire(rd)       |              | deq elem[3]</span><br></pre></td></tr></table></figure>
 
