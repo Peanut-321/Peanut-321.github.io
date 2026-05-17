@@ -496,7 +496,10 @@
 <p><strong>3. inflightCount — credit-based flow control</strong></p>
 <p>The issue engine fires faster (1 word&#x2F;cycle) than the unpack engine consumes (1 element&#x2F;cycle → 0.25 word&#x2F;cycle). Without a cap, the FIFO overflows. <code>inflightCount</code> acts as a credit account: issue spends a credit per request, unpack returns a credit per word consumed. <code>inflightMax = 4</code> caps the window at 4 in-flight words, matching the unpack engine’s digestion rate.</p>
 <p><strong>4. sLoadActive — concurrent FSM (core change)</strong></p>
-<p>The three serial states <code>sIssue</code>, <code>sWaitResp</code>, and <code>sUnpack</code> merge into a single <code>sLoadActive</code> state. Inside this state, two concurrent <code>when</code> blocks run: the issue engine fires requests up to <code>inflightMax</code>, and the unpack engine drains the FIFO. Both can advance in the same cycle — issue and unpack truly overlap.</p>
+<p>The three serial states <code>sIssue</code>, <code>sWaitResp</code>, and <code>sUnpack</code> merge into a single <code>sLoadActive</code> state. Inside, two independent <code>when</code> blocks run concurrently — the issue engine fires requests up to <code>inflightMax</code>, and the unpack engine drains the FIFO.</p>
+<p>A naive ping-pong FSM (sIssue → sUnpack → sIssue → …) cannot achieve overlap: issue and unpack never share a cycle, yielding 5 cycles&#x2F;word. True concurrency requires both engines active in the same state.</p>
+<p>The only conflict is <code>inflightCount</code>. Both engines update it — issue +1, unpack −1. If they write it in separate <code>when</code> blocks, Chisel’s last-connect-wins semantics drop one update when both fire in the same cycle. The fix: compute the net change — <code>inflightCount + issueFired − unpackWordDone</code> — so both updates survive the same cycle. 1537 cycles → ~1033 cycles.</p>
+<p>Full step-by-step implementation notes: <a target="_blank" rel="noopener" href="https://github.com/Peanut-321/MyConvAccel">ConvDMA Pipeline Design Notes</a></p>
 <h2 id="Phase-4-Compute-Datapath-—-LineBuffer-ConvEngine"><a href="#Phase-4-Compute-Datapath-—-LineBuffer-ConvEngine" class="headerlink" title="Phase 4: Compute Datapath — LineBuffer &amp; ConvEngine"></a>Phase 4: Compute Datapath — LineBuffer &amp; ConvEngine</h2><blockquote>
 <p>TODO</p>
 </blockquote>
