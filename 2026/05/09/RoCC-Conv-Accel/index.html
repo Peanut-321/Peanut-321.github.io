@@ -514,6 +514,7 @@
 <p><strong>Why not read directly from SRAM?</strong> Each output pixel needs values from 5 different rows. Fetching them directly would require 5 independent reads per cycle targeting 5 different addresses — five memory ports. LineBuffer replaces that with one write port (DMA feeds in one pixel per cycle) and one 5-wide read port (5 rows × same column). A 160-entry register file is far cheaper than a 5-port SRAM.</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sIdle ──► sPrime (load 5 rows)  ──► sActive (32 output rows)  ──► sDone</span><br></pre></td></tr></table></figure>
 
+<p>In <code>sActive</code>, while the buffer emits 36 columns per row, DMA loads the next input row into a separate <code>tmpRow</code> register. When the row ends, the buffer shifts up — row 0 discarded, rows 1..3 move up, <code>tmpRow</code> enters as row 4. Without <code>tmpRow</code>, DMA would overwrite rows still being output, and load and output could not overlap — the end-to-end benefit of Phase 3’s pipelined DMA would be lost here.</p>
 <p>Zero-padding covers all four image borders through two mechanisms:</p>
 <ul>
 <li><strong>Top &#x2F; bottom:</strong> Handled by what the five buffer rows hold. At output row 0, the top two slots are zero; at output row 31, the bottom two are zero. As the window slides down, real rows rotate in and out — no extra control logic.</li>

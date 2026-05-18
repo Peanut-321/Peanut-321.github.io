@@ -466,7 +466,7 @@
 <p>这是一个数据重组问题，自然拆成两个维度：LineBuffer 负责垂直方向（行），ShiftWindow 负责水平方向（列）。LineBuffer 从 DMA 流中收集 5 行 × 32 列像素，然后每周期输出同一列上 5 个垂直相邻像素——从行优先到列优先，做了 90° 旋转。ShiftWindow 缓冲来自 LineBuffer 的连续 5 列，每周期右移，输出完整的 5×5 窗口给 MAC 单元。</p>
 <p><strong>为什么不直接从 SRAM 读取？</strong> 每个输出像素需要来自 5 个不同行的值。直接读取需要每周期 5 次独立读取，指向 5 个不同地址——五个内存端口。LineBuffer 用一个写端口（DMA 每周期写入一个像素）和一个 5 路读端口（5 行 × 同一列）替代了它。160 条目的寄存器堆远便宜过一个 5 端口 SRAM。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sIdle ──► sPrime (加载前 5 行) ──► sActive (32 个输出行) ──► sDone</span><br></pre></td></tr></table></figure>
-
+<p>在 <code>sActive</code> 状态下，缓冲区每行输出 36 列，DMA 将下一行输入加载到单独的 <code>tmpRow</code> 寄存器中。当一行结束时，缓冲区向上移动——丢弃第 0 行，第 1 到 3 行向上移动，<code>tmpRow</code> 作为第 4 行进入缓冲区。如果没有 <code>tmpRow</code>，DMA 会覆盖仍在输出的行，并且加载和输出无法重叠——第三阶段流水线式 DMA 的端到端优势将无法体现。</p>
 <p>零填充通过两种机制覆盖四个边界：</p>
 <ul>
 <li><strong>上 &#x2F; 下：</strong> 由五个缓冲行存的内容决定。输出行 0 时，顶部两行为零；输出行 31 时，底部两行为零。窗口下滑过程中，真实行自然轮转进出——无需额外控制逻辑。</li>
