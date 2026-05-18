@@ -509,9 +509,16 @@
 <li><strong>Cycles 4 and 6–8:</strong> The issue engine is blocked because <code>inflightCount == inflightMax</code>. It waits for unpack to finish a word and return a credit.</li>
 </ul>
 <p>The only conflict is <code>inflightCount</code>. Both engines update it — issue +1, unpack −1. Splitting them into two <code>when</code> blocks would break under Chisel’s last-connect-wins rule: when both fire in the same cycle, only the later assignment takes effect, silently dropping the other update. The fix is a single expression: <code>inflightCount + issueFired − unpackWordDone</code>. Both boolean events feed one arithmetic operation — +1 and −1 cancel cleanly when they coincide, and neither update is lost.</p>
-<h2 id="Phase-4-Compute-Datapath-—-LineBuffer-ConvEngine"><a href="#Phase-4-Compute-Datapath-—-LineBuffer-ConvEngine" class="headerlink" title="Phase 4: Compute Datapath — LineBuffer &amp; ConvEngine"></a>Phase 4: Compute Datapath — LineBuffer &amp; ConvEngine</h2><blockquote>
-<p>TODO</p>
-</blockquote>
+<h2 id="Phase-4-Compute-Datapath-—-LineBuffer-ConvEngine"><a href="#Phase-4-Compute-Datapath-—-LineBuffer-ConvEngine" class="headerlink" title="Phase 4: Compute Datapath — LineBuffer &amp; ConvEngine"></a>Phase 4: Compute Datapath — LineBuffer &amp; ConvEngine</h2><p>DMA delivers pixels one at a time in row-major order — row 0 left to right, then row 1, then row 2. But a 5×5 convolution at an output pixel (r, c) needs 25 pixels arranged as a 5×5 neighbourhood centred at (r+2, c+2). A single pixel from the DMA is useless on its own — the compute datapath must assemble an entire 5×5 window before the MAC unit can start.</p>
+<p>This is a data reshape problem. It splits naturally into two dimensions, so we pair two modules: LineBuffer handles the vertical direction (rows), ShiftWindow handles the horizontal direction (columns). LineBuffer collects 5 rows of 32 pixels from the DMA stream, then outputs one column of 5 vertically adjacent pixels per cycle. ShiftWindow buffers 5 consecutive columns from LineBuffer, shifting right each cycle, and outputs a full 5×5 window to the MAC unit. </p>
+<p><strong>Why not read directly from SRAM?</strong> Each output pixel needs values from 5 different rows. Fetching them directly would require 5 independent reads per cycle targeting 5 different addresses — five memory ports. LineBuffer replaces that with one write port (DMA feeds in one pixel per cycle) and one 5-wide read port (5 rows × same column). A 160-entry register file is far cheaper than a 5-port SRAM.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sIdle ──► sPrime (load 5 rows)  ──► sActive (32 output rows)  ──► sDone</span><br></pre></td></tr></table></figure>
+
+<p>Zero-padding covers all four image borders through two mechanisms:</p>
+<ul>
+<li><strong>Top &#x2F; bottom:</strong> Handled by what the five buffer rows hold. At output row 0, the top two slots are zero; at output row 31, the bottom two are zero. As the window slides down, real rows rotate in and out — no extra control logic.</li>
+<li><strong>Left &#x2F; right:</strong> Each output row emits 36 columns (2 padding + 32 data + 2 padding). The <code>colValid</code> signal marks data columns. When low, ShiftWindow fills zeros regardless of <code>colOut</code>.</li>
+</ul>
 <h2 id="Phase-5-Top-Level-Integration-Master-FSM"><a href="#Phase-5-Top-Level-Integration-Master-FSM" class="headerlink" title="Phase 5: Top-Level Integration &amp; Master FSM"></a>Phase 5: Top-Level Integration &amp; Master FSM</h2><blockquote>
 <p>TODO</p>
 </blockquote>
