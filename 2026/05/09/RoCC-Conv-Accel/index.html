@@ -630,14 +630,14 @@
 <li>Queue is neither empty nor full: both <code>enq.ready</code> and <code>deq.valid</code> are 1 — data can flow in and out simultaneously.</li>
 </ul>
 <p>No hand-written FIFO logic. The Chisel standard library handles it.</p>
-<p><strong>inputQueue — input-side reservoir</strong></p>
+<p><strong>inputQueue</strong></p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> inputQueue = <span class="type">Module</span>(<span class="keyword">new</span> <span class="type">Queue</span>(<span class="type">UInt</span>(<span class="number">16.</span><span class="type">W</span>), <span class="number">1024</span>))</span><br></pre></td></tr></table></figure>
 
-<p>Depth 1024 is chosen to hold an entire 32×32 input image (1024 pixels). During <code>sLoadInput</code>, DMA bursts all 1024 pixels into <code>inputQueue</code> at full TileLink speed, then moves on. During <code>sCompute</code>, LineBuffer drains the queue one pixel per cycle at its own pace. The two sides never need to synchronize — the queue is the decoupling point.</p>
-<p><strong>storeQueue — output-side reservoir</strong></p>
+<p>Depth 1024 &#x3D; one full 32×32 image. DMA dumps all pixels in one burst during <code>sLoadInput</code>; LineBuffer drains them one per cycle during <code>sCompute</code>. No synchronization needed.</p>
+<p><strong>storeQueue</strong></p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> storeQueue = <span class="type">Module</span>(<span class="keyword">new</span> <span class="type">Queue</span>(<span class="type">SInt</span>(<span class="number">16.</span><span class="type">W</span>), <span class="number">2048</span>))</span><br></pre></td></tr></table></figure>
 
-<p>Depth 2048 comfortably holds all 1088 output results with margin to spare. ConvEngine pushes one result per cycle into the queue. DMA reads from the other end and writes back to memory in bursts. If DMA is mid-burst and cannot accept more data, <code>storeStream.ready</code> drops — the queue stops dequeuing and fills up. The margin (2048 − 1088 &#x3D; 960 slots) prevents the queue from filling before DMA has a chance to catch up under normal timing variation.</p>
+<p>Depth 2048 &#x3D; 1088 results + 960 slots of headroom. ConvEngine pushes one per cycle; DMA bursts them to memory. When DMA is busy, the queue absorbs the slack until DMA catches up.</p>
 <p><strong>Backpressure chain</strong></p>
 <p>Backpressure in hardware is not a message-passing protocol — it is a direct wire. When <code>storeQueue</code> fills up, its internal <code>enq.ready</code> drops from 1 to 0. Two modules are wired directly to this signal:</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">engine.io.stall  := !storeQueue.io.enq.ready</span><br><span class="line">lineBuf.io.stall := !storeQueue.io.enq.ready</span><br></pre></td></tr></table></figure>

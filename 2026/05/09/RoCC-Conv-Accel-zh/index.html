@@ -583,14 +583,14 @@
 <li>Queue 既不空也不满：<code>enq.ready</code> 和 <code>deq.valid</code> 同时为 1——数据可以一边进一边出。</li>
 </ul>
 <p>不需要自己写 FIFO 逻辑，Chisel 标准库全部管好。</p>
-<p><strong>inputQueue —— 输入侧蓄水池</strong></p>
+<p><strong>inputQueue</strong></p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> inputQueue = <span class="type">Module</span>(<span class="keyword">new</span> <span class="type">Queue</span>(<span class="type">UInt</span>(<span class="number">16.</span><span class="type">W</span>), <span class="number">1024</span>))</span><br></pre></td></tr></table></figure>
 
-<p>深度 1024 刚好装下整张 32×32 输入图像（1024 个像素）。<code>sLoadInput</code> 期间 DMA 以 TileLink 满速把所有像素一次灌进 inputQueue 然后收工。<code>sCompute</code> 期间 LineBuffer 以一拍一个的速度从容取走。两边不需要同步——queue 就是解耦点。</p>
-<p><strong>storeQueue —— 输出侧蓄水池</strong></p>
+<p>深度 1024 &#x3D; 一整张 32×32 图。DMA 在 <code>sLoadInput</code> 阶段一次灌满，LineBuffer 在 <code>sCompute</code> 阶段一拍一个取走。无需同步。</p>
+<p><strong>storeQueue</strong></p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> storeQueue = <span class="type">Module</span>(<span class="keyword">new</span> <span class="type">Queue</span>(<span class="type">SInt</span>(<span class="number">16.</span><span class="type">W</span>), <span class="number">2048</span>))</span><br></pre></td></tr></table></figure>
 
-<p>深度 2048 足以装下全部 1088 个结果，还留有 960 格余量。ConvEngine 每拍产出一个结果塞进队列。DMA 从另一头取出，以突发方式写回内存。DMA 忙不过来时 <code>storeStream.ready</code> 拉低——队列停止出队，积压累积。960 格余量保证在正常时序波动下，队列不至于在 DMA 赶上之前就满了。</p>
+<p>深度 2048 &#x3D; 1088 个结果 + 960 格余量。ConvEngine 一拍塞一个，DMA 突发写回。DMA 忙时队列暂存，追上即可。</p>
 <p><strong>反压链</strong></p>
 <p>硬件里的反压不是消息传递——是直接接线。当 storeQueue 满了，它内部的 <code>enq.ready</code> 从 1 变成 0。两个模块直接连在这根信号上：</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">engine.io.stall  := !storeQueue.io.enq.ready</span><br><span class="line">lineBuf.io.stall := !storeQueue.io.enq.ready</span><br></pre></td></tr></table></figure>
@@ -700,9 +700,9 @@
       
   <nav class="post-nav">  
       
-      <a class="prev" href="/2026/05/16/nju-os-notes/">  
+      <a class="prev" href="/2026/05/16/csapp-notes/">  
         <i class="iconfont icon-left"></i>  
-        <span class="prev-text nav-default">操作系统学习笔记</span>  
+        <span class="prev-text nav-default">CSAPP 学习笔记</span>  
         <span class="prev-text nav-mobile">上一篇</span>  
       </a>  
       
