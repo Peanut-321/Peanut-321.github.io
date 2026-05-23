@@ -488,7 +488,7 @@
 <li>对外暴露 <code>SimpleMemIO</code> 接口，测试时直连 FakeScratchpadMemory，上 Chipyard 后替换为 HellaCache。</li>
 </ul>
 <h3 id="ConvAccelTop：框架与-IO"><a href="#ConvAccelTop：框架与-IO" class="headerlink" title="ConvAccelTop：框架与 IO"></a>ConvAccelTop：框架与 IO</h3><p><code>ConvAccelTop</code> 是一个独立的 <code>Module</code>——对外只有一套简单的 <code>start</code> &#x2F; <code>done</code> 握手，外加内存基地址和 <code>SimpleMemIO</code>。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">        ┌────────────────────────────────────────────┐</span><br><span class="line"> start ─┤                                            ├─ done</span><br><span class="line">kAddr ─┤                                            ├─ state[2:0]</span><br><span class="line">iAddr ─┤                                            ├─ dbgResultCnt[10:0]</span><br><span class="line">oAddr ─┤                                            ├─ dbgQueueCnt[6:0]</span><br><span class="line">       │              ConvAccelTop                   ├─ dbgDmaDone</span><br><span class="line">       │                                            ├─ dbgDmaState[2:0]</span><br><span class="line">       │                                            │</span><br><span class="line">       │                                            ├─ mem.req.valid</span><br><span class="line">       │                                            ├─ mem.req.bits.addr</span><br><span class="line">       │                                            ├─ mem.req.bits.op</span><br><span class="line">       │                                            ├─ mem.req.bits.data</span><br><span class="line">       │                                            │</span><br><span class="line">mem.rsp.valid ─┤                                    │</span><br><span class="line">mem.rsp.data  ─┤                                    │</span><br><span class="line">       └────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">        ┌────────────────────────────────────────────┐</span><br><span class="line"> start ─┤                                            ├─ done</span><br><span class="line">kAddr ─┤                                            ├─ state[2:0]</span><br><span class="line">iAddr ─┤              ConvAccelTop                   │</span><br><span class="line">oAddr ─┤                                            ├─ mem.req.valid</span><br><span class="line">       │                                            ├─ mem.req.bits.addr</span><br><span class="line">       │                                            ├─ mem.req.bits.op</span><br><span class="line">       │                                            ├─ mem.req.bits.data</span><br><span class="line">       │                                            │</span><br><span class="line">mem.rsp.valid ─┤                                    │</span><br><span class="line">mem.rsp.data  ─┤                                    │</span><br><span class="line">       └────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
 
 <table>
 <thead>
@@ -545,34 +545,10 @@
 <td><code>state</code></td>
 <td>3</td>
 <td>输出</td>
-<td>Debug：当前 FSM 状态</td>
-</tr>
-<tr>
-<td><code>dbgResultCnt</code></td>
-<td>11</td>
-<td>输出</td>
-<td>Debug：已产出的结果像素计数</td>
-</tr>
-<tr>
-<td><code>dbgQueueCnt</code></td>
-<td>7</td>
-<td>输出</td>
-<td>Debug：storeQueue 当前深度</td>
-</tr>
-<tr>
-<td><code>dbgDmaDone</code></td>
-<td>1</td>
-<td>输出</td>
-<td>Debug：DMA 内部 <code>done</code> 标志</td>
-</tr>
-<tr>
-<td><code>dbgDmaState</code></td>
-<td>3</td>
-<td>输出</td>
-<td>Debug：DMA 内部 FSM 状态</td>
+<td>当前 FSM 状态</td>
 </tr>
 </tbody></table>
-<p>三个地址端口在 <code>start</code> 脉冲同一拍被锁存进内部寄存器，后续阶段全部用寄存器里的值——防止外部在计算途中改动地址。五个 debug 信号是被动输出的，纯给 testbench 观察内部状态用。</p>
+<p>三个地址端口在 <code>start</code> 脉冲同一拍被锁存进内部寄存器，后续阶段全部用寄存器里的值——防止外部在计算途中改动地址。</p>
 <h3 id="Bug-1-colValid-早关-2-拍导致结果丢失"><a href="#Bug-1-colValid-早关-2-拍导致结果丢失" class="headerlink" title="Bug 1: colValid 早关 2 拍导致结果丢失"></a>Bug 1: colValid 早关 2 拍导致结果丢失</h3><p><strong>现象。</strong> goDone 改为 1024 后测试能跑完，但 1024 个 outValid 中只有 960 个对应真实图像数据，末尾 64 个丢失。</p>
 <p><strong>定位。</strong> resultCnt → outValid → inValid → colValid，最终追到 LineBuffer 的 <code>colValid = inImage</code>。<code>inImage</code> 仅在 outputCol 2-33 为 true，即每行只标记 32 列。但 ShiftWindow 的窗口中心（reg(2)）落后 colOut 2 拍：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">outputCol=33: reg = [img_31, img_30, img_29, img_28, img_27]  center = img_29</span><br><span class="line">outputCol=34: reg = [0,      img_31, img_30, img_29, img_28]  center = img_30  ← colValid=0！</span><br><span class="line">outputCol=35: reg = [0,      0,      img_31, img_30, img_29]  center = img_31  ← colValid=0！</span><br></pre></td></tr></table></figure>

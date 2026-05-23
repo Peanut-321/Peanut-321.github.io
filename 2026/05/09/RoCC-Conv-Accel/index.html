@@ -535,7 +535,7 @@
 <li>Expose <code>SimpleMemIO</code> to the outside world, directly connecting to FakeScratchpadMemory (for testing) or HellaCache (for integration).</li>
 </ul>
 <h3 id="ConvAccelTop-Skeleton-IO"><a href="#ConvAccelTop-Skeleton-IO" class="headerlink" title="ConvAccelTop: Skeleton &amp; IO"></a>ConvAccelTop: Skeleton &amp; IO</h3><p><code>ConvAccelTop</code> is a standalone <code>Module</code> — it exposes a simple <code>start</code>&#x2F;<code>done</code> handshake plus memory-mapped address ports. The <code>SimpleMemIO</code> bundle carries all memory traffic (read requests and responses) to a simulated scratchpad or, later, to HellaCache.</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">        ┌────────────────────────────────────────────┐</span><br><span class="line"> start ─┤                                            ├─ done</span><br><span class="line">kAddr ─┤                                            ├─ state[2:0]</span><br><span class="line">iAddr ─┤                                            ├─ dbgResultCnt[10:0]</span><br><span class="line">oAddr ─┤                                            ├─ dbgQueueCnt[6:0]</span><br><span class="line">       │              ConvAccelTop                   ├─ dbgDmaDone</span><br><span class="line">       │                                            ├─ dbgDmaState[2:0]</span><br><span class="line">       │                                            │</span><br><span class="line">       │                                            ├─ mem.req.valid</span><br><span class="line">       │                                            ├─ mem.req.bits.addr</span><br><span class="line">       │                                            ├─ mem.req.bits.op</span><br><span class="line">       │                                            ├─ mem.req.bits.data</span><br><span class="line">       │                                            │</span><br><span class="line">mem.rsp.valid ─┤                                    │</span><br><span class="line">mem.rsp.data  ─┤                                    │</span><br><span class="line">       └────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">        ┌────────────────────────────────────────────┐</span><br><span class="line"> start ─┤                                            ├─ done</span><br><span class="line">kAddr ─┤                                            ├─ state[2:0]</span><br><span class="line">iAddr ─┤              ConvAccelTop                   │</span><br><span class="line">oAddr ─┤                                            ├─ mem.req.valid</span><br><span class="line">       │                                            ├─ mem.req.bits.addr</span><br><span class="line">       │                                            ├─ mem.req.bits.op</span><br><span class="line">       │                                            ├─ mem.req.bits.data</span><br><span class="line">       │                                            │</span><br><span class="line">mem.rsp.valid ─┤                                    │</span><br><span class="line">mem.rsp.data  ─┤                                    │</span><br><span class="line">       └────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
 
 <table>
 <thead>
@@ -592,34 +592,10 @@
 <td><code>state</code></td>
 <td>3</td>
 <td>Output</td>
-<td>Debug: current FSM state</td>
-</tr>
-<tr>
-<td><code>dbgResultCnt</code></td>
-<td>11</td>
-<td>Output</td>
-<td>Debug: accumulated output pixel count</td>
-</tr>
-<tr>
-<td><code>dbgQueueCnt</code></td>
-<td>7</td>
-<td>Output</td>
-<td>Debug: storeQueue fill level</td>
-</tr>
-<tr>
-<td><code>dbgDmaDone</code></td>
-<td>1</td>
-<td>Output</td>
-<td>Debug: DMA internal <code>done</code> flag</td>
-</tr>
-<tr>
-<td><code>dbgDmaState</code></td>
-<td>3</td>
-<td>Output</td>
-<td>Debug: DMA internal FSM state</td>
+<td>Current FSM state</td>
 </tr>
 </tbody></table>
-<p>The three address ports (<code>kernelAddr</code>, <code>inputAddr</code>, <code>outputAddr</code>) are sampled on the <code>start</code> pulse and held in internal registers — this prevents external changes from corrupting an in-progress run. The five debug outputs are passive: they expose internal counters and FSM states so the testbench can inspect them without probing internal wires.</p>
+<p>The three address ports (<code>kernelAddr</code>, <code>inputAddr</code>, <code>outputAddr</code>) are sampled on the <code>start</code> pulse and held in internal registers — this prevents external changes from corrupting an in-progress run.</p>
 <h3 id="Submodule-Instantiation-Wiring"><a href="#Submodule-Instantiation-Wiring" class="headerlink" title="Submodule Instantiation &amp; Wiring"></a>Submodule Instantiation &amp; Wiring</h3><h3 id="InputQueue-StoreQueue-—-Elastic-Buffer"><a href="#InputQueue-StoreQueue-—-Elastic-Buffer" class="headerlink" title="InputQueue &amp; StoreQueue — Elastic Buffer"></a>InputQueue &amp; StoreQueue — Elastic Buffer</h3><h3 id="Master-FSM-in-ConvControl"><a href="#Master-FSM-in-ConvControl" class="headerlink" title="Master FSM in ConvControl"></a>Master FSM in ConvControl</h3><h3 id="End-to-End-Data-Flow-Walkthrough"><a href="#End-to-End-Data-Flow-Walkthrough" class="headerlink" title="End-to-End Data Flow Walkthrough"></a>End-to-End Data Flow Walkthrough</h3><h3 id="RoCC-Response-Protocal"><a href="#RoCC-Response-Protocal" class="headerlink" title="RoCC Response Protocal"></a>RoCC Response Protocal</h3><h3 id="Debug-Pipeline-Drain-tmpRow-Corruption"><a href="#Debug-Pipeline-Drain-tmpRow-Corruption" class="headerlink" title="Debug: Pipeline Drain &amp; tmpRow Corruption"></a>Debug: Pipeline Drain &amp; tmpRow Corruption</h3><h4 id="Bug-1-colValid-Shuts-Off-2-Cycles-Too-Early"><a href="#Bug-1-colValid-Shuts-Off-2-Cycles-Too-Early" class="headerlink" title="Bug 1: colValid Shuts Off 2 Cycles Too Early"></a><strong>Bug 1: colValid Shuts Off 2 Cycles Too Early</strong></h4><p><strong>The data path.</strong> </p>
 <p>LineBuffer outputs 36 columns per row. colValid controls whether ShiftWindow shifts in real data or zeros. ShiftWindow is a 5-column register array: new columns enter at reg(0), old columns exit at reg(4), and the window center is fixed at reg(2).</p>
 <p>When <code>colValid = true</code>: the entire window shifts right, colIn → reg(0), reg(4) is discarded.<br>When <code>colValid = false</code>: the window still shifts right, but 0 → reg(0) instead.</p>
