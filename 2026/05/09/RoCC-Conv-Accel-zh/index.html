@@ -600,7 +600,10 @@
 <li><strong>第 1 拍</strong>：storeQueue 满 —— <code>enq.ready</code> → 0 —— <code>engine.stall</code> 和 <code>lineBuf.stall</code> 拉高 —— ConvEngine 和 LineBuffer 冻结。</li>
 <li><strong>第 2 拍</strong>：LineBuffer 停止消费 —— inputQueue 堆满 —— inputQueue 的 <code>enq.ready</code> → 0 —— DMA 的 <code>loadStream.ready</code> 拉低 —— DMA 停。</li>
 </ol>
-<p>整条流水线——五级、端到端——两拍内全停。当 DMA 追上、storeQueue 腾出空位，<code>enq.ready</code> 回到 1，管线自动重启，零软件介入。</p>
+<p>整条流水线——五级、端到端——两拍内全停：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">storeQueue 满</span><br><span class="line">→ storeQueue.io.enq.ready = 0</span><br><span class="line">→ ConvEngine 停（outValid 无处可去）</span><br><span class="line">→ LineBuffer 停（无新窗口被消费）</span><br><span class="line">→ inputQueue 只进不出，堆满</span><br><span class="line">→ inputQueue.io.enq.ready = 0</span><br><span class="line">→ DMA load 停</span><br></pre></td></tr></table></figure>
+
+<p>反压不是消息——是一根线从 1 掉到 0。每一级直接读这根线，没有握手，没有通知，没有软件参与。当 DMA 追上、storeQueue 腾出空位，<code>enq.ready</code> 回到 1，管线自动重启。</p>
 <h3 id="Bug-1-colValid-早关-2-拍导致结果丢失"><a href="#Bug-1-colValid-早关-2-拍导致结果丢失" class="headerlink" title="Bug 1: colValid 早关 2 拍导致结果丢失"></a>Bug 1: colValid 早关 2 拍导致结果丢失</h3><p><strong>现象。</strong> goDone 改为 1024 后测试能跑完，但 1024 个 outValid 中只有 960 个对应真实图像数据，末尾 64 个丢失。</p>
 <p><strong>定位。</strong> resultCnt → outValid → inValid → colValid，最终追到 LineBuffer 的 <code>colValid = inImage</code>。<code>inImage</code> 仅在 outputCol 2-33 为 true，即每行只标记 32 列。但 ShiftWindow 的窗口中心（reg(2)）落后 colOut 2 拍：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">outputCol=33: reg = [img_31, img_30, img_29, img_28, img_27]  center = img_29</span><br><span class="line">outputCol=34: reg = [0,      img_31, img_30, img_29, img_28]  center = img_30  ← colValid=0！</span><br><span class="line">outputCol=35: reg = [0,      0,      img_31, img_30, img_29]  center = img_31  ← colValid=0！</span><br></pre></td></tr></table></figure>
@@ -702,12 +705,18 @@
       
   <nav class="post-nav">  
       
-      <a class="prev" href="/2026/05/09/RoCC-Conv-Accel/">  
+      <a class="prev" href="/2026/05/16/csapp-notes/">  
         <i class="iconfont icon-left"></i>  
-        <span class="prev-text nav-default">A RISC-V Based RoCC Convolution Accelerator</span>  
+        <span class="prev-text nav-default">CSAPP 学习笔记</span>  
         <span class="prev-text nav-mobile">上一篇</span>  
       </a>  
       
+      
+      <a class="next" href="/2026/05/09/RoCC-Conv-Accel/">  
+        <span class="next-text nav-default">A RISC-V Based RoCC Convolution Accelerator</span>  
+        <span class="prev-text nav-mobile">下一篇</span>  
+        <i class="iconfont icon-right"></i>  
+      </a>  
       
   </nav>  
   
