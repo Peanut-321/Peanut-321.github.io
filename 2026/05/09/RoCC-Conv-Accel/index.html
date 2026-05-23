@@ -698,7 +698,6 @@
 </li>
 </ul>
 <p>At the top level, io.busy is driven by the master FSM. It is high while the accelerator is in an active phase and low when the accelerator is idle or done:</p>
-<p>At the top level, io.busy is driven by the master FSM. It is high while the accelerator is in an active phase and low when the accelerator is idle or done:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">io.busy = state =/= sIdle &amp;&amp; state =/= sDone</span><br></pre></td></tr></table></figure>
 <p>The current design uses polling rather than interrupts, so io.interrupt stays low. If interrupt support is added later, it can be asserted when the FSM enters sDone, but it is not required for the current software flow.</p>
 <h3 id="Debug-Pipeline-Drain-tmpRow-Corruption"><a href="#Debug-Pipeline-Drain-tmpRow-Corruption" class="headerlink" title="Debug: Pipeline Drain &amp; tmpRow Corruption"></a>Debug: Pipeline Drain &amp; tmpRow Corruption</h3><h4 id="Bug-1-colValid-Shuts-Off-2-Cycles-Too-Early"><a href="#Bug-1-colValid-Shuts-Off-2-Cycles-Too-Early" class="headerlink" title="Bug 1: colValid Shuts Off 2 Cycles Too Early"></a><strong>Bug 1: colValid Shuts Off 2 Cycles Too Early</strong></h4><p><strong>The data path.</strong> </p>
