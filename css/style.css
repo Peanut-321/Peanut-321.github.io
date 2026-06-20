@@ -693,6 +693,7 @@ h6 {
 .post .post-toc {
   position: absolute;
   width: 200px;
+  max-height: calc(100vh - 40px);
   margin-left: 785px;
   padding: 10px;
   font-family: Georgia, "Times New Roman", serif;
@@ -709,6 +710,10 @@ h6 {
   text-transform: uppercase;
 }
 .post .post-toc .post-toc-content {
+  max-height: calc(100vh - 90px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 6px;
   font-size: 15px;
 }
 .post .post-toc .post-toc-content .toc,
