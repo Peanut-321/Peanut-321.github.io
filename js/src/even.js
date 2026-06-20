@@ -93,24 +93,39 @@
 
   Even.prototype.tocFollow = function () {
     var HEADERFIX = 30;
-    var $toclink = $('.toc-link'),
-      $headerlink = $('.headerlink');
+    var $toclink = $('.toc-link');
+
+    var tocTargets = $.map($toclink, function (link) {
+      var href = $(link).attr('href');
+      if (!href || href.charAt(0) !== '#') return null;
+
+      var rawId = href.slice(1);
+      var id = rawId;
+      try {
+        id = decodeURIComponent(rawId);
+      } catch (e) {}
+
+      var target = document.getElementById(id) || document.getElementById(rawId);
+      if (!target) return null;
+
+      return {
+        link: link,
+        target: target
+      };
+    });
 
     $(window).scroll(function () {
-      var headerlinkTop = $.map($headerlink, function (link) {
-        return $(link).offset().top;
-      });
       var scrollTop = $(window).scrollTop();
 
-      for (var i = 0; i < $toclink.length; i++) {
-        var isLastOne = i + 1 === $toclink.length,
-          currentTop = headerlinkTop[i] - HEADERFIX,
-          nextTop = isLastOne ? Infinity : headerlinkTop[i + 1] - HEADERFIX;
+      for (var i = 0; i < tocTargets.length; i++) {
+        var isLastOne = i + 1 === tocTargets.length,
+          currentTop = $(tocTargets[i].target).offset().top - HEADERFIX,
+          nextTop = isLastOne ? Infinity : $(tocTargets[i + 1].target).offset().top - HEADERFIX;
 
         if (currentTop < scrollTop && scrollTop <= nextTop) {
-          $($toclink[i]).addClass('active');
+          $(tocTargets[i].link).addClass('active');
         } else {
-          $($toclink[i]).removeClass('active');
+          $(tocTargets[i].link).removeClass('active');
         }
       }
     });
