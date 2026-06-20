@@ -92,7 +92,6 @@
   };
 
   Even.prototype.tocFollow = function () {
-    var HEADERFIX = 30;
     var $toclink = $('.toc-link');
 
     var tocTargets = $.map($toclink, function (link) {
@@ -114,21 +113,26 @@
       };
     });
 
-    $(window).scroll(function () {
-      var scrollTop = $(window).scrollTop();
+    function updateActiveToc() {
+      if (!tocTargets.length) return;
+
+      var marker = $(window).scrollTop() + Math.min(160, window.innerHeight * 0.35);
+      var activeIndex = 0;
 
       for (var i = 0; i < tocTargets.length; i++) {
-        var isLastOne = i + 1 === tocTargets.length,
-          currentTop = $(tocTargets[i].target).offset().top - HEADERFIX,
-          nextTop = isLastOne ? Infinity : $(tocTargets[i + 1].target).offset().top - HEADERFIX;
-
-        if (currentTop < scrollTop && scrollTop <= nextTop) {
-          $(tocTargets[i].link).addClass('active');
+        if ($(tocTargets[i].target).offset().top <= marker) {
+          activeIndex = i;
         } else {
-          $(tocTargets[i].link).removeClass('active');
+          break;
         }
       }
-    });
+
+      $toclink.removeClass('active');
+      $(tocTargets[activeIndex].link).addClass('active');
+    }
+
+    $(window).on('scroll', updateActiveToc);
+    updateActiveToc();
   };
 
   Even.prototype.fancybox = function () {
