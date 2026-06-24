@@ -204,24 +204,24 @@
   <div class="post-toc" id="post-toc">
     <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-0%EF%BC%9A%E6%96%B9%E6%A1%88%E8%A7%84%E5%88%92-%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1"><span class="toc-text">Phase 0：方案规划 &amp; 协议设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-1%EF%BC%9A%E6%9E%B6%E6%9E%84%E6%80%BB%E8%A7%88"><span class="toc-text">Phase 1：架构总览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-2%EF%BC%9AConvControl-%E6%8C%87%E4%BB%A4%E8%A7%A3%E7%A0%81%E4%B8%8E%E6%8E%A7%E5%88%B6FSM"><span class="toc-text">Phase 2：ConvControl-指令解码与控制FSM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-3%EF%BC%9AConvDMA-%E2%80%94-TileLink-DMA-%E5%BC%95%E6%93%8E"><span class="toc-text">Phase 3：ConvDMA — TileLink DMA 引擎</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-4%EF%BC%9A%E8%AE%A1%E7%AE%97%E6%95%B0%E6%8D%AE%E9%80%9A%E8%B7%AF-%E2%80%94-LineBuffer-ConvEngine"><span class="toc-text">Phase 4：计算数据通路 — LineBuffer &amp; ConvEngine</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-5%EF%BC%9A%E9%A1%B6%E5%B1%82%E9%9B%86%E6%88%90%E4%B8%8E%E4%B8%BB-FSM"><span class="toc-text">Phase 5：顶层集成与主 FSM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-6%EF%BC%9AChipyard-%E9%9B%86%E6%88%90%E4%B8%8E-Verilator-%E6%9E%84%E5%BB%BA"><span class="toc-text">Phase 6：Chipyard 集成与 Verilator 构建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-7%EF%BC%9A%E8%A3%B8%E6%9C%BA-C-%E6%B5%8B%E8%AF%95%E7%A8%8B%E5%BA%8F"><span class="toc-text">Phase 7：裸机 C 测试程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-8%EF%BC%9A%E6%80%A7%E8%83%BD%E6%8A%A5%E5%91%8A%E4%B8%8E%E6%80%BB%E7%BB%93"><span class="toc-text">Phase 8：性能报告与总结</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-0%EF%BC%9A%E6%96%B9%E6%A1%88%E8%A7%84%E5%88%92-%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1"><span class="toc-text">Phase 0：方案规划 &amp; 协议设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-1%EF%BC%9A%E6%9E%B6%E6%9E%84%E6%80%BB%E8%A7%88"><span class="toc-text">Phase 1：架构总览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-2%EF%BC%9AConvControl%EF%BC%9A%E6%8C%87%E4%BB%A4%E8%A7%A3%E7%A0%81%E4%B8%8E%E6%8E%A7%E5%88%B6-FSM"><span class="toc-text">Phase 2：ConvControl：指令解码与控制 FSM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-3%EF%BC%9AConvDMA-%E2%80%94-TileLink-DMA-%E5%BC%95%E6%93%8E"><span class="toc-text">Phase 3：ConvDMA — TileLink DMA 引擎</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-4%EF%BC%9A%E8%AE%A1%E7%AE%97%E6%95%B0%E6%8D%AE%E9%80%9A%E8%B7%AF-%E2%80%94-LineBuffer-ConvEngine"><span class="toc-text">Phase 4：计算数据通路 — LineBuffer &amp; ConvEngine</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-5%EF%BC%9A%E9%A1%B6%E5%B1%82%E9%9B%86%E6%88%90%E4%B8%8E%E4%B8%BB-FSM"><span class="toc-text">Phase 5：顶层集成与主 FSM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-6%EF%BC%9AChipyard-%E9%9B%86%E6%88%90%E4%B8%8E-Verilator-%E6%9E%84%E5%BB%BA"><span class="toc-text">Phase 6：Chipyard 集成与 Verilator 构建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-7%EF%BC%9A%E8%A3%B8%E6%9C%BA-C-%E6%B5%8B%E8%AF%95%E7%A8%8B%E5%BA%8F"><span class="toc-text">Phase 7：裸机 C 测试程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-8%EF%BC%9A%E6%80%A7%E8%83%BD%E6%8A%A5%E5%91%8A%E4%B8%8E%E6%80%BB%E7%BB%93"><span class="toc-text">Phase 8：性能报告与总结</span></a></li></ol>
     </div>
   </div>
   
 
   <div class="post-content">
     
-    <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>卷积是深度学习和图像处理最基本的运算之一。当我们在 CPU 上用 5×5 kernel 对 32×32 的矩阵进行卷积运算的时候，需要大量的 cycle 去完成卷积运算，造成了严重的性能浪费。</p>
-<p>因此我们使用基于 RISC-V 的 RoCC（Rocket Custom Coprocessor）接口设计了一个专门用于计算卷积的加速器——把算力密集的任务从 CPU 卸载到专用硬件上。CPU 只需要发出指令，RoCC 即可进行运算，其中不需要 CPU 进行任何参与。</p>
+    <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>卷积是深度学习和图像处理里最常见的计算之一。问题在于，如果直接让 CPU 在一个 32×32 矩阵上跑 5×5 kernel，CPU 会反复做地址计算、循环控制、load&#x2F;store 和乘加运算，cycle 很快就被这些重复工作吃掉。</p>
+<p>这个项目的目标就是用 RISC-V 的 RoCC（Rocket Custom Coprocessor）接口做一个专门计算卷积的硬件加速器。CPU 只负责告诉加速器数据在哪里、什么时候开始、什么时候查询状态；真正的数据搬运和卷积计算都交给硬件完成。</p>
 <ul>
 <li>Repository：<a target="_blank" rel="noopener" href="https://github.com/Peanut-321/MyConvAccel">MyConvAccel</a></li>
 </ul>
-<h2 id="Phase-0：方案规划-协议设计"><a href="#Phase-0：方案规划-协议设计" class="headerlink" title="Phase 0：方案规划 &amp; 协议设计"></a>Phase 0：方案规划 &amp; 协议设计</h2><p>首先我们需要设计此项目的架构以及目标。</p>
-<h3 id="协议设计：RoCC-指令编码"><a href="#协议设计：RoCC-指令编码" class="headerlink" title="协议设计：RoCC 指令编码"></a>协议设计：RoCC 指令编码</h3><p>RoCC 协议：CPU 通过 custom instruction 把操作数(<code>rs1</code>, <code>rs2</code>)发送给加速器，等待加速器计算结束后通过<code>resp.data</code> 再把结果发送回来。</p>
+<h2 id="Phase-0：方案规划-协议设计"><a href="#Phase-0：方案规划-协议设计" class="headerlink" title="Phase 0：方案规划 &amp; 协议设计"></a>Phase 0：方案规划 &amp; 协议设计</h2><p>在写 Chisel 之前，先把最基本的问题定下来：CPU 怎么控制加速器？软件要看到什么接口？硬件内部要支持哪些状态？</p>
+<h3 id="协议设计：RoCC-指令编码"><a href="#协议设计：RoCC-指令编码" class="headerlink" title="协议设计：RoCC 指令编码"></a>协议设计：RoCC 指令编码</h3><p>从软件视角看，RoCC 协议并不复杂：CPU 通过 custom instruction 把寄存器里的值传给加速器，加速器处理完之后再通过 <code>resp.data</code> 返回确认值或状态值。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Rocket Core (CPU)                      Accelerator</span><br><span class="line">      |                                      |</span><br><span class="line">      |  custom inst (rs1=addr, rs2=data)    |   ← RoCC interface: control</span><br><span class="line">      | -----------------------------------&gt; |</span><br><span class="line">      |                                      |</span><br><span class="line">      |  DMA read / write                    |   ← TileLink bus: data</span><br><span class="line">      | &lt;==================================&gt; |</span><br><span class="line">      |                                      |</span><br><span class="line">      |  resp.data = status / result         |   ← RoCC interface: status</span><br><span class="line">      | &lt;----------------------------------- |</span><br></pre></td></tr></table></figure>
 
-<p>因此我们加速器使用三步走的流程：<strong>setting address → trigger → polling</strong></p>
-<p>CPU 先告诉输入矩阵、kernel、输出各在内存的什么位置，然后发一个 START，最后 polling status register 观察加速器是否完成运算。</p>
+<p>因此，这个加速器采用三步流程：<strong>set address → trigger → poll</strong>。</p>
+<p>CPU 先告诉加速器输入矩阵、kernel 和输出 buffer 在内存中的位置，再发出 <code>START</code>，最后轮询 status register，判断计算是否完成。</p>
 <p>Rocket Core 通过 RoCC 接口和加速器进行通信。每条 custom instruction 带有 <code>funct7</code>、<code>rs1</code>、<code>rs2</code>、<code>rd</code> 四个字段。</p>
 <table>
 <thead>
@@ -263,7 +263,7 @@
 <td>Read status register to rd</td>
 </tr>
 </tbody></table>
-<p>设计包含四位状态寄存器用于进行polling。</p>
+<p>为了让软件可以轮询加速器状态，硬件暴露了一个 4-bit status register：</p>
 <table>
 <thead>
 <tr>
@@ -295,35 +295,35 @@
 </tbody></table>
 <h3 id="设计决策"><a href="#设计决策" class="headerlink" title="设计决策"></a>设计决策</h3><ol>
 <li><p><strong>为什么地址分三条独立指令？</strong></p>
-<p> 一条 RoCC 指令只带两个操作数（<code>rs1</code> 和 <code>rs2</code>），不够一次传三个base address。替代方案是传结构体指针，但那会让加速器为了读配置额外发起一次 DMA，导致复杂度和延迟增加。设置三条独立的指令，一次只传一个地址，硬件接口最干净。</p>
+<p> 一条 RoCC 指令只有两个源操作数（<code>rs1</code> 和 <code>rs2</code>），没法一次塞下三个 base address。另一种做法是传一个结构体指针，让加速器再去内存里读配置，但这样会多一次 DMA 访问，也会让控制逻辑变复杂。这里选择三条独立指令，一条指令只设置一个地址，硬件接口最直接。</p>
 </li>
-<li><p><strong>为什么non-blocking 启动 + polling，而不是阻塞等结果？</strong></p>
-<p> non-blocking 允许 CPU 发出 <code>START_ACCEL</code> 后立刻去进行其他工作。选polling不选中断，是因为 5×5 卷积的延迟很短而且可预期——中断控制器和上下文切换的开销反而更大。</p>
+<li><p><strong>为什么 non-blocking 启动 + polling，而不是阻塞等结果？</strong></p>
+<p> non-blocking 的好处是 CPU 发出 <code>START_ACCEL</code> 之后不需要卡在原地等结果。这里选择 polling 而不是 interrupt，是因为 5×5 卷积的延迟短且可预测；如果为了这么短的任务引入中断控制器和上下文切换，反而可能得不偿失。</p>
 </li>
 <li><p><strong>为什么 funct7 连续编码而不是跳跃分配？</strong></p>
-<p> 一个 <code>funct7 &lt;= 4</code> 判断就能覆盖全部合法指令，解码器最小。跳跃编码会增加combinational logic。</p>
+<p> 连续编码让硬件解码非常简单：一个 <code>funct7 &lt;= 4</code> 就能覆盖所有合法命令。跳跃编码没有带来额外收益，只会增加组合逻辑。</p>
 </li>
 </ol>
-<h3 id="关键设计取舍"><a href="#关键设计取舍" class="headerlink" title="关键设计取舍"></a>关键设计取舍</h3><p>下面几个问题需要在项目开始前定下来。</p>
+<h3 id="关键设计取舍"><a href="#关键设计取舍" class="headerlink" title="关键设计取舍"></a>关键设计取舍</h3><p>这几个设计选择会直接影响后面的 datapath 和控制逻辑，所以需要一开始就定好。</p>
 <ol>
 <li><p><strong>kernel 大小是固定还是可配置的？</strong></p>
-<p> 如果支持可变kernel导致control logic复杂度显著增加。最终选取固定的 5×5 硬件datapath。对于小于 5×5 的kernel由软件预先zero-padding补齐。</p>
+<p> 如果支持可变 kernel，控制逻辑、窗口生成和计数边界都会复杂很多。这个项目最终固定为 5×5 硬件 datapath；如果软件侧有更小的 kernel，就先 zero-padding 到 5×5。</p>
 </li>
 <li><p><strong>边界像素怎么处理？</strong></p>
-<p> zero-padding是最简单的办法——滑动窗口 FSM 不需要任何边界处理特殊逻辑。</p>
+<p> 使用 zero-padding。这样滑动窗口 FSM 不需要为边界像素单独写一套特殊逻辑。</p>
 </li>
-<li><p><strong>为什么选fixed-point不用floating-point？</strong></p>
+<li><p><strong>为什么选 fixed-point，而不是 floating-point？</strong></p>
 <ul>
-<li><p><strong>为什么不用floating-point？</strong> IEEE 754 multiplier面积大、延迟高。Q8.8 fixed-point multiplier就是一个 16-bit × 16-bit 整数乘法，一个周期出结果，硬件零开销。</p>
+<li><p><strong>为什么不用 floating-point？</strong> IEEE 754 multiplier 面积大、延迟高。Q8.8 fixed-point multiplier 本质上就是一个 16-bit × 16-bit 整数乘法，硬件代价小很多。</p>
 </li>
-<li><p><strong>为什么不用纯整数？</strong> kernel权重基本上都是小数（比如 0.125、-0.5），没有办法用纯整数表示。这里使用Q8.8定点数：8 位整数部分（范围 ±128）与8 位小数部分（精度 1&#x2F;256）进行组合形成一个16bits数据。</p>
+<li><p><strong>为什么不用纯整数？</strong> kernel 权重通常带小数，比如 0.125、-0.5，纯整数没法自然表示。Q8.8 把 16 bit 分成两半：8 bit 整数部分（范围约为 ±128）和 8 bit 小数部分（精度 1&#x2F;256）。</p>
 </li>
-<li><p><strong>为什么accumulator是 32 位？</strong> 5×5 卷积要累加 25 个 Q8.8 定点数的乘积。每个 16-bit × 16-bit 产生 32 位数据，32 位accumulator刚好能做到不溢出。</p>
+<li><p><strong>为什么 accumulator 是 32 位？</strong> 5×5 卷积要累加 25 个乘积。虽然单次 16-bit × 16-bit 乘法会产生 32-bit product，但 accumulator 的选择还要看 Q8.8 的数值范围。对于固定 5×5 datapath，signed 32-bit accumulator 已经有足够余量。</p>
 </li>
 </ul>
 </li>
 <li><p><strong>为什么有地址对齐约束？</strong></p>
-<p> TileLink DMA 在地址按字对齐时进行搬运最高效。如果地址没对齐的话，一次传输会被拆分成多次传输，同时硬件需要对其进行字节移位和拼接的处理。因此只需要在加速器运行中对每条 <code>SET_ADDR_*</code> 检查地址即可。</p>
+<p> TileLink DMA 在地址按字对齐时最简单、最高效。如果地址不对齐，一次传输可能被拆成多次，硬件还要额外处理字节移位和拼接。这里直接在每条 <code>SET_ADDR_*</code> 时检查地址，把对齐责任交给软件，硬件保持简单。</p>
 </li>
 </ol>
 <table>
@@ -359,12 +359,13 @@
 </tr>
 </tbody></table>
 <hr>
-<h2 id="Phase-1：架构总览"><a href="#Phase-1：架构总览" class="headerlink" title="Phase 1：架构总览"></a>Phase 1：架构总览</h2><h3 id="问题：为什么通过-CPU-直接进行卷积运算会这么慢？"><a href="#问题：为什么通过-CPU-直接进行卷积运算会这么慢？" class="headerlink" title="问题：为什么通过 CPU 直接进行卷积运算会这么慢？"></a>问题：为什么通过 CPU 直接进行卷积运算会这么慢？</h3><p>5×5 kernel 在 32×32 的矩阵上滑动运算的时候，总共进行 1024 次输出。对于每次输出要进行 25 次乘法和 24 次加法——1024个输出一共约 25,000 次乘加。在 CPU 上，真正的限制是”滑动”本身。Kernel每次进行滑动，CPU 需要计算地址偏移、更新循环变量、从内存加载像素和权重、再写回结果，因此绝大多数指令花在了循环控制和地址搬运。</p>
-<p>因此我们可以进行粗略估计：在一颗简单的顺序 RISC-V 核上，每个输出像素大约花 100~150 cycles（两次 load，一次 store，约 50 条算数指令，外加循环分支）。1024 个像素加起来，<strong>10 万到 15 万 cycles</strong>。而我们的加速器干同样的活只要 <strong>2428 cycles</strong>——大约 50 倍的加速。</p>
-<h3 id="把计算卸载进加速器中"><a href="#把计算卸载进加速器中" class="headerlink" title="把计算卸载进加速器中"></a>把计算卸载进加速器中</h3><p>当我们使用加速器去计算卷积的时候，CPU只需要发指令即可。加速器自行完成剩下其他步骤：从内存中取数据、计算卷积、写回数据。CPU只需要发出：SET, START以及POLL指令。</p>
+<h2 id="Phase-1：架构总览"><a href="#Phase-1：架构总览" class="headerlink" title="Phase 1：架构总览"></a>Phase 1：架构总览</h2><h3 id="问题：为什么直接用-CPU-跑卷积会慢？"><a href="#问题：为什么直接用-CPU-跑卷积会慢？" class="headerlink" title="问题：为什么直接用 CPU 跑卷积会慢？"></a>问题：为什么直接用 CPU 跑卷积会慢？</h3><p>5×5 kernel 在 32×32 矩阵上滑动时，一共会产生 1024 个输出。每个输出需要 25 次乘法和 24 次加法，合起来大约是 25,000 次乘加。听起来只是算术量大，但在 CPU 上，真正慢的往往不是乘加本身，而是“滑动窗口”这件事：每滑一次都要算地址偏移、更新循环变量、load 像素和权重、再 store 结果。大量指令其实花在循环控制和地址 bookkeeping 上。</p>
+<p>粗略估计一下，在一颗简单的顺序 RISC-V 核上，每个输出像素可能要花 100~150 cycles。1024 个像素加起来就是 <strong>10 万到 15 万 cycles</strong>。而 RTL 仿真里，加速器完成同样的 32×32 case 只需要 <strong>2428 cycles</strong>，大致能看到 40× 到 50× 量级的加速空间。</p>
+<h3 id="把计算卸载进加速器中"><a href="#把计算卸载进加速器中" class="headerlink" title="把计算卸载进加速器中"></a>把计算卸载进加速器中</h3><p>把卷积卸载给加速器后，CPU 的角色就缩小成三件事：设置地址、发出 <code>START</code>、轮询状态。取数据、计算卷积、写回结果都由加速器自己完成。</p>
 <p>加速器内部看上去是什么样的？</p>
-<p>最简单的方法是将DMA load部分，MAC计算部分与DMA store部分进行串行连接。这种连接非常简单，但是依旧会产生大量的资源浪费。当DMA进行数据传输的时候，MAC部分需要暂停运算等待数据传输结束，反之亦然。因此此链接方法在同一个周期内只有一个硬件进行工作。为了提高加速器的工作效率，我们将三个硬件工作进行重叠，使其能够流水线工作。最终达到接近 50 倍的加速。</p>
-<h3 id="Module-Map"><a href="#Module-Map" class="headerlink" title="Module Map"></a>Module Map</h3><table>
+<p>最朴素的做法是串行执行：DMA load → MAC compute → DMA store。这个设计很直观，但效率不高：DMA 搬数据时 MAC 在等，MAC 计算时 DMA 又可能空闲，同一时间经常只有一块硬件在干活。</p>
+<p>实际实现里，我们尽量让这些阶段重叠。<code>InputQueue</code> 先吸收输入数据，<code>LineBuffer</code> 可以边加载边准备窗口；<code>ConvEngine</code> 是多级流水线，填满后基本能连续产出结果；<code>StoreQueue</code> 暂存计算结果，再由 DMA 写回内存。最终的性能提升就来自这些重叠，而不是单纯把乘法器换快。</p>
+<h3 id="模块划分"><a href="#模块划分" class="headerlink" title="模块划分"></a>模块划分</h3><table>
 <thead>
 <tr>
 <th>Module</th>
@@ -374,41 +375,36 @@
 </thead>
 <tbody><tr>
 <td>ConvControl</td>
-<td>RoCC decode + 5-state master FSM + status register</td>
+<td>RoCC decode + 4-state control FSM + status register</td>
 <td>2</td>
 </tr>
 <tr>
 <td>ConvDMA</td>
 <td>7-state DMA engine over TileLink</td>
-<td>3, 4</td>
+<td>3</td>
 </tr>
 <tr>
-<td>LineBuffer</td>
-<td>5×32×16 sliding window with zero-padding</td>
-<td>5</td>
+<td>LineBuffer + ConvEngine</td>
+<td>Sliding window + MAC pipeline, 6-stage compute datapath</td>
+<td>4</td>
 </tr>
 <tr>
 <td>InputQueue + StoreQueue</td>
 <td>Elastic buffers with backpressure</td>
-<td>7</td>
-</tr>
-<tr>
-<td>ConvEngine</td>
-<td>ShiftWindow + KernelROM + ConvUnit, 6-stage MAC pipeline</td>
-<td>6</td>
+<td>5</td>
 </tr>
 </tbody></table>
-<p>The following phases walk through each module in detail.</p>
+<p>后面的几个 phase 会按模块展开，把每一块是怎么接起来的讲清楚。</p>
 <hr>
-<h2 id="Phase-2：ConvControl-指令解码与控制FSM"><a href="#Phase-2：ConvControl-指令解码与控制FSM" class="headerlink" title="Phase 2：ConvControl-指令解码与控制FSM"></a>Phase 2：ConvControl-指令解码与控制FSM</h2><p>之前我们已经设计了整个加速器的架构，由 Phase 1 可知，最顶层是 RoCC control。其中 CPU 发出 <code>funct7</code>，ConvControl 负责进行解码以及执行，最终通过 <code>rd</code> 进行回复。</p>
-<h3 id="Interface"><a href="#Interface" class="headerlink" title="Interface"></a>Interface</h3><p>ConvControl 通过五个信号和一个有效就绪握手与 CPU 通信：当 CPU 接收到 <code>instrCmd.valid</code>、<code>funct7</code>、<code>rs1</code> 和 <code>rd</code> 信号，并返回 <code>instrReady</code> 信号。当 <code>valid</code> 和 <code>ready</code> 在同一周期内都为高电平时，即可执行指令。</p>
-<h3 id="指令解码"><a href="#指令解码" class="headerlink" title="指令解码"></a>指令解码</h3><p>在解码过程中使用五个比较器——<code>funct7 === 0.U</code> 到 <code>funct7 === 4.U</code>，不需要优先级编码器，也不需要查找表。Phase 0 的连续编码在这里得到了回报：<code>funct7</code> 本身就是指令编号。</p>
+<h2 id="Phase-2：ConvControl：指令解码与控制-FSM"><a href="#Phase-2：ConvControl：指令解码与控制-FSM" class="headerlink" title="Phase 2：ConvControl：指令解码与控制 FSM"></a>Phase 2：ConvControl：指令解码与控制 FSM</h2><p>Phase 1 里已经画出了整体架构。Phase 2 关注的是最上面的 RoCC control：CPU 发出带有 <code>funct7</code> 的 custom instruction，<code>ConvControl</code> 负责解码、执行，并在需要时通过 <code>rd</code> 返回结果。</p>
+<h3 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h3><p><code>ConvControl</code> 和 CPU 之间通过 valid&#x2F;ready 握手通信。CPU 侧送来 <code>instrCmd.valid</code>、<code>funct7</code>、<code>rs1</code> 和 <code>rd</code>，<code>ConvControl</code> 返回 <code>instrReady</code>。只有当 <code>valid</code> 和 <code>ready</code> 在同一个 cycle 同时为高时，这条指令才真正被接受。</p>
+<h3 id="指令解码"><a href="#指令解码" class="headerlink" title="指令解码"></a>指令解码</h3><p>解码逻辑只需要五个比较器：<code>funct7 === 0.U</code> 到 <code>funct7 === 4.U</code>。不需要 priority encoder，也不需要 lookup table。Phase 0 里选择连续编码的好处就在这里体现出来了：<code>funct7</code> 本身就可以当作命令编号。</p>
 <ul>
 <li><strong>SET (0–2):</strong> 在 sBusy 状态下阻塞。在计算过程中更改地址会破坏运算。</li>
 <li><strong>START (3):</strong> 仅在 sIdle 或 sDone 状态下接受。不能启动已在运行的加速器。</li>
 <li><strong>POLL (4):</strong> 始终接受。这是一个纯读取操作——不会对任何操作进行干扰。</li>
 </ul>
-<h3 id="SET-ADDR：存储三个基地址"><a href="#SET-ADDR：存储三个基地址" class="headerlink" title="SET_ADDR：存储三个基地址"></a>SET_ADDR：存储三个基地址</h3><p>根据 <code>funct7</code> 的值，<code>rs1</code> 被写入 <code>addrIn</code>、<code>addrKer</code>、<code>addrOut</code> 中。如果加速器处于 <code>sError</code> 状态，任何 SET 都会将其清除并回到 <code>sIdle</code>。</p>
+<h3 id="SET-ADDR：存储三个基地址"><a href="#SET-ADDR：存储三个基地址" class="headerlink" title="SET_ADDR：存储三个基地址"></a>SET_ADDR：存储三个基地址</h3><p>根据 <code>funct7</code> 的值，<code>rs1</code> 会被写入 <code>addrIn</code>、<code>addrKer</code> 或 <code>addrOut</code>。如果加速器处于 <code>sError</code>，任意一条 SET 指令都会清除错误状态，并把 FSM 拉回 <code>sIdle</code>。</p>
 <h3 id="START-ACCEL：地址检查与触发"><a href="#START-ACCEL：地址检查与触发" class="headerlink" title="START_ACCEL：地址检查与触发"></a>START_ACCEL：地址检查与触发</h3><ol>
 <li><p><strong>地址非零检查</strong></p>
 <p> 如果任意一个基地址（<code>addrIn</code>、<code>addrKer</code>、<code>addrOut</code>）为零，状态跳转到 sError。</p>
@@ -417,7 +413,7 @@
 <p> 输入和输出矩阵要求 8 字节对齐（<code>addrIn(2,0) === 0.U</code>）。kernel 要求 2 字节对齐（<code>addrKer(0) === 0.U</code>）。DMA 总线宽度为 64 位，每次传输搬 4 个像素。kernel 只有 25 个系数，2 字节对齐足够。如果数据未对齐，硬件需要额外进行字节移位和拼接。</p>
 </li>
 </ol>
-<p>所有检查通过 → sIdle → sBusy，计算开始。任意一项失败 → sError，status register 中 <code>addr_err</code> 位置位。</p>
+<p>所有检查通过后，状态从 <code>sIdle</code> 进入 <code>sBusy</code>，计算开始。只要有一项检查失败，就进入 <code>sError</code>，并把 status register 里的 <code>addr_err</code> 置位。</p>
 <h3 id="FSM：四状态"><a href="#FSM：四状态" class="headerlink" title="FSM：四状态"></a>FSM：四状态</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">         START pass                done</span><br><span class="line">┌─── sIdle ────────────────► sBusy ─────────────► sDone</span><br><span class="line">│      ▲                       ▲                    │</span><br><span class="line">│      │                       │ START              │ SET</span><br><span class="line">│      │                       └────────────────────┘</span><br><span class="line">│      │</span><br><span class="line">│      │ SET</span><br><span class="line">│      │</span><br><span class="line">│ START fail</span><br><span class="line">│      │</span><br><span class="line">│      ▼</span><br><span class="line">└──► sError</span><br></pre></td></tr></table></figure>
 
 <ul>
@@ -427,67 +423,68 @@
 <li><strong>sError：</strong> 保持 <code>addrErr = 1</code>。只有 SET 能拉回 sIdle——没有直达 sBusy 的路径。</li>
 </ul>
 <hr>
-<h2 id="Phase-3：ConvDMA-—-TileLink-DMA-引擎"><a href="#Phase-3：ConvDMA-—-TileLink-DMA-引擎" class="headerlink" title="Phase 3：ConvDMA — TileLink DMA 引擎"></a>Phase 3：ConvDMA — TileLink DMA 引擎</h2><p>卷积引擎需要频繁地从 SRAM 读取像素和权重，再将结果写回。ConvDMA 负责管理这些数据传输。Phase 3 从严格串行的 DMA 开始——同一时刻只有一个请求在飞。这样 FSM 足够简单，初始测试也能逐周期精确验证。验证通过后，我们再添加流水线，让多个请求可以不等前一个响应就发出。</p>
-<h3 id="DMA-接口定义"><a href="#DMA-接口定义" class="headerlink" title="DMA 接口定义"></a>DMA 接口定义</h3><p>三个纯 Bundle 连接 DMA 与 L1 data cache。仅信号声明，不含逻辑——valid&#x2F;ready 握手由 <code>Decoupled</code> 提供。</p>
+<h2 id="Phase-3：ConvDMA-—-TileLink-DMA-引擎"><a href="#Phase-3：ConvDMA-—-TileLink-DMA-引擎" class="headerlink" title="Phase 3：ConvDMA — TileLink DMA 引擎"></a>Phase 3：ConvDMA — TileLink DMA 引擎</h2><p>卷积引擎需要不断从 SRAM 读取输入像素和 kernel 权重，最后还要把结果写回内存。<code>ConvDMA</code> 就是专门负责这些数据传输的模块。</p>
+<p>Phase 3 先从最容易验证的串行 DMA 开始：同一时间只允许一个 memory request 在路上。这样 FSM 足够简单，测试时也容易逐拍对齐。确认串行版本正确之后，再考虑把请求发射和响应处理流水线化。</p>
+<h3 id="DMA-接口定义"><a href="#DMA-接口定义" class="headerlink" title="DMA 接口定义"></a>DMA 接口定义</h3><p>DMA 和 L1 data cache 之间用三个 Bundle 描述接口。这些 Bundle 只定义信号本身，不包含控制逻辑；真正的数据是否能在某一拍传过去，仍然由 <code>Decoupled</code> 的 valid&#x2F;ready 握手决定。</p>
 <ul>
-<li><strong>SimpleMemReq</strong> — DMA 发给 L1 的请求。携带 64-bit 地址、64-bit 写数据、字节掩码、读写标志和 4-bit tag。串行 DMA 中 tag 恒为 0，预留 4-bit 给流水线版本做乱序响应匹配。</li>
-<li><strong>SimpleMemResp</strong> — L1 的回复。返回 64-bit 读数据，并回传请求的 tag。</li>
-<li><strong>SimpleMemIO</strong> — 将 <code>req</code>（DMA→L1）和 <code>resp</code>（L1→DMA，<code>Flipped</code>）捆为一个端口。</li>
+<li><strong>SimpleMemReq</strong> — DMA 发给 L1 的请求，包含 64-bit 地址、64-bit 写数据、byte mask、读写标志和 4-bit tag。串行版本里 tag 恒为 0，后面做流水线时可以用 tag 匹配响应。</li>
+<li><strong>SimpleMemResp</strong> — L1 返回给 DMA 的响应，包含 64-bit 读数据和对应请求的 tag。</li>
+<li><strong>SimpleMemIO</strong> — 把 <code>req</code>（DMA → L1）和 <code>resp</code>（L1 → DMA，<code>Flipped</code>）打包成一个端口。</li>
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  ConvDMA                  SimpleMemIO            L1 data cache</span><br><span class="line">┌─────────┐              ┌─────────────┐          ┌──────────┐</span><br><span class="line">│         │── req ──────►│ req (output) │────────►│          │</span><br><span class="line">│  FSM    │              │             │          │  L1 D$   │</span><br><span class="line">│         │◄─ resp ──────│ resp (input) │◄────────│          │</span><br><span class="line">└─────────┘              └─────────────┘          └──────────┘</span><br></pre></td></tr></table></figure>
 
-<h3 id="串行-FSM"><a href="#串行-FSM" class="headerlink" title="串行 FSM"></a>串行 FSM</h3><p>ConvDMA 有两条数据通路：</p>
+<h3 id="串行-FSM"><a href="#串行-FSM" class="headerlink" title="串行 FSM"></a>串行 FSM</h3><p><code>ConvDMA</code> 内部有两条数据路径：</p>
 <ul>
 <li><strong>Load path</strong>（sIdle → sIssue → sWaitResp → sUnpack → 循环）：从内存读 64-bit word，拆解为 4 个 16-bit 元素，推入 <code>elemQueue</code> 供计算单元消费。</li>
 <li><strong>Store path</strong>（sIdle → sGather → sIssue → 循环）：从计算单元收集 4 个 16-bit 元素，拼成 64-bit word，写回内存。</li>
 </ul>
-<p>两条路径共享 <code>sIssue</code>，通过 <code>opReg</code> 分叉。严格遵守”发射一个请求 → 等响应 → 拆&#x2F;拼数据 → 再发射下一个”的串行铁律——任意时刻只有 1 个请求在飞。</p>
+<p>两条路径共享 <code>sIssue</code>，再通过 <code>opReg</code> 区分当前是在读还是在写。串行版本的规则很简单：发一个请求，等它完成，再处理数据，然后才发下一个请求。因此任意时刻最多只有一个 request in flight。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Load path:   sIdle → sIssue → sWaitResp → sUnpack(×4) ─┐</span><br><span class="line">              ▲                                        │</span><br><span class="line">              └────────────────────────────────────────┘</span><br><span class="line"></span><br><span class="line">Store path:  sIdle → sGather(×4) → sIssue ─┐</span><br><span class="line">             ▲                             │</span><br><span class="line">             └─────────────────────────────┘</span><br><span class="line"></span><br><span class="line">Error path:  sIdle ──► sError  (SET addr ⇒ sIdle)</span><br></pre></td></tr></table></figure>
 
 
-<h3 id="瓶颈：6-cycles-word"><a href="#瓶颈：6-cycles-word" class="headerlink" title="瓶颈：6 cycles&#x2F;word"></a>瓶颈：6 cycles&#x2F;word</h3><p>以 load path 为例，读一个 word 走 sIssue → sWaitResp → sUnpack×4 → 回到 sIssue，恰好 6 拍。sUnpack 占 4 拍，内存在这 4 拍完全空闲。瓶颈不在内存延迟，而在 FSM 不让发射和拆包重叠。</p>
+<h3 id="瓶颈：6-cycles-word"><a href="#瓶颈：6-cycles-word" class="headerlink" title="瓶颈：6 cycles&#x2F;word"></a>瓶颈：6 cycles&#x2F;word</h3><p>以 load path 为例，读一个 word 要经历 <code>sIssue → sWaitResp → sUnpack×4 → 回到 sIssue</code>，正好 6 拍。其中 <code>sUnpack</code> 占了 4 拍，而这 4 拍里内存接口是空着的。瓶颈不是内存本身太慢，而是 FSM 把“发请求”和“拆数据”串在了一起。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cyc |     state |     mem.req    |   mem.resp   | loadStream</span><br><span class="line">  0 |    sIssue | fire(rd)       |              |</span><br><span class="line">  1 | sWaitResp |                | fire         |</span><br><span class="line">  2 |   sUnpack |                               |</span><br><span class="line">  3 |   sUnpack |                               | deq elem[0]</span><br><span class="line">  4 |   sUnpack |                               | deq elem[1]</span><br><span class="line">  5 |   sUnpack |                               | deq elem[2]</span><br><span class="line">  6 |    sIssue | fire(rd)       |              | deq elem[3]</span><br></pre></td></tr></table></figure>
 
 <p>256 word × 6 + 1 cycle overhead &#x3D; <strong>1537 cycles</strong>。</p>
-<h3 id="流水线化-DMA"><a href="#流水线化-DMA" class="headerlink" title="流水线化 DMA"></a>流水线化 DMA</h3><p>这一步解决串行 FSM 的瓶颈。核心思路：将发射（issue）和拆包（unpack）解耦为两个并发硬件进程，在时间上重叠。</p>
+<h3 id="流水线化-DMA"><a href="#流水线化-DMA" class="headerlink" title="流水线化 DMA"></a>流水线化 DMA</h3><p>流水线化的核心就是把 issue 和 unpack 拆开，让它们变成两个可以同时工作的硬件过程。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Serial:</span><br><span class="line">  Issue:    [sIssue]              [sIssue]              [sIssue]</span><br><span class="line">  Response:    [sWait]               [sWait]               [sWait]</span><br><span class="line">  Unpack:         [sUnpack×4]            [sUnpack×4]            [sUnpack×4]</span><br><span class="line">             ↑── 6 cycles/word ──↑</span><br><span class="line"></span><br><span class="line">Pipelined:</span><br><span class="line">  Issue:    [sIssue][sIssue][sIssue][sIssue][sIssue]...</span><br><span class="line">  Response:    [1 cycle]  [1 cycle]  [1 cycle]  [1 cycle]  [1 cycle]  ← enqueue FIFO</span><br><span class="line">  Unpack:         [sUnpack×4][sUnpack×4][sUnpack×4]...               ← dequeue FIFO</span><br><span class="line">             ↑── 4 cycles/word (unpack is the bottleneck) ──↑</span><br></pre></td></tr></table></figure>
 
-<p>响应 FIFO 吸收速率差：issue 引擎以 1 word&#x2F;cycle 发射（直到 inflight 上限），响应自动落入 FIFO，unpack 引擎以 4 cycles&#x2F;word 从 FIFO 取出拆解。两者互不阻塞。1537 cycles → ~1033 cycles，提升约 33%。逐步实现细节见后续文章。</p>
+<p>中间的 response FIFO 用来吸收速率差：issue engine 可以按 1 word&#x2F;cycle 发请求，直到达到 inflight 上限；response 回来后先进入 FIFO；unpack engine 再以 4 cycles&#x2F;word 的速度从 FIFO 里取出并拆成 16-bit 元素。这样 issue 和 unpack 不再互相等待，load 部分从 1537 cycles 降到约 1033 cycles，提升大约 33%。</p>
 <h4 id="串行到流水线的四项改动"><a href="#串行到流水线的四项改动" class="headerlink" title="串行到流水线的四项改动"></a>串行到流水线的四项改动</h4><p><strong>1. Register → Queue</strong></p>
-<p>串行 DMA 用单个 <code>respWord</code> 寄存器锁存一次响应——因为最多只有 1 个 in-flight 请求。流水线版本替换为响应 FIFO 缓冲多个响应。数据自动落入 FIFO，FSM 只在需要时从 FIFO 取数。这拆掉了响应收集与 FSM 状态机之间的耦合。</p>
+<p>串行 DMA 只需要一个 <code>respWord</code> 寄存器，因为同一时间最多只有一个响应会回来。流水线版本则换成 response FIFO，可以缓存多个响应。FSM 不再直接盯着 <code>mem.resp</code>，而是在需要 unpack 时从 FIFO 里取数据。</p>
 <p><strong>2. sWaitResp 退化</strong></p>
-<p><code>sWaitResp</code> 不再等 <code>mem.resp.valid</code>，也不再锁存响应数据。唯一剩下的工作就是等 FIFO 有数据可取。</p>
+<p><code>sWaitResp</code> 不再负责等待 <code>mem.resp.valid</code>，也不再负责锁存响应数据。响应已经由 FIFO 接住了，FSM 只需要等 FIFO 里有数据可取。</p>
 <p><strong>3. inflightCount — 信用制流控</strong></p>
-<p>issue 引擎发射速率（1 word&#x2F;cycle）快于 unpack 引擎消费速率（1 element&#x2F;cycle → 0.25 word&#x2F;cycle）。不加限流 FIFO 会溢出。<code>inflightCount</code> 作为信用账户：issue 每发一个请求消耗 1 点信用，unpack 每拆完一个 word 归还 1 点信用。<code>inflightMax = 4</code> 将窗口限制为 4 个 in-flight word，恰好匹配 unpack 引擎消化速度。</p>
+<p>issue engine 的发射速度是 1 word&#x2F;cycle，而 unpack engine 的消费速度是 1 element&#x2F;cycle，也就是 0.25 word&#x2F;cycle。如果不限制，FIFO 很快会被塞满。<code>inflightCount</code> 就像一个 credit counter：issue 每发一个请求就占用一个 credit，unpack 每拆完一个 word 就归还一个 credit。<code>inflightMax = 4</code> 把同时在路上的请求限制在 4 个 word 以内。</p>
 <p><strong>4. sLoadActive — 并发 FSM（核心改动）</strong></p>
-<p>将串行的三个状态 <code>sIssue</code>、<code>sWaitResp</code>、<code>sUnpack</code> 合并为一个 <code>sLoadActive</code> 状态。在此状态内，两个独立的 <code>when</code> 块并发运行：issue 引擎发射请求直至 <code>inflightMax</code>，unpack 引擎从 FIFO 排空数据。两者可在同一拍内同时推进——issue 与 unpack 真正重叠。</p>
+<p>把串行版本里的 <code>sIssue</code>、<code>sWaitResp</code>、<code>sUnpack</code> 合并成一个 <code>sLoadActive</code> 状态。在这个状态里，两个独立的 <code>when</code> 块同时工作：issue engine 负责继续发请求，unpack engine 负责从 FIFO 里取数据拆包。两者可以在同一个 cycle 同时前进，这才是真正的 overlap。</p>
 <hr>
-<h2 id="Phase-4：计算数据通路-—-LineBuffer-ConvEngine"><a href="#Phase-4：计算数据通路-—-LineBuffer-ConvEngine" class="headerlink" title="Phase 4：计算数据通路 — LineBuffer &amp; ConvEngine"></a>Phase 4：计算数据通路 — LineBuffer &amp; ConvEngine</h2><p>DMA 每个周期送入一个像素，顺序为行优先——第 0 行从左到右，然后第 1 行、第 2 行。但 5×5 卷积在输出像素 (r, c) 处需要 25 个像素，排列为以 (r+2, c+2) 为中心的 5×5 邻域。单个像素毫无用处——计算数据通路必须在 MAC 单元启动前拼出完整的 5×5 窗口。</p>
-<p>这是一个数据重组问题，自然拆成两个维度：LineBuffer 负责垂直方向（行），ShiftWindow 负责水平方向（列）。LineBuffer 从 DMA 流中收集 5 行 × 32 列像素，然后每周期输出同一列上 5 个垂直相邻像素——从行优先到列优先，做了 90° 旋转。ShiftWindow 缓冲来自 LineBuffer 的连续 5 列，每周期右移，输出完整的 5×5 窗口给 MAC 单元。</p>
-<p><strong>为什么不直接从 SRAM 读取？</strong> 每个输出像素需要来自 5 个不同行的值。直接读取需要每周期 5 次独立读取，指向 5 个不同地址——五个内存端口。LineBuffer 用一个写端口（DMA 每周期写入一个像素）和一个 5 路读端口（5 行 × 同一列）替代了它。160 条目的寄存器堆远便宜过一个 5 端口 SRAM。</p>
+<h2 id="Phase-4：计算数据通路-—-LineBuffer-ConvEngine"><a href="#Phase-4：计算数据通路-—-LineBuffer-ConvEngine" class="headerlink" title="Phase 4：计算数据通路 — LineBuffer &amp; ConvEngine"></a>Phase 4：计算数据通路 — LineBuffer &amp; ConvEngine</h2><p>DMA 每次送进来的只是一个像素，而且顺序是 row-major：第 0 行从左到右，然后第 1 行、第 2 行继续往下。但 5×5 卷积在计算输出像素 <code>(r, c)</code> 时，需要的是一个完整的 5×5 邻域。也就是说，单个像素本身并不能直接喂给 MAC 单元，datapath 必须先把连续输入流重组成一个 5×5 window。</p>
+<p>这本质上是一个数据重排问题，可以自然拆成两个方向：<code>LineBuffer</code> 处理垂直方向，也就是行；<code>ShiftWindow</code> 处理水平方向，也就是列。<code>LineBuffer</code> 从 DMA stream 里收集 5 行像素，每拍输出同一列上的 5 个相邻像素；<code>ShiftWindow</code> 再缓存连续 5 列，最终拼出完整的 5×5 window。</p>
+<p><strong>为什么不直接从 SRAM 读？</strong> 因为每个输出像素都要访问 5 个不同行的值。如果每拍都直接去 SRAM 里取，就相当于需要 5 个独立读端口，这对硬件来说很贵。<code>LineBuffer</code> 用一个写端口接收 DMA 输入，再用 5 路读出同一列的 5 行数据。160 个 entry 的寄存器堆，比一个 5-port SRAM 简单得多。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sIdle ──► sPrime (加载前 5 行) ──► sActive (32 个输出行) ──► sDone</span><br></pre></td></tr></table></figure>
-<p>在 <code>sActive</code> 状态下，缓冲区每行输出 36 列，DMA 将下一行输入加载到单独的 <code>tmpRow</code> 寄存器中。当一行结束时，缓冲区向上移动——丢弃第 0 行，第 1 到 3 行向上移动，<code>tmpRow</code> 作为第 4 行进入缓冲区。如果没有 <code>tmpRow</code>，DMA 会覆盖仍在输出的行，并且加载和输出无法重叠——第三阶段流水线式 DMA 的端到端优势将无法体现。</p>
-<p>零填充通过两种机制覆盖四个边界：</p>
+<p>在 <code>sActive</code> 状态下，buffer 每个输出行会吐出 36 列：左边 2 列 padding，中间 32 列真实图像，右边 2 列 padding。与此同时，DMA 会把下一行输入加载到单独的 <code>tmpRow</code> 里。等当前输出行结束，5 行 buffer 整体上移：第 0 行丢弃，第 1 到第 3 行上移，<code>tmpRow</code> 进入第 4 行。如果没有 <code>tmpRow</code>，DMA 就可能覆盖还在被读取的行，load 和 output 也没法重叠。</p>
+<p>zero-padding 由两部分共同完成：</p>
 <ul>
-<li><strong>上 &#x2F; 下：</strong> 由五个缓冲行存的内容决定。输出行 0 时，顶部两行为零；输出行 31 时，底部两行为零。窗口下滑过程中，真实行自然轮转进出——无需额外控制逻辑。</li>
-<li><strong>左 &#x2F; 右：</strong> 每个输出行输出 36 列（2 左填充 + 32 数据 + 2 右填充）。<code>colValid</code> 信号标记数据列。低电平时，ShiftWindow 忽略 <code>colOut</code> 的值，自行填零。</li>
+<li><strong>上 &#x2F; 下：</strong> 由 5 行 buffer 里当前存的内容决定。输出第 0 行时，顶部两行是 0；输出第 31 行时，底部两行是 0。窗口往下滑时，真实行自然轮转进出，不需要额外分支。</li>
+<li><strong>左 &#x2F; 右：</strong> 每个输出行输出 36 列（2 列左 padding + 32 列图像 + 2 列右 padding）。<code>colValid</code> 用来标记当前列是否是真实图像列；为低时，<code>ShiftWindow</code> 不使用 <code>colOut</code>，而是移入 0。</li>
 </ul>
-<h3 id="Part-B-ShiftWindow-→-KernelROM-→-ConvUnit"><a href="#Part-B-ShiftWindow-→-KernelROM-→-ConvUnit" class="headerlink" title="Part B: ShiftWindow → KernelROM → ConvUnit"></a>Part B: ShiftWindow → KernelROM → ConvUnit</h3><p>LineBuffer 每拍输出 5 个像素（一列）。MAC 单元需要完整的 5×5 窗口。三个模块完成剩余的组装工作：</p>
-<p><strong>ShiftWindow — 5×5 寄存器窗口。</strong> 内部维护一个 5×5 寄存器阵列。每拍所有列右移——最旧列（c4）丢弃，新列从 LineBuffer 进入 c0。<code>colValid</code> 为低时 c0 填零，实现左&#x2F;右 padding。窗口以组合逻辑输出——400 比特的寄存器，比 BRAM 便宜，零读延迟。</p>
-<p><strong>KernelROM — 权值存储。</strong> 25 条目寄存器堆。计算开始前一次性写入，计算期间只读——对计算通路等效于 ROM。5×5 组合输出，零延迟，ConvUnit 同拍拿到 <code>window</code> 和 <code>kernel</code> 两个操作数。</p>
-<p><strong>ConvUnit — 5 级流水线 MAC 树。</strong> 若用纯组合逻辑（25 次乘法 + 巨型加法树），关键路径太长，频率上不去。解决方案：把 pairwise 加法树切为 5 级流水线，每级只需一次 32 位加法。</p>
+<h3 id="Part-B：ShiftWindow-→-KernelROM-→-ConvUnit"><a href="#Part-B：ShiftWindow-→-KernelROM-→-ConvUnit" class="headerlink" title="Part B：ShiftWindow → KernelROM → ConvUnit"></a>Part B：ShiftWindow → KernelROM → ConvUnit</h3><p><code>LineBuffer</code> 每拍只输出 5 个像素，也就是一列。MAC 单元需要的是完整的 5×5 window，所以还需要下面三个模块把最后一步补上：</p>
+<p><strong>ShiftWindow — 5×5 寄存器窗口。</strong> 内部维护一个 5×5 register array。每拍所有列右移：最旧的一列丢掉，新列从 <code>LineBuffer</code> 进入 c0。<code>colValid</code> 为低时，新列填 0，用来实现左右 padding。整个窗口通过组合逻辑输出，只有 400 bit 寄存器，比 BRAM 更轻，也没有读延迟。</p>
+<p><strong>KernelROM — 权重存储。</strong> 25 个 entry 的寄存器堆。计算开始前一次性写入，计算期间只读，所以对 compute datapath 来说等价于 ROM。它以组合逻辑输出 5×5 kernel，<code>ConvUnit</code> 可以在同一拍拿到 <code>window</code> 和 <code>kernel</code>。</p>
+<p><strong>ConvUnit — 5 级流水线 MAC 树。</strong> 如果把 25 次乘法和整棵加法树都放在一个组合路径里，critical path 会非常长。这里把 pairwise addition tree 切成 5 级 pipeline，每一级只承担一次 32-bit 加法。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Stage 0（组合）：25 个 16×16→32 并行乘法</span><br><span class="line">Stage 1–5（寄存）：25→13→7→4→2→1  pairwise 规约</span><br><span class="line">                    Stage 5 顺带完成四舍五入（+0x80）、&gt;&gt;8、饱和截位</span><br></pre></td></tr></table></figure>
 
-<p>为什么 pairwise 不用 Wallace tree：pairwise 结构规整，深度刚好 ceil(log₂ 25) &#x3D; 5 级，寄存器自然插在各级之间——关键路径仅为一次 32 位加法。</p>
-<p><strong>ConvEngine — 顶层黏合。</strong> 实例化 ShiftWindow、KernelROM、ConvUnit，把 <code>colIn</code> &#x2F; <code>colValid</code> 接入 ShiftWindow，<code>kernel</code> &#x2F; <code>window</code> 接入 ConvUnit。<code>inValid</code> 延迟 1 拍（<code>RegNext</code>）与 ShiftWindow 的寄存器输出对齐。<code>stall</code> 输入门控 <code>colValid</code>，反压时冻结整条流水线。<code>outValid</code> 是 <code>inValid</code> 经 <code>ShiftRegister</code> 延迟 5 拍——高电平时 <code>result</code> 为有效卷积输出。</p>
+<p>这里没有用 Wallace tree，是因为 pairwise tree 结构更规整，深度正好是 <code>ceil(log₂ 25) = 5</code> 级，pipeline register 也很自然地插在每一级之间。这样 critical path 基本被压到一次 32-bit addition。</p>
+<p><strong>ConvEngine — 顶层黏合。</strong> <code>ConvEngine</code> 把 <code>ShiftWindow</code>、<code>KernelROM</code> 和 <code>ConvUnit</code> 接起来：<code>colIn</code> &#x2F; <code>colValid</code> 进入 <code>ShiftWindow</code>，<code>window</code> 和 <code>kernel</code> 再送进 <code>ConvUnit</code>。<code>inValid</code> 通过 <code>RegNext</code> 延迟 1 拍，用来对齐 <code>ShiftWindow</code> 的寄存器输出；<code>outValid</code> 则是 <code>inValid</code> 再经过 5 拍延迟，对齐 MAC pipeline 的输出。当 <code>stall</code> 拉高时，整条 compute pipeline 会被冻结，避免下游队列满了还继续产出结果。</p>
 <hr>
-<h2 id="Phase-5：顶层集成与主-FSM"><a href="#Phase-5：顶层集成与主-FSM" class="headerlink" title="Phase 5：顶层集成与主 FSM"></a>Phase 5：顶层集成与主 FSM</h2><p>Phase 1 到 Phase 4 把四个零件各自造好了。Phase 5 做三件事：</p>
+<h2 id="Phase-5：顶层集成与主-FSM"><a href="#Phase-5：顶层集成与主-FSM" class="headerlink" title="Phase 5：顶层集成与主 FSM"></a>Phase 5：顶层集成与主 FSM</h2><p>Phase 1 到 Phase 4 已经把主要模块各自做出来了。Phase 5 的任务是把它们接成一个完整的 standalone top：</p>
 <ul>
-<li>把 ConvControl、ConvDMA、LineBuffer、ConvEngine 拼成一个 <code>ConvAccelTop</code>。</li>
-<li>在各级之间塞入弹性缓冲（InputQueue &#x2F; StoreQueue）。</li>
-<li>对外暴露 <code>SimpleMemIO</code> 接口，测试时直连 FakeScratchpadMemory，上 Chipyard 后替换为 HellaCache。</li>
+<li>实例化 <code>ConvDMA</code>、<code>LineBuffer</code>、<code>ConvEngine</code> 和两个 elastic Queue。</li>
+<li>加一个 5-state execution FSM，负责任务阶段切换：load kernel、load input、compute&#x2F;store。</li>
+<li>对外暴露 <code>SimpleMemIO</code>，standalone 测试时接 fake scratchpad，上 Chipyard 后再接到 RoCC&#x2F;DCache 路径。</li>
 </ul>
-<h3 id="ConvAccelTop：框架与-IO"><a href="#ConvAccelTop：框架与-IO" class="headerlink" title="ConvAccelTop：框架与 IO"></a>ConvAccelTop：框架与 IO</h3><p><code>ConvAccelTop</code> 是一个独立的 <code>Module</code>——对外只有一套简单的 <code>start</code> &#x2F; <code>done</code> 握手，外加内存基地址和 <code>SimpleMemIO</code>。</p>
+<h3 id="ConvAccelTop：框架与-IO"><a href="#ConvAccelTop：框架与-IO" class="headerlink" title="ConvAccelTop：框架与 IO"></a>ConvAccelTop：框架与 IO</h3><p><code>ConvAccelTop</code> 是一个独立的 <code>Module</code>。从外面看，它只有一套简单的 <code>start</code> &#x2F; <code>done</code> 握手，外加三个内存基地址和一个 <code>SimpleMemIO</code> 端口。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">               ┌────────────────────────────────────────────┐</span><br><span class="line">        start ─┤                                            ├─ done</span><br><span class="line">        kAddr ─┤                                            ├─ state[2:0]</span><br><span class="line">        iAddr ─┤               ConvAccelTop                 │</span><br><span class="line">        oAddr ─┤                                            ├─ mem.req.valid</span><br><span class="line">               │                                            ├─ mem.req.bits.addr</span><br><span class="line">               │                                            ├─ mem.req.bits.op</span><br><span class="line">               │                                            ├─ mem.req.bits.data</span><br><span class="line">               │                                            │</span><br><span class="line">mem.rsp.valid ─┤                                            │</span><br><span class="line">mem.rsp.data  ─┤                                            │</span><br><span class="line">               └────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
 
 <table>
@@ -548,22 +545,22 @@
 <td>当前 FSM 状态</td>
 </tr>
 </tbody></table>
-<p>三个地址端口在 <code>start</code> 脉冲同一拍被锁存进内部寄存器，后续阶段全部用寄存器里的值——防止外部在计算途中改动地址。</p>
-<h3 id="子模块实例化与接线"><a href="#子模块实例化与接线" class="headerlink" title="子模块实例化与接线"></a>子模块实例化与接线</h3><p>五个子模块实例化——前三个是 Phase 3&#x2F;4 自己写的，后两个直接用 Chisel 自带的 <code>Queue</code>：</p>
+<p>三个地址会在 <code>start</code> 脉冲到来的那一拍锁存进内部寄存器。后续阶段都使用寄存器里的地址，避免外部信号在计算过程中变化导致结果被写错位置。</p>
+<h3 id="子模块实例化与接线"><a href="#子模块实例化与接线" class="headerlink" title="子模块实例化与接线"></a>子模块实例化与接线</h3><p>这里一共实例化五个子模块：前三个是前面 phase 里实现的 datapath 模块，后两个直接使用 Chisel 标准库里的 <code>Queue</code>。</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> dma        = <span class="type">Module</span>(<span class="keyword">new</span> <span class="type">ConvDMA</span>)                        <span class="comment">// Phase 3</span></span><br><span class="line"><span class="keyword">val</span> lineBuf    = <span class="type">Module</span>(<span class="keyword">new</span> <span class="type">LineBuffer</span>)                     <span class="comment">// Phase 4</span></span><br><span class="line"><span class="keyword">val</span> engine     = <span class="type">Module</span>(<span class="keyword">new</span> <span class="type">ConvEngine</span>)                     <span class="comment">// Phase 4</span></span><br><span class="line"><span class="keyword">val</span> storeQueue = <span class="type">Module</span>(<span class="keyword">new</span> <span class="type">Queue</span>(<span class="type">SInt</span>(<span class="number">16.</span><span class="type">W</span>), <span class="number">2048</span>))       <span class="comment">// Chisel 内置 FIFO</span></span><br><span class="line"><span class="keyword">val</span> inputQueue = <span class="type">Module</span>(<span class="keyword">new</span> <span class="type">Queue</span>(<span class="type">UInt</span>(<span class="number">16.</span><span class="type">W</span>), <span class="number">1024</span>))       <span class="comment">// Chisel 内置 FIFO</span></span><br></pre></td></tr></table></figure>
 
-<p><code>Queue</code> 是 Chisel 的标准 FIFO——内部自动管理读写指针，满了反压上游，空了反压下游。不需要自己写任何 FIFO 逻辑。</p>
+<p><code>Queue</code> 是 Chisel 的标准 FIFO。它内部会自动维护读写指针、计数器和 valid&#x2F;ready 反压逻辑，因此这里不需要手写 FIFO。</p>
 <p><strong>1. io.mem ↔ DMA</strong></p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">io.mem &lt;&gt; dma.io.mem</span><br></pre></td></tr></table></figure>
 
-<p><code>&lt;&gt;</code> 是 Chisel 的批量连接操作符。<code>io.mem</code> 和 <code>dma.io.mem</code> 都是 <code>SimpleMemIO</code> 类型，内部包含 <code>req.valid</code>、<code>req.bits.addr</code>、<code>rsp.data</code> 等多个信号。<code>&lt;&gt;</code> 把同名信号一一接上——一行替代八行 <code>:=</code>。</p>
+<p><code>&lt;&gt;</code> 是 Chisel 的 bulk connect 操作符。<code>io.mem</code> 和 <code>dma.io.mem</code> 都是 <code>SimpleMemIO</code>，里面包含 <code>req.valid</code>、<code>req.bits.addr</code>、<code>rsp.data</code> 等一组信号。用 <code>&lt;&gt;</code> 可以把同名字段一次性接起来，不用逐个 <code>:=</code>。</p>
 <p><strong>2. DMA loadStream 扇出</strong></p>
-<p>DMA 读回的数据只有一个出口 <code>loadStream</code>，但在不同阶段要去不同地方：</p>
+<p>DMA 读回的数据只有一个出口：<code>loadStream</code>。但在不同状态下，它要被送到不同地方：</p>
 <ul>
 <li><code>sLoadKernel</code>：<code>loadStream</code> → <code>engine.io.kernelData</code>，把 25 个权重写入 kernel ROM。</li>
 <li><code>sLoadInput</code>：<code>loadStream</code> → <code>inputQueue.io.enq</code>，1024 个像素全部缓冲起来。</li>
 </ul>
-<p>一次只有一个状态活跃，用 <code>when</code> &#x2F; <code>elsewhen</code> 分支就够了，不需要仲裁器或多路选择器。</p>
+<p>由于同一时间只有一个 FSM 状态处于活跃状态，用 <code>when</code> &#x2F; <code>elsewhen</code> 分支就够了，不需要额外的 arbiter。</p>
 <p><strong>3. 计算主通路（三段 daisy chain）</strong></p>
 <p>三段都是标准的 <code>valid</code> &#x2F; <code>ready</code> 握手：</p>
 <ul>
@@ -574,41 +571,41 @@
 <p><strong>4. storeQueue → DMA（写回路径）</strong></p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dma.io.storeStream.valid := storeQueue.io.deq.valid</span><br><span class="line">storeQueue.io.deq.ready  := dma.io.storeStream.ready</span><br></pre></td></tr></table></figure>
 
-<p>DMA 从 storeQueue 取结果写回内存。DMA 在突发写忙不过来时，<code>storeStream.ready</code> 拉低——队列停止出队，反压沿管线一路向上传导。</p>
-<h3 id="InputQueue-与-StoreQueue-——-弹性缓冲"><a href="#InputQueue-与-StoreQueue-——-弹性缓冲" class="headerlink" title="InputQueue 与 StoreQueue —— 弹性缓冲"></a>InputQueue 与 StoreQueue —— 弹性缓冲</h3><p>DMA 和 ConvEngine 的工作节奏不同。DMA 是突发传输——快但不连续。ConvEngine 每拍产出一个像素——匀速但不灵活。没有缓冲，任何速度不匹配都会让整条流水线空转或丢数据。</p>
-<p>两个 Chisel 的 <code>Queue</code> 夹在模块之间吸收速度差。<code>Queue</code> 是一个标准 FIFO，内部是环形 buffer + 读写指针 + 计数器。对外暴露出两个口——<code>enq</code>（写入端）和 <code>deq</code>（读出端），自动管理 <code>valid</code>&#x2F;<code>ready</code> 握手：</p>
+<p>DMA 从 <code>storeQueue</code> 取结果并写回内存。如果 DMA 正在忙，<code>storeStream.ready</code> 会拉低，队列停止出队，反压就会沿着 compute pipeline 一路往上传。</p>
+<h3 id="InputQueue-与-StoreQueue-——-弹性缓冲"><a href="#InputQueue-与-StoreQueue-——-弹性缓冲" class="headerlink" title="InputQueue 与 StoreQueue —— 弹性缓冲"></a>InputQueue 与 StoreQueue —— 弹性缓冲</h3><p>DMA 和 <code>ConvEngine</code> 的节奏不一样。DMA 是 burst 型传输：快，但不是每一拍都稳定输出。<code>ConvEngine</code> 则更像一条固定节拍的流水线：一旦填满，就希望每拍都能产出一个像素。中间如果没有缓冲，任何一点速度不匹配都会让整条 pipeline 停下来，甚至丢数据。</p>
+<p>所以这里在模块之间放了两个 Chisel <code>Queue</code>，用来吸收速率差。<code>Queue</code> 本质上就是一个标准 FIFO，内部有环形 buffer、读写指针和计数器。对外只有两个口：<code>enq</code> 是写入端，<code>deq</code> 是读出端，valid&#x2F;ready 握手由它自动处理。</p>
 <ul>
 <li>Queue <strong>空</strong>：<code>deq.valid</code> &#x3D; 0（没数据可读）。</li>
 <li>Queue <strong>满</strong>：<code>enq.ready</code> &#x3D; 0（没空间可写）。</li>
 <li>Queue 既不空也不满：<code>enq.ready</code> 和 <code>deq.valid</code> 同时为 1——数据可以一边进一边出。</li>
 </ul>
-<p>不需要自己写 FIFO 逻辑，Chisel 标准库全部管好。</p>
+<p>这也是直接用标准库的好处：我们只需要关心数据应该流向哪里，不需要再手写 FIFO 的边界条件。</p>
 <p><strong>inputQueue</strong></p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> inputQueue = <span class="type">Module</span>(<span class="keyword">new</span> <span class="type">Queue</span>(<span class="type">UInt</span>(<span class="number">16.</span><span class="type">W</span>), <span class="number">1024</span>))</span><br></pre></td></tr></table></figure>
 
-<p>深度 1024 &#x3D; 一整张 32×32 图。DMA 在 <code>sLoadInput</code> 阶段一次灌满，LineBuffer 在 <code>sCompute</code> 阶段一拍一个取走。无需同步。</p>
+<p>深度 1024 正好是一整张 32×32 图。DMA 在 <code>sLoadInput</code> 阶段把输入像素写进去，<code>LineBuffer</code> 可以同时或稍后从里面一拍一个取走。两边不用严格同步。</p>
 <p><strong>storeQueue</strong></p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> storeQueue = <span class="type">Module</span>(<span class="keyword">new</span> <span class="type">Queue</span>(<span class="type">SInt</span>(<span class="number">16.</span><span class="type">W</span>), <span class="number">2048</span>))</span><br></pre></td></tr></table></figure>
 
-<p>深度 2048 &#x3D; 1088 个结果 + 960 格余量。ConvEngine 一拍塞一个，DMA 突发写回。DMA 忙时队列暂存，追上即可。</p>
+<p>深度 2048 足够放下 1088 个结果，并留出额外余量。<code>ConvEngine</code> 可以一拍塞一个结果；DMA 如果暂时忙不过来，结果就先堆在 <code>storeQueue</code> 里，等 DMA 空出来再写回内存。</p>
 <p><strong>反压链</strong></p>
-<p>硬件里的反压不是消息传递——是直接接线。当 storeQueue 满了，它内部的 <code>enq.ready</code> 从 1 变成 0。两个模块直接连在这根信号上：</p>
+<p>硬件里的 backpressure 不是“发消息通知”，而是直接接线。当 <code>storeQueue</code> 满了，它的 <code>enq.ready</code> 会从 1 变成 0。下面两个模块直接看这根线：</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">engine.io.stall  := !storeQueue.io.enq.ready</span><br><span class="line">lineBuf.io.stall := !storeQueue.io.enq.ready</span><br></pre></td></tr></table></figure>
 
-<p><code>enq.ready</code> 一拉低，两个模块同一拍全看到。链式反应在两拍内完成：</p>
+<p><code>enq.ready</code> 一旦拉低，<code>ConvEngine</code> 和 <code>LineBuffer</code> 同一拍就能看到。接下来反压会沿着 pipeline 往上游传：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">storeQueue 满</span><br><span class="line">→ storeQueue.io.enq.ready = 0</span><br><span class="line">→ ConvEngine 停（outValid 无处可去）</span><br><span class="line">→ LineBuffer 停（无新窗口被消费）</span><br><span class="line">→ inputQueue 只进不出，堆满</span><br><span class="line">→ inputQueue.io.enq.ready = 0</span><br><span class="line">→ DMA load 停</span><br></pre></td></tr></table></figure>
 
-<p>没有握手，没有通知，没有软件参与。当 DMA 追上、storeQueue 腾出空位，<code>enq.ready</code> 回到 1，管线自动重启。</p>
-<h3 id="Master-FSM-in-ConvControl"><a href="#Master-FSM-in-ConvControl" class="headerlink" title="Master FSM in ConvControl"></a>Master FSM in ConvControl</h3><p>Master FSM 不会逐拍调度每一个 pixel 或每一个 convolution window。它只是在每个阶段打开对应模块的工作路径，然后让模块之间的 ready&#x2F;valid 握手决定数据是否能在这一拍前进。换句话说，顶层 FSM 控制的是“阶段”，而不是每一个微操作。</p>
-<p>在 <code>sLoadKernel</code> 阶段，DMA 的 load stream 被接到 <code>ConvEngine</code> 的 kernel 写端口。DMA 每吐出一个有效 word，就写入一个 kernel 元素。等所需 kernel 元素加载完成后，DMA 拉高 <code>done</code>，FSM 跳到 <code>sLoadInput</code>。</p>
-<p>在 <code>sLoadInput</code> 阶段，DMA 的 load stream 被接到 <code>InputQueue</code>。与此同时，<code>InputQueue</code> 也允许向 <code>LineBuffer</code> 出队，所以 input loading 和 line-buffer filling 是重叠的。等 <code>LineBuffer</code> 内部攒够足够的像素后，它开始向 <code>ConvEngine</code> 输出有效的 column&#x2F;window。从这一刻开始，即使 input DMA 还在继续加载后面的像素，计算流水线也已经启动了。</p>
-<p>在 <code>sCompute</code> 阶段，input DMA 已经完成，DMA 命令切换到 store 模式。<code>InputQueue</code>、<code>LineBuffer</code>、<code>ConvEngine</code> 和 <code>StoreQueue</code> 中残留的数据继续向后 drain。同时，<code>StoreQueue</code> 将结果送给 DMA store stream，因此计算尾部和结果写回是重叠的。</p>
+<p>这里没有软件参与，也不需要额外控制信号。等 DMA 追上进度、<code>storeQueue</code> 腾出空间，<code>enq.ready</code> 回到 1，pipeline 就会自动继续流动。</p>
+<h3 id="主执行-FSM"><a href="#主执行-FSM" class="headerlink" title="主执行 FSM"></a>主执行 FSM</h3><p>Master FSM 并不会逐拍安排每一个 pixel 或每一个 convolution window。它做的是更粗粒度的阶段控制：当前是 load kernel、load input，还是 compute&#x2F;store。至于某一拍数据能不能真的往前走，则交给模块之间的 <code>valid</code> &#x2F; <code>ready</code> 握手决定。</p>
+<p>在 <code>sLoadKernel</code> 阶段，DMA 的 load stream 会接到 <code>ConvEngine</code> 的 kernel 写端口。DMA 每吐出一个有效 word，就写入对应的 kernel 元素。等 kernel 加载完成，DMA 拉高 <code>done</code>，FSM 进入 <code>sLoadInput</code>。</p>
+<p>在 <code>sLoadInput</code> 阶段，DMA 的 load stream 会写入 <code>InputQueue</code>。与此同时，<code>InputQueue</code> 也可以向 <code>LineBuffer</code> 出队，所以 input loading 和 line-buffer filling 是重叠发生的。等 <code>LineBuffer</code> 攒够前几行像素，它就开始向 <code>ConvEngine</code> 输出有效 column&#x2F;window。也就是说，输入 DMA 还在加载后面几行时，compute pipeline 已经可以提前启动。</p>
+<p>在 <code>sCompute</code> 阶段，输入 DMA 已经结束，DMA 切换到 store 模式。<code>InputQueue</code>、<code>LineBuffer</code>、<code>ConvEngine</code> 和 <code>StoreQueue</code> 里剩下的数据继续向后排空；同时，<code>StoreQueue</code> 把结果送给 DMA store stream。这样 compute tail 和 output writeback 也能重叠。</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sLoadKernel:</span><br><span class="line">  DMA load kernel -&gt; ConvEngine kernel ROM</span><br><span class="line"></span><br><span class="line">sLoadInput:</span><br><span class="line">  DMA load input -&gt; InputQueue -&gt; LineBuffer -&gt; ConvEngine -&gt; StoreQueue</span><br><span class="line"></span><br><span class="line">sCompute:</span><br><span class="line">  InputQueue -&gt; LineBuffer -&gt; ConvEngine -&gt; StoreQueue -&gt; DMA store output</span><br></pre></td></tr></table></figure>
 
-<h3 id="端到端数据流走读"><a href="#端到端数据流走读" class="headerlink" title="端到端数据流走读"></a>端到端数据流走读</h3><p>下图是一次完整卷积的全生命周期——所有信号、所有队列、所有阶段，在时间轴上对齐：</p>
+<h3 id="端到端数据流走读"><a href="#端到端数据流走读" class="headerlink" title="端到端数据流走读"></a>端到端数据流走读</h3><p>下图把一次完整卷积的生命周期按时间轴展开：哪些阶段在跑，哪些队列在进出数据，哪些 pipeline 正在排空，都可以放在一张图里看。</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">time ───────────────────────────────────────────────────────────────────────────────&gt;</span><br><span class="line"></span><br><span class="line">io.start          ┌─┐</span><br><span class="line">                  └─┘</span><br><span class="line"></span><br><span class="line">state             sIdle ──&gt; sLoadKernel ──&gt; sLoadInput ───────────&gt; sCompute ──&gt; sDone</span><br><span class="line"></span><br><span class="line">dma.cmd                    load_kernel      load_input              store_output</span><br><span class="line"></span><br><span class="line">dma.loadStream             [ kernel data ]  [ input pixels ........ ]              idle</span><br><span class="line"></span><br><span class="line">InputQueue.enq                              [ input pixels ........ ]              idle</span><br><span class="line">InputQueue.deq                                   [ pixels -&gt; LineBuffer ........... ][drain]</span><br><span class="line"></span><br><span class="line">LineBuffer                                            [ warm-up ][ colValid active ........ ][drain]</span><br><span class="line"></span><br><span class="line">ConvEngine                                                       [ compute valid windows .... ][drain]</span><br><span class="line"></span><br><span class="line">StoreQueue.enq                                                     [ results ............... ]</span><br><span class="line">StoreQueue.deq                                                                  [ results -&gt; DMA .... ]</span><br><span class="line"></span><br><span class="line">dma.storeStream                                                                 [ output results .... ]</span><br><span class="line"></span><br><span class="line">io.done                                                                                              ┌──</span><br><span class="line">                                                                                                     └──</span><br></pre></td></tr></table></figure>
 
-<p>三次重叠是性能提升的来源：</p>
+<p>性能提升主要来自三处 overlap：</p>
 <table>
 <thead>
 <tr>
@@ -633,7 +630,7 @@
 <td>sCompute 尾部</td>
 </tr>
 </tbody></table>
-<h3 id="RoCC-响应协议"><a href="#RoCC-响应协议" class="headerlink" title="RoCC 响应协议"></a>RoCC 响应协议</h3><p>指令编码和软件可见的状态位已在 Phase 0 定义，由 Phase 2 的 <code>ConvControl</code> 实现。在顶层，Phase 5 只需确保这些控制响应正确接入 RoCC 响应通道。</p>
+<h3 id="RoCC-响应协议"><a href="#RoCC-响应协议" class="headerlink" title="RoCC 响应协议"></a>RoCC 响应协议</h3><p>指令编码和软件可见的 status bits 已经在 Phase 0 定义，并由 Phase 2 的 <code>ConvControl</code> 实现。到顶层集成时，我们只需要确保这些响应能正确接到 RoCC response channel 上。</p>
 <p>一次 RoCC 响应的完成条件是：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">io.resp.fire = io.resp.valid &amp;&amp; io.resp.ready</span><br></pre></td></tr></table></figure>
 
@@ -641,27 +638,27 @@
 
 <p>加速器使用三种响应模式：</p>
 <ul>
-<li><p><code>SET_ADDR_*</code>：地址寄存器更新后立即响应，返回确认值即可——因为只改动了配置状态。</p>
+<li><p><code>SET_ADDR_*</code>：地址寄存器更新后立即响应，返回一个确认值即可，因为这类指令只修改配置状态。</p>
 </li>
-<li><p><code>START_ACCEL</code>：同样立即响应，但仅表示已接受启动请求，并不表示卷积已完成。接受后主 FSM 进入活跃状态，<code>io.busy</code> 保持高直到运行结束。</p>
+<li><p><code>START_ACCEL</code>：同样立即响应，但这个响应只表示“启动请求已被接受”，不表示卷积已经完成。接受后 master FSM 进入活跃状态，<code>io.busy</code> 保持高，直到运行结束。</p>
 </li>
-<li><p><code>POLL_STATUS</code>：软件观察完成状态的指令。响应数据来自状态寄存器，包含 <code>busy</code>、<code>done</code>、<code>overflow</code>、<code>addr_err</code> 等位。</p>
+<li><p><code>POLL_STATUS</code>：软件用它观察加速器是否完成。响应数据来自 status register，包含 <code>busy</code>、<code>done</code>、<code>overflow</code>、<code>addr_err</code> 等位。</p>
 </li>
 </ul>
 <p>顶层 <code>io.busy</code> 由主 FSM 驱动：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">io.busy = state =/= sIdle &amp;&amp; state =/= sDone</span><br></pre></td></tr></table></figure>
-<p>当前设计使用轮询而非中断，因此 <code>io.interrupt</code> 保持低。若后续添加中断支持，可在 FSM 进入 <code>sDone</code> 时拉高。</p>
-<h3 id="Bug-1-colValid-早关-2-拍导致结果丢失"><a href="#Bug-1-colValid-早关-2-拍导致结果丢失" class="headerlink" title="Bug 1: colValid 早关 2 拍导致结果丢失"></a>Bug 1: colValid 早关 2 拍导致结果丢失</h3><p><strong>现象。</strong> goDone 改为 1024 后测试能跑完，但 1024 个 outValid 中只有 960 个对应真实图像数据，末尾 64 个丢失。</p>
-<p><strong>定位。</strong> resultCnt → outValid → inValid → colValid，最终追到 LineBuffer 的 <code>colValid = inImage</code>。<code>inImage</code> 仅在 outputCol 2-33 为 true，即每行只标记 32 列。但 ShiftWindow 的窗口中心（reg(2)）落后 colOut 2 拍：</p>
+<p>当前设计使用 polling，而不是 interrupt，所以 <code>io.interrupt</code> 一直保持低。如果后面要加中断，可以在 FSM 进入 <code>sDone</code> 时拉高。</p>
+<h3 id="Bug-1-colValid-早关-2-拍导致结果丢失"><a href="#Bug-1-colValid-早关-2-拍导致结果丢失" class="headerlink" title="Bug 1: colValid 早关 2 拍导致结果丢失"></a>Bug 1: colValid 早关 2 拍导致结果丢失</h3><p><strong>现象。</strong> 把 <code>goDone</code> 改成 1024 之后，测试可以跑完，但结果不对：1024 个 <code>outValid</code> 里只有 960 个真正对应图像数据，末尾 64 个结果丢了。</p>
+<p><strong>定位。</strong> 顺着 <code>resultCnt → outValid → inValid → colValid</code> 往前追，最后问题落在 <code>LineBuffer</code> 的 <code>colValid = inImage</code> 上。<code>inImage</code> 只在 <code>outputCol = 2..33</code> 为 true，也就是每行只标记 32 列。但 <code>ShiftWindow</code> 的窗口中心是 <code>reg(2)</code>，它比刚进入窗口的新列慢 2 拍：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">outputCol=33: reg = [img_31, img_30, img_29, img_28, img_27]  center = img_29</span><br><span class="line">outputCol=34: reg = [0,      img_31, img_30, img_29, img_28]  center = img_30  ← colValid=0！</span><br><span class="line">outputCol=35: reg = [0,      0,      img_31, img_30, img_29]  center = img_31  ← colValid=0！</span><br></pre></td></tr></table></figure>
 
-<p>img_30 和 img_31 已穿过窗口中心，卷积结果已算出，但 colValid 提前关闭，outValid 未标记。每行丢 2 个，32 行丢 64 个。</p>
-<p><strong>根因。</strong> <code>colValid = inImage</code> 混淆了两件事：colOut 是否为图像列、窗口中心是否还持有有效像素。outputCol&#x3D;34-35 时 colOut 是零（正确的 padding 行为），但 img_30、img_31 仍在 reg(2) 中排队，MAC 流水线已经在算了——只是 valid 信号没给。</p>
-<p><strong>修复。</strong> right padding 区域 colValid 延长 2 拍，排空流水线尾部：</p>
+<p>也就是说，<code>img_30</code> 和 <code>img_31</code> 明明已经滑到窗口中心，卷积结果也已经算出来了，但 <code>colValid</code> 提前关掉，导致这些结果没有被标记为有效。每行丢 2 个，32 行刚好丢 64 个。</p>
+<p><strong>根因。</strong> <code>colValid = inImage</code> 把两件事混在了一起：当前 <code>colOut</code> 是不是图像列，以及窗口中心是不是还持有有效像素。<code>outputCol = 34..35</code> 时，<code>colOut</code> 应该是 0，这是正确的 right padding；但 <code>img_30</code>、<code>img_31</code> 还在窗口里向中心移动，MAC pipeline 也已经在算，只是 valid 信号提前断了。</p>
+<p><strong>修复。</strong> 在 right padding 区域把 <code>colValid</code> 多保持 2 拍，让窗口尾部的有效像素有时间排空：</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#125;.otherwise &#123;</span><br><span class="line">  io.colOut   := <span class="type">VecInit</span>.fill(<span class="number">5</span>)(<span class="number">0.</span><span class="type">S</span>(<span class="number">16.</span><span class="type">W</span>))                <span class="comment">// colOut 填零，不从 buffer 读</span></span><br><span class="line">  io.colValid := outputCol &gt;= <span class="number">34.</span><span class="type">U</span> &amp;&amp; outputCol &lt;= <span class="number">35.</span><span class="type">U</span>    <span class="comment">// ← 延长 2 拍</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>为什么不能直接扩大 <code>inImage</code> 到 35？因为 <code>bufCol = (outputCol - 2.U)(4,0)</code> 在 outputCol&#x3D;34 时得到 32，5-bit 截断后回卷到 0，会从 buffer 读出错误数据。colOut 填零 + colValid 单独延长，把”从 buffer 读什么”和”流水线是否继续运转”拆开。</p>
-<p>修复后每行 34 个 colValid × 32 行 &#x3D; 1088 个 outValid：前 2 个是流水线填充气泡（窗口中心为零），中 30 个是有效结果，后 2 个是排空产出。</p>
+<p>为什么不能直接把 <code>inImage</code> 扩到 35？因为 <code>bufCol = (outputCol - 2.U)(4,0)</code> 在 <code>outputCol = 34</code> 时得到 32，5-bit 截断后会回卷到 0，结果从 buffer 里读出错误数据。正确做法是：padding 区域的 <code>colOut</code> 仍然填 0，但 <code>colValid</code> 单独延长。这样就把“从 buffer 读什么”和“pipeline 是否继续前进”拆开了。</p>
+<p>修复后，每行会有 34 个 <code>colValid</code>，32 行一共 1088 个 <code>outValid</code>。其中前 2 个是 pipeline fill bubble，中间是有效结果，最后 2 个用于 drain window 尾部。</p>
 <table>
 <thead>
 <tr>
@@ -692,32 +689,32 @@
 </tr>
 </tbody></table>
 <p>测试端 <code>+2</code> 跳过的是开头 2 个填充气泡（窗口中心尚未进入图像区域），不是修复前丢失的结果。</p>
-<h3 id="Bug-2-tmpRow-行切换时被覆写"><a href="#Bug-2-tmpRow-行切换时被覆写" class="headerlink" title="Bug 2: tmpRow 行切换时被覆写"></a>Bug 2: tmpRow 行切换时被覆写</h3><p><strong>现象。</strong> 737 个 mismatch。不是零星错——系统性的。前 4 行正确，第 5 行起整行出错。</p>
-<p><strong>定位。</strong> 最初只打印了前 2 行输出，看起来全对。扩大到全部 32 行后，第 5 行第一个像素是 <code>0x00C0</code>——row 6 的行号。测试数据是递增序列，像素值自带身份信息：</p>
+<h3 id="Bug-2-tmpRow-行切换时被覆写"><a href="#Bug-2-tmpRow-行切换时被覆写" class="headerlink" title="Bug 2: tmpRow 行切换时被覆写"></a>Bug 2: tmpRow 行切换时被覆写</h3><p><strong>现象。</strong> 测试出现 737 个 mismatch，而且不是随机错。前 4 行输出正确，从第 5 行开始整行都偏了。</p>
+<p><strong>定位。</strong> 一开始只打印前 2 行，看起来完全正常。把输出扩大到全部 32 行后，问题才暴露出来：第 5 行第一个像素是 <code>0x00C0</code>，也就是 row 6 的行号。因为测试数据是递增序列，每个像素值都自带“身份信息”：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0x0000 = 第 0 行首个像素</span><br><span class="line">0x0020 = 第 1 行首个像素（32）</span><br><span class="line">0x00A0 = 第 5 行首个像素（160）</span><br><span class="line">0x00C0 = 第 6 行首个像素（192）</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">row0 out: 0000 0000 0000 0001 0002 ... 001d  ← 正确</span><br><span class="line">row1 out: 0000 0000 0020 0021 0022 ... 003d  ← 正确</span><br><span class="line">row2 out: 0000 0000 0040 0041 0042 ... 005d  ← 正确</span><br><span class="line">row3 out: 0000 0000 0060 0061 0062 ... 007d  ← 正确</span><br><span class="line">row4 out: 0000 0000 0080 0081 0082 ... 009d  ← 正确</span><br><span class="line">row5 out: 0000 0000 00c0 00c1 00c2 ... 00bd  ← row6 的数据!!</span><br><span class="line">row6 out: 0000 0000 00e0 00e1 00e2 ...       ← 混合</span><br></pre></td></tr></table></figure>
 
-<p>row 6 的数据跳到了 row 5——错误跨越了整行。</p>
-<p><strong>追数据来源。</strong> LineBuffer 在每行末尾将 5 行 buffer 上移：</p>
+<p>这说明 row 6 的数据提前跑到了 row 5 的位置，而且不是一个像素错，是整行级别的错。</p>
+<p><strong>追数据来源。</strong> <code>LineBuffer</code> 会在每个输出行末尾把 5 行 buffer 上移：</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">when (outputRow &gt;= <span class="number">2.</span><span class="type">U</span>) &#123;</span><br><span class="line">  buffer(<span class="number">0</span>) := buffer(<span class="number">1</span>)</span><br><span class="line">  buffer(<span class="number">1</span>) := buffer(<span class="number">2</span>)</span><br><span class="line">  buffer(<span class="number">2</span>) := buffer(<span class="number">3</span>)</span><br><span class="line">  buffer(<span class="number">3</span>) := buffer(<span class="number">4</span>)</span><br><span class="line">  buffer(<span class="number">4</span>) := tmpRow      <span class="comment">// 新数据的唯一入口</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>新数据只从一个地方进来：<code>tmpRow</code>。buffer 里有错，一定是 tmpRow 先错了。</p>
-<p>tmpRow 在 sActive 期间逐像素从 DMA 加载：</p>
+<p>新数据只有一个入口：<code>tmpRow</code>。所以如果 buffer 里出现了 row 6 的数据，问题一定先发生在 <code>tmpRow</code>。</p>
+<p><code>tmpRow</code> 在 <code>sActive</code> 期间逐像素从 DMA 加载：</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">when (io.in.valid &amp;&amp; io.in.ready) &#123;</span><br><span class="line">  tmpRow(loadCol) := io.in.bits.asSInt</span><br><span class="line">  when (loadCol === <span class="number">31.</span><span class="type">U</span>) &#123;</span><br><span class="line">    loadCol := <span class="number">0.</span><span class="type">U</span>   <span class="comment">// 32 个像素加载完，回卷</span></span><br><span class="line">  &#125;.otherwise &#123;</span><br><span class="line">    loadCol := loadCol + <span class="number">1.</span><span class="type">U</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><code>io.in.ready</code> 受 <code>needLoad</code> 控制，只看行号不看列号：</p>
+<p>当时 <code>io.in.ready</code> 只受 <code>needLoad</code> 控制，而 <code>needLoad</code> 只看行号，不看列号：</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> needLoad = outputRow &gt;= <span class="number">2</span> &amp;&amp; outputRow + <span class="number">3</span> &lt; <span class="number">32</span></span><br><span class="line">io.in.ready := needLoad &amp;&amp; !io.stall   <span class="comment">// ← 没有列范围限制</span></span><br></pre></td></tr></table></figure>
 
-<p><strong>逐拍模拟 outputRow&#x3D;2。</strong> DMA 发完 row 5 的 32 个像素后继续往前发——它不知道有 padding 列：</p>
+<p><strong>逐拍模拟 outputRow&#x3D;2。</strong> DMA 发完 row 5 的 32 个像素后会继续往前发，因为 DMA 本身不知道 LineBuffer 每行还有 padding 列：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">outputCol:  0   1   2   3  ...  31  32  33  34  35</span><br><span class="line">           左填 左填 图像 图像    图像 图像 图像 右填 右填</span><br><span class="line">needLoad:   T   T   T   T  ...  T   T   T   T   T</span><br><span class="line"></span><br><span class="line">loadCol:   0   1   2   3  ...  29  30  31   0   1   ← 列 32 时回卷！</span><br><span class="line">DMA 发来:  R5  R5  R5  R5      R5  R5  R5  R6  R6   ← R5=row5, R6=row6</span><br><span class="line">                                                     ↑</span><br><span class="line">                                   row6 覆写了 tmpRow(0) 和 tmpRow(1)！</span><br></pre></td></tr></table></figure>
 
-<p>列 32-35 期间，<code>loadCol</code> 已回卷到 0，但 <code>needLoad</code> 仍为 true。DMA 已经在发 row 6 的像素——它们覆写了 tmpRow 的前 4 个槽位。行尾移位 <code>buffer(4) := tmpRow</code> 把污染数据拉入 buffer。经过几轮移位，脏数据往上爬，最终在 outputRow&#x3D;5 露出表面。</p>
-<p><strong>根因。</strong> <code>loadCol</code> 模 32 回卷，<code>outputCol</code> 模 36 回卷。每行 4 个 padding 列形成了一个窗口——DMA 已经跑到下一行，<code>loadCol</code> 已复位，但 <code>needLoad</code> 还在无条件地让数据进来。</p>
-<p><strong>修复。</strong> DMA 加载限制在图像列期间：</p>
+<p>在列 32..35 期间，<code>loadCol</code> 已经回卷到 0，但 <code>needLoad</code> 仍然是 true。此时 DMA 已经开始发送 row 6 的像素，于是这些像素覆写了 <code>tmpRow</code> 前几个位置。行尾执行 <code>buffer(4) := tmpRow</code> 时，污染后的 <code>tmpRow</code> 被拉进 buffer。再经过几轮上移，错误数据就会在 <code>outputRow = 5</code> 暴露出来。</p>
+<p><strong>根因。</strong> <code>loadCol</code> 是按 32 回卷的，但 <code>outputCol</code> 是按 36 回卷的。每行多出来的 4 个 padding 列形成了一个危险窗口：DMA 已经进入下一行，<code>loadCol</code> 也回到了 0，但 <code>needLoad</code> 还在放行输入。</p>
+<p><strong>修复。</strong> 让 DMA input 只在真实图像列期间被接收：</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 修改前</span></span><br><span class="line">io.in.ready := needLoad &amp;&amp; !io.stall</span><br><span class="line"></span><br><span class="line"><span class="comment">// 修改后</span></span><br><span class="line">io.in.ready := needLoad &amp;&amp; inImage &amp;&amp; !io.stall</span><br></pre></td></tr></table></figure>
 
-<p>outputCol 34-35 期间 <code>inImage</code> 为 false，不再加载，tmpRow 保持完整，行尾移位进入 buffer 的数据是正确的。</p>
+<p>这样在 <code>outputCol = 34..35</code> 期间，<code>inImage</code> 为 false，<code>LineBuffer</code> 不再接收新的 DMA 数据，<code>tmpRow</code> 就不会被下一行提前覆写。</p>
 <hr>
 <h2 id="Phase-6：Chipyard-集成与-Verilator-构建"><a href="#Phase-6：Chipyard-集成与-Verilator-构建" class="headerlink" title="Phase 6：Chipyard 集成与 Verilator 构建"></a>Phase 6：Chipyard 集成与 Verilator 构建</h2><p>到 Phase 5 为止，加速器仍然是一个 standalone Chisel module。测试时，testbench 直接拉高 <code>start</code>，直接提供输入矩阵、kernel 和输出矩阵的基地址，并把 <code>SimpleMemIO</code> 接到一个模拟内存上。这样可以验证 datapath 是否正确，但它还不是一个真正由处理器控制的加速器。</p>
 <p>Phase 6 的目标是把 standalone 设计移植到 Chipyard 里，让 Rocket core 执行裸机 C 程序，并通过 custom RoCC 指令控制卷积加速器。也就是说，软件侧仍然使用 Phase 0 里定义的 <code>SET_ADDR_IN</code>、<code>SET_ADDR_KER</code>、<code>SET_ADDR_OUT</code>、<code>START</code> 和 <code>POLL_STATUS</code> 接口，但这些命令现在会真的从 CPU 发到 RoCC accelerator。</p>
@@ -745,7 +742,7 @@
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> control = <span class="type">Module</span>(<span class="keyword">new</span> <span class="type">ConvControl</span>)</span><br><span class="line"><span class="keyword">val</span> accel   = <span class="type">Module</span>(<span class="keyword">new</span> <span class="type">ConvAccelTop</span>)</span><br></pre></td></tr></table></figure>
 
 <p><code>ConvControl</code> 负责 command decode、地址寄存器和 status bits。<code>ConvAccelTop</code> 则是前面 standalone 阶段已经完成的卷积 datapath。换句话说，RoCC wrapper 没有重写卷积计算逻辑，而是在 standalone datapath 外面加了一层“CPU 可控制”的外壳。</p>
-<h3 id="Command-Path"><a href="#Command-Path" class="headerlink" title="Command Path"></a>Command Path</h3><p>当 Rocket 解码到一条 <code>custom0</code> 指令时，它会把这条指令里的关键字段拆出来，并打包成 RoCC 接口上的命令包，也就是 <code>io.cmd.bits</code>。</p>
+<h3 id="命令路径"><a href="#命令路径" class="headerlink" title="命令路径"></a>命令路径</h3><p>当 Rocket 解码到一条 <code>custom0</code> 指令时，它会把这条指令里的关键字段拆出来，并打包成 RoCC 接口上的命令包，也就是 <code>io.cmd.bits</code>。</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">io.cmd.bits.inst.funct  <span class="comment">// funct7 command number</span></span><br><span class="line">io.cmd.bits.rs1         <span class="comment">// rs1 value, usually an address</span></span><br><span class="line">io.cmd.bits.rs2         <span class="comment">// rs2 value, unused here</span></span><br><span class="line">io.cmd.bits.inst.rd     <span class="comment">// destination register for response</span></span><br></pre></td></tr></table></figure>
 
 <p>这条命令只有在 <code>valid</code> 和 <code>ready</code> 同时为高时才会被真正接收：</p>
@@ -754,7 +751,7 @@
 <p><code>cmdFire</code> 表示 RoCC 命令已经完成握手，并在当前 cycle 真正进入加速器。之后 RoCC wrapper 会把这条命令中已经解码好的字段继续转发给 <code>ConvControl</code>，让 <code>ConvControl</code> 根据 <code>funct</code> 判断这是设置输入地址、设置 kernel 地址、设置输出地址、启动计算，还是查询状态。</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">control.io.instrCmd.valid  := cmdFire</span><br><span class="line">control.io.instrCmd.funct7 := io.cmd.bits.inst.funct</span><br><span class="line">control.io.instrCmd.rs1    := io.cmd.bits.rs1</span><br><span class="line">control.io.instrCmd.rd     := io.cmd.bits.inst.rd</span><br></pre></td></tr></table></figure>
 
-<h3 id="Memory-Path"><a href="#Memory-Path" class="headerlink" title="Memory Path"></a>Memory Path</h3><p>Standalone 加速器使用的是项目里定义的 <code>SimpleMemIO</code>，它只描述了一个简单的 memory request&#x2F;response 接口。进入 RoCC 之后，真正能访问内存的是 Rocket 暴露出来的 DCache 接口，也就是 <code>io.mem</code>。因此 RoCC wrapper 需要在这两种接口之间做一次转换。</p>
+<h3 id="内存路径"><a href="#内存路径" class="headerlink" title="内存路径"></a>内存路径</h3><p>Standalone 加速器使用的是项目里定义的 <code>SimpleMemIO</code>，它只描述了一个简单的 memory request&#x2F;response 接口。进入 RoCC 之后，真正能访问内存的是 Rocket 暴露出来的 DCache 接口，也就是 <code>io.mem</code>。因此 RoCC wrapper 需要在这两种接口之间做一次转换。</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">io.mem.req.valid := accel.io.mem.req.valid</span><br><span class="line">accel.io.mem.req.ready := io.mem.req.fire</span><br><span class="line"></span><br><span class="line">io.mem.req.bits.addr := accel.io.mem.req.bits.addr</span><br><span class="line">io.mem.req.bits.cmd  := <span class="type">Mux</span>(accel.io.mem.req.bits.isWrite, <span class="type">M_XWR</span>, <span class="type">M_XRD</span>)</span><br><span class="line">io.mem.req.bits.size := log2Ceil(<span class="number">8</span>).<span class="type">U</span>          <span class="comment">// fixed 64-bit transfer</span></span><br><span class="line">io.mem.req.bits.data := accel.io.mem.req.bits.data</span><br></pre></td></tr></table></figure>
 
 <p>这里最关键的是前两行：</p>
@@ -765,7 +762,7 @@
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">io.mem.req.valid &amp;&amp; io.mem.req.ready</span><br></pre></td></tr></table></figure>
 
 <p>因此，<code>io.mem.req.fire</code> 为高就表示这一拍确实成功发出了一条 DCache request，并且 DCache 已经收下了它。这样一来，<code>ConvDMA</code> 仍然可以认为自己在和一个简单的 64-bit memory interface 通信，但这个请求实际会被 wrapper 翻译成 Rocket DCache request。</p>
-<p>response path 则是反方向：</p>
+<p>响应路径则是反方向：</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">accel.io.mem.resp.valid := io.mem.resp.valid</span><br><span class="line">accel.io.mem.resp.bits.data := io.mem.resp.bits.data</span><br><span class="line">accel.io.mem.resp.bits.tag  := io.mem.resp.bits.tag</span><br></pre></td></tr></table></figure>
 
 <p>完成这一阶段集成后，加速器就可以读取 C 程序中分配的 input 和 kernel 数组，并把卷积结果写回软件可见的 output buffer。此时设计已经从“testbench 驱动的 standalone module”变成了“Rocket CPU 通过 RoCC 控制的系统级加速器”。</p>
