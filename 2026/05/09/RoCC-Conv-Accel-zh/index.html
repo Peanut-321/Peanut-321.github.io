@@ -470,7 +470,7 @@
 <hr>
 <h2 id="Phase-4：计算数据通路-—-LineBuffer-ConvEngine"><a href="#Phase-4：计算数据通路-—-LineBuffer-ConvEngine" class="headerlink" title="Phase 4：计算数据通路 — LineBuffer &amp; ConvEngine"></a>Phase 4：计算数据通路 — LineBuffer &amp; ConvEngine</h2><p>DMA 每次送进来的只是一个像素，而且顺序是 row-major：第 0 行从左到右，然后第 1 行、第 2 行继续往下。但 5×5 卷积在计算输出像素 <code>(r, c)</code> 时，需要的是一个完整的 5×5 邻域。也就是说，单个像素本身并不能直接喂给 MAC 单元，datapath 必须先把连续输入流重组成一个 5×5 window。</p>
 <p>这本质上是一个数据重排问题，可以自然拆成两个方向：<code>LineBuffer</code> 处理垂直方向，也就是行；<code>ShiftWindow</code> 处理水平方向，也就是列。<code>LineBuffer</code> 从 DMA stream 里收集 5 行像素，每拍输出同一列上的 5 个相邻像素；<code>ShiftWindow</code> 再缓存连续 5 列，最终拼出完整的 5×5 window。</p>
-<p><strong>为什么不直接从 SRAM 读？</strong> 因为每个输出像素都要访问 5 个不同行的值。如果每拍都直接去 SRAM 里取，就相当于需要 5 个独立读端口，这对硬件来说很贵。<code>LineBuffer</code> 用一个写端口接收 DMA 输入，再用 5 路读出同一列的 5 行数据。160 个 entry 的寄存器堆，比一个 5-port SRAM 简单得多。</p>
+<h3 id="Part-A：LineBuffer"><a href="#Part-A：LineBuffer" class="headerlink" title="Part A：LineBuffer"></a>Part A：LineBuffer</h3><p><strong>为什么不直接从 SRAM 读？</strong> 因为每个输出像素都要访问 5 个不同行的值。如果每拍都直接去 SRAM 里取，就相当于需要 5 个独立读端口，这对硬件来说很贵。<code>LineBuffer</code> 用一个写端口接收 DMA 输入，再用 5 路读出同一列的 5 行数据。160 个 entry 的寄存器堆，比一个 5-port SRAM 简单得多。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sIdle ──► sPrime (加载前 5 行) ──► sActive (32 个输出行) ──► sDone</span><br></pre></td></tr></table></figure>
 <p>在 <code>sActive</code> 状态下，buffer 每个输出行会吐出 36 列：左边 2 列 padding，中间 32 列真实图像，右边 2 列 padding。与此同时，DMA 会把下一行输入加载到单独的 <code>tmpRow</code> 里。等当前输出行结束，5 行 buffer 整体上移：第 0 行丢弃，第 1 到第 3 行上移，<code>tmpRow</code> 进入第 4 行。如果没有 <code>tmpRow</code>，DMA 就可能覆盖还在被读取的行，load 和 output 也没法重叠。</p>
 <p>zero-padding 由两部分共同完成：</p>
