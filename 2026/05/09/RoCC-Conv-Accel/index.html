@@ -204,7 +204,7 @@
   <div class="post-toc" id="post-toc">
     <h2 class="post-toc-title">Contents</h2>
     <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-0-Project-Planning-Protocol-Design"><span class="toc-text">Phase 0: Project Planning &amp; Protocol Design</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-1-Architecture-Overview"><span class="toc-text">Phase 1: Architecture Overview</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-2-ConvControl-%E2%80%94-Instruction-Decode-FSM"><span class="toc-text">Phase 2: ConvControl — Instruction Decode &amp; FSM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-3-ConvDMA-%E2%80%94-TileLink-DMA-Engine"><span class="toc-text">Phase 3: ConvDMA — TileLink DMA Engine</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-4-Compute-Datapath-%E2%80%94-LineBuffer-ConvEngine"><span class="toc-text">Phase 4: Compute Datapath — LineBuffer &amp; ConvEngine</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-5-Top-Level-Integration-Master-FSM"><span class="toc-text">Phase 5: Top-Level Integration &amp; Master FSM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-6-Chipyard-Integration-Verilator-Build"><span class="toc-text">Phase 6: Chipyard Integration &amp; Verilator Build</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-7-Bare-Metal-C-Test-Program"><span class="toc-text">Phase 7: Bare-Metal C Test Program</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-8-Performance-Report-Summary"><span class="toc-text">Phase 8: Performance Report &amp; Summary</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-0-Project-Planning-Protocol-Design"><span class="toc-text">Phase 0: Project Planning &amp; Protocol Design</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-1-Architecture-Overview"><span class="toc-text">Phase 1: Architecture Overview</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-2-ConvControl-%E2%80%94-Instruction-Decode-FSM"><span class="toc-text">Phase 2: ConvControl — Instruction Decode &amp; FSM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-3-ConvDMA-%E2%80%94-TileLink-DMA-Engine"><span class="toc-text">Phase 3: ConvDMA — TileLink DMA Engine</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-4-Compute-Datapath-%E2%80%94-LineBuffer-ConvEngine"><span class="toc-text">Phase 4: Compute Datapath — LineBuffer &amp; ConvEngine</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-5-Top-Level-Integration-Master-FSM"><span class="toc-text">Phase 5: Top-Level Integration &amp; Master FSM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-6-Chipyard-Integration-Verilator-Build"><span class="toc-text">Phase 6: Chipyard Integration &amp; Verilator Build</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-7-Bare-Metal-C-Test-Program"><span class="toc-text">Phase 7: Bare-Metal C Test Program</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phase-8-Performance-Report-Summary"><span class="toc-text">Phase 8: Performance Report &amp; Summary</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#References"><span class="toc-text">References</span></a></li></ol>
     </div>
   </div>
   
@@ -792,13 +792,105 @@
 
 <p>After this connection, the accelerator can read the input and kernel arrays allocated by the C program, then write the output results back into the software-visible output buffer.</p>
 <hr>
-<h2 id="Phase-7-Bare-Metal-C-Test-Program"><a href="#Phase-7-Bare-Metal-C-Test-Program" class="headerlink" title="Phase 7: Bare-Metal C Test Program"></a>Phase 7: Bare-Metal C Test Program</h2><blockquote>
-<p>TODO</p>
-</blockquote>
+<h2 id="Phase-7-Bare-Metal-C-Test-Program"><a href="#Phase-7-Bare-Metal-C-Test-Program" class="headerlink" title="Phase 7: Bare-Metal C Test Program"></a>Phase 7: Bare-Metal C Test Program</h2><p>After the accelerator is registered in Chipyard, the next step is to drive it from software. The test program is a bare-metal C benchmark running on Rocket. It does not call a device driver or memory-mapped register file; instead, it emits RoCC custom instructions directly.</p>
+<h3 id="RoCC-Software-Wrappers"><a href="#RoCC-Software-Wrappers" class="headerlink" title="RoCC Software Wrappers"></a>RoCC Software Wrappers</h3><p>The C side wraps the five accelerator commands in small helper functions:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span> <span class="title function_">set_addr_in</span><span class="params">(<span class="type">uint64_t</span> addr)</span> &#123;</span><br><span class="line">    ROCC_INSTRUCTION_SS(<span class="number">0</span>, addr, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span> <span class="title function_">set_addr_ker</span><span class="params">(<span class="type">uint64_t</span> addr)</span> &#123;</span><br><span class="line">    ROCC_INSTRUCTION_SS(<span class="number">0</span>, addr, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span> <span class="title function_">set_addr_out</span><span class="params">(<span class="type">uint64_t</span> addr)</span> &#123;</span><br><span class="line">    ROCC_INSTRUCTION_SS(<span class="number">0</span>, addr, <span class="number">0</span>, <span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span> <span class="title function_">start_accel</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    ROCC_INSTRUCTION_SS(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">3</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">uint64_t</span> <span class="title function_">poll_status</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    <span class="type">uint64_t</span> status;</span><br><span class="line">    ROCC_INSTRUCTION_DSS(<span class="number">0</span>, status, <span class="number">0</span>, <span class="number">0</span>, <span class="number">4</span>);</span><br><span class="line">    <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The first argument, <code>0</code>, selects the <code>custom0</code> opcode. The last argument is the <code>funct7</code> field decoded by <code>ConvControl</code>:</p>
+<table>
+<thead>
+<tr>
+<th>C helper</th>
+<th>Opcode set</th>
+<th>funct7</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>set_addr_in(addr)</code></td>
+<td><code>custom0</code></td>
+<td>0</td>
+<td>Store input base address</td>
+</tr>
+<tr>
+<td><code>set_addr_ker(addr)</code></td>
+<td><code>custom0</code></td>
+<td>1</td>
+<td>Store kernel base address</td>
+</tr>
+<tr>
+<td><code>set_addr_out(addr)</code></td>
+<td><code>custom0</code></td>
+<td>2</td>
+<td>Store output base address</td>
+</tr>
+<tr>
+<td><code>start_accel()</code></td>
+<td><code>custom0</code></td>
+<td>3</td>
+<td>Start the accelerator</td>
+</tr>
+<tr>
+<td><code>poll_status()</code></td>
+<td><code>custom0</code></td>
+<td>4</td>
+<td>Read the status register</td>
+</tr>
+</tbody></table>
+<p>This is the software-visible side of the same protocol defined in Phase 0 and decoded in Phase 6.</p>
+<h3 id="Benchmark-Flow"><a href="#Benchmark-Flow" class="headerlink" title="Benchmark Flow"></a>Benchmark Flow</h3><p>The benchmark first computes a software reference, then launches the accelerator on the same input and kernel buffers:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">sw_start = rdcycle();</span><br><span class="line">software_conv_5x5_same_q88();</span><br><span class="line">sw_end = rdcycle();</span><br><span class="line">sw_cycles = sw_end - sw_start;</span><br><span class="line"></span><br><span class="line">set_addr_in((<span class="type">uint64_t</span>)(<span class="type">uintptr_t</span>)input);</span><br><span class="line">set_addr_ker((<span class="type">uint64_t</span>)(<span class="type">uintptr_t</span>)kernel);</span><br><span class="line">set_addr_out((<span class="type">uint64_t</span>)(<span class="type">uintptr_t</span>)hw_out);</span><br><span class="line"></span><br><span class="line">fence_rw();</span><br><span class="line"></span><br><span class="line">acc_start = rdcycle();</span><br><span class="line">start_accel();</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (poll_count = <span class="number">0</span>; poll_count &lt; MAX_POLL; poll_count++) &#123;</span><br><span class="line">    status = poll_status();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (poll_count &gt; <span class="number">10</span> &amp;&amp; (status &amp; <span class="number">0x2</span>)) &#123;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fence_rw();</span><br><span class="line"></span><br><span class="line">acc_end = rdcycle();</span><br><span class="line">acc_cycles = acc_end - acc_start;</span><br></pre></td></tr></table></figure>
+
+<p><code>rdcycle</code> reads the RISC-V cycle counter. The accelerator timing window starts after address setup and the first fence, then includes <code>START</code>, polling, completion wait, and the final fence.</p>
+<p>The <code>fence rw, rw</code> is important because the CPU and accelerator share memory. Before starting the accelerator, the benchmark has already written the input and kernel arrays. The fence makes those writes visible to the memory system before the accelerator begins reading through DCache.</p>
+<p>The polling loop waits for bit 1 of the status register:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">status &amp; 0x2  -&gt; done</span><br></pre></td></tr></table></figure>
+
+<p>Once <code>done</code> is observed, the program compares the hardware output buffer against the software reference. This phase therefore checks two things at once: Rocket can control the accelerator through RoCC, and the accelerator can read and write C-visible memory correctly.</p>
 <hr>
-<h2 id="Phase-8-Performance-Report-Summary"><a href="#Phase-8-Performance-Report-Summary" class="headerlink" title="Phase 8: Performance Report &amp; Summary"></a>Phase 8: Performance Report &amp; Summary</h2><blockquote>
-<p>TODO</p>
-</blockquote>
+<h2 id="Phase-8-Performance-Report-Summary"><a href="#Phase-8-Performance-Report-Summary" class="headerlink" title="Phase 8: Performance Report &amp; Summary"></a>Phase 8: Performance Report &amp; Summary</h2><p>The final benchmark compares the software convolution against the RoCC accelerator path.</p>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Cycles</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Software convolution</td>
+<td>586,893</td>
+</tr>
+<tr>
+<td>RoCC accelerator</td>
+<td>3,312</td>
+</tr>
+<tr>
+<td>Speedup</td>
+<td>177.20×</td>
+</tr>
+<tr>
+<td>Cycle reduction</td>
+<td>99.43%</td>
+</tr>
+</tbody></table>
+<p>The software version spends most of its time in nested loops: address calculation, boundary checks, loads, multiplies, adds, stores, and branches. The accelerator removes that loop overhead from the CPU. The sliding-window pattern, 5×5 MAC pipeline, buffering, and memory traffic are all handled in hardware.</p>
+<p>The speedup is not just from a faster multiplier. It comes from moving the whole convolution dataflow into a dedicated datapath:</p>
+<ul>
+<li><code>LineBuffer</code> and <code>ShiftWindow</code> reuse pixels instead of repeatedly loading overlapping windows.</li>
+<li><code>ConvUnit</code> pipelines the 25-way MAC tree.</li>
+<li><code>InputQueue</code> and <code>StoreQueue</code> absorb rate mismatches between DMA and compute.</li>
+<li>RoCC reduces CPU involvement to a few setup, start, and polling instructions.</li>
+</ul>
+<p>At the end of this project, the design is no longer just a standalone Chisel module. It is a Rocket-controlled RoCC accelerator integrated through Chipyard, launched from bare-metal C, accessing memory through the DCache interface, and reporting completion through the same custom instruction protocol used for configuration.</p>
+<hr>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li>Chipyard Documentation, <a target="_blank" rel="noopener" href="https://chipyard.readthedocs.io/en/stable/Customization/RoCC-Accelerators.html">Adding a RoCC Accelerator</a>.</li>
+<li>CHIPS Alliance, <a target="_blank" rel="noopener" href="https://github.com/chipsalliance/rocket-chip">Rocket Chip Generator</a>.</li>
+<li>RISC-V International, <a target="_blank" rel="noopener" href="https://github.com/riscv/riscv-isa-manual">RISC-V Instruction Set Manual</a>.</li>
+<li>Chisel Documentation, <a target="_blank" rel="noopener" href="https://www.chisel-lang.org/docs/explanations/interfaces-and-connections">Interfaces and Connections</a>.</li>
+<li>Verilator, <a target="_blank" rel="noopener" href="https://verilator.org/guide/latest/">Verilator User’s Guide</a>.</li>
+<li>Schuyler Eldridge, <a target="_blank" rel="noopener" href="https://github.com/seldridge/rocket-rocc-examples">rocket-rocc-examples</a>, used as the basis for the RoCC C instruction macro style.</li>
+</ul>
 
     
   </div>
