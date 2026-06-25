@@ -216,13 +216,13 @@
 <ul>
 <li>Repository：<a target="_blank" rel="noopener" href="https://github.com/Peanut-321/MyConvAccel">MyConvAccel</a></li>
 </ul>
-<h2 id="项目目标与难点"><a href="#项目目标与难点" class="headerlink" title="项目目标与难点"></a>项目目标与难点</h2><p>这个项目要做的是一个面向固定 5×5 卷积的硬件加速器，输入规模是 32×32。目标不是只让一个 standalone Chisel datapath 在 testbench 里跑通，而是把它进一步接入 Rocket&#x2F;Chipyard，变成一个可以被 C 程序通过 RoCC 指令启动的系统级 accelerator。</p>
+<h2 id="项目目标与难点"><a href="#项目目标与难点" class="headerlink" title="项目目标与难点"></a>项目目标与难点</h2><p>这个项目要做的是一个面向固定 5×5 卷积的硬件加速器，输入规模是 32×32。目标不是只让一个 standalone Chisel datapath 在 testbench 里跑通，而是把它进一步接入 Rocket&#x2F;Chipyard，变成一个可以被 C 程序通过 RoCC 指令启动的系统级加速器。</p>
 <p>真正的难点不只是“做 25 个乘加”。卷积加速器还必须处理滑动窗口的数据复用、DMA 读写、Q8.8 定点数计算、流水线之间的反压，以及 CPU 能看见的控制协议。</p>
 <p>这个设计主要要打通三条路径：</p>
 <ul>
 <li>计算路径：用 LineBuffer、ShiftWindow 和 MAC pipeline 完成 5×5 卷积。</li>
 <li>内存路径：从内存读取 input&#x2F;kernel，并把 output 写回软件可见的 buffer。</li>
-<li>控制路径：Rocket 通过 RoCC custom instruction 设置地址、启动加速器、轮询状态。</li>
+<li>控制路径：Rocket 通过 RoCC custom instruction 设置地址、启动加速器并轮询状态。</li>
 </ul>
 <p>预期结果是：CPU 不再逐像素执行卷积循环，而是只发少量 RoCC 指令；数据搬运、窗口构造、卷积计算和结果写回都由硬件自动完成。</p>
 <h2 id="Phase-0：方案规划-协议设计"><a href="#Phase-0：方案规划-协议设计" class="headerlink" title="Phase 0：方案规划 &amp; 协议设计"></a>Phase 0：方案规划 &amp; 协议设计</h2><p>在写 Chisel 之前，先把最基本的问题定下来：CPU 怎么控制加速器？软件要看到什么接口？硬件内部要支持哪些状态？</p>
@@ -432,7 +432,8 @@
 <li><strong>sError：</strong> 保持 <code>addrErr = 1</code>。只有 SET 能拉回 sIdle——没有直达 sBusy 的路径。</li>
 </ul>
 <hr>
-<h2 id="Phase-3：ConvDMA-—-TileLink-DMA-引擎"><a href="#Phase-3：ConvDMA-—-TileLink-DMA-引擎" class="headerlink" title="Phase 3：ConvDMA — TileLink DMA 引擎"></a>Phase 3：ConvDMA — TileLink DMA 引擎</h2><p>卷积引擎需要不断从 SRAM 读取输入像素和 kernel 权重，最后还要把结果写回内存。<code>ConvDMA</code> 就是专门负责这些数据传输的模块。</p>
+<h2 id="Phase-3：ConvDMA-—-TileLink-DMA-引擎"><a href="#Phase-3：ConvDMA-—-TileLink-DMA-引擎" class="headerlink" title="Phase 3：ConvDMA — TileLink DMA 引擎"></a>Phase 3：ConvDMA — TileLink DMA 引擎</h2><p><strong>核心思路：</strong> <code>ConvDMA</code> 把内存读写变成 valid&#x2F;ready 数据流。串行版本方便验证；流水线版本通过重叠 request issue 和 response unpack 来提高吞吐。</p>
+<p>卷积引擎需要不断从 SRAM 读取输入像素和 kernel 权重，最后还要把结果写回内存。<code>ConvDMA</code> 就是专门负责这些数据传输的模块。</p>
 <p>Phase 3 先从最容易验证的串行 DMA 开始：同一时间只允许一个 memory request 在路上。这样 FSM 足够简单，测试时也容易逐拍对齐。确认串行版本正确之后，再考虑把请求发射和响应处理流水线化。</p>
 <h3 id="DMA-接口定义"><a href="#DMA-接口定义" class="headerlink" title="DMA 接口定义"></a>DMA 接口定义</h3><p>DMA 和 L1 data cache 之间用三个 Bundle 描述接口。这些 Bundle 只定义信号本身，不包含控制逻辑；真正的数据是否能在某一拍传过去，仍然由 <code>Decoupled</code> 的 valid&#x2F;ready 握手决定。</p>
 <ul>
@@ -468,7 +469,8 @@
 <p><strong>4. sLoadActive — 并发 FSM（核心改动）</strong></p>
 <p>把串行版本里的 <code>sIssue</code>、<code>sWaitResp</code>、<code>sUnpack</code> 合并成一个 <code>sLoadActive</code> 状态。在这个状态里，两个独立的 <code>when</code> 块同时工作：issue engine 负责继续发请求，unpack engine 负责从 FIFO 里取数据拆包。两者可以在同一个 cycle 同时前进，这才是真正的 overlap。</p>
 <hr>
-<h2 id="Phase-4：计算数据通路-—-LineBuffer-ConvEngine"><a href="#Phase-4：计算数据通路-—-LineBuffer-ConvEngine" class="headerlink" title="Phase 4：计算数据通路 — LineBuffer &amp; ConvEngine"></a>Phase 4：计算数据通路 — LineBuffer &amp; ConvEngine</h2><p>DMA 每次送进来的只是一个像素，而且顺序是 row-major：第 0 行从左到右，然后第 1 行、第 2 行继续往下。但 5×5 卷积在计算输出像素 <code>(r, c)</code> 时，需要的是一个完整的 5×5 邻域。也就是说，单个像素本身并不能直接喂给 MAC 单元，datapath 必须先把连续输入流重组成一个 5×5 window。</p>
+<h2 id="Phase-4：计算数据通路-—-LineBuffer-ConvEngine"><a href="#Phase-4：计算数据通路-—-LineBuffer-ConvEngine" class="headerlink" title="Phase 4：计算数据通路 — LineBuffer &amp; ConvEngine"></a>Phase 4：计算数据通路 — LineBuffer &amp; ConvEngine</h2><p><strong>核心思路：</strong> DMA 输入是 row-major 的单像素流，而卷积需要 5×5 window。<code>LineBuffer</code> 负责跨行复用，<code>ShiftWindow</code> 负责跨列拼窗，<code>ConvUnit</code> 负责流水线乘加。</p>
+<p>DMA 每次送进来的只是一个像素，而且顺序是 row-major：第 0 行从左到右，然后第 1 行、第 2 行继续往下。但 5×5 卷积在计算输出像素 <code>(r, c)</code> 时，需要的是一个完整的 5×5 邻域。也就是说，单个像素本身并不能直接喂给 MAC 单元，datapath 必须先把连续输入流重组成一个 5×5 window。</p>
 <p>这本质上是一个数据重排问题，可以自然拆成两个方向：<code>LineBuffer</code> 处理垂直方向，也就是行；<code>ShiftWindow</code> 处理水平方向，也就是列。<code>LineBuffer</code> 从 DMA stream 里收集 5 行像素，每拍输出同一列上的 5 个相邻像素；<code>ShiftWindow</code> 再缓存连续 5 列，最终拼出完整的 5×5 window。</p>
 <h3 id="Part-A：LineBuffer"><a href="#Part-A：LineBuffer" class="headerlink" title="Part A：LineBuffer"></a>Part A：LineBuffer</h3><p><strong>为什么不直接从 SRAM 读？</strong> 因为每个输出像素都要访问 5 个不同行的值。如果每拍都直接去 SRAM 里取，就相当于需要 5 个独立读端口，这对硬件来说很贵。<code>LineBuffer</code> 用一个写端口接收 DMA 输入，再用 5 路读出同一列的 5 行数据。160 个 entry 的寄存器堆，比一个 5-port SRAM 简单得多。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sIdle ──► sPrime (加载前 5 行) ──► sActive (32 个输出行) ──► sDone</span><br></pre></td></tr></table></figure>
@@ -487,7 +489,8 @@
 <p>这里没有用 Wallace tree，是因为 pairwise tree 结构更规整，深度正好是 <code>ceil(log₂ 25) = 5</code> 级，pipeline register 也很自然地插在每一级之间。这样 critical path 基本被压到一次 32-bit addition。</p>
 <p><strong>ConvEngine — 顶层黏合。</strong> <code>ConvEngine</code> 把 <code>ShiftWindow</code>、<code>KernelROM</code> 和 <code>ConvUnit</code> 接起来：<code>colIn</code> &#x2F; <code>colValid</code> 进入 <code>ShiftWindow</code>，<code>window</code> 和 <code>kernel</code> 再送进 <code>ConvUnit</code>。<code>inValid</code> 通过 <code>RegNext</code> 延迟 1 拍，用来对齐 <code>ShiftWindow</code> 的寄存器输出；<code>outValid</code> 则是 <code>inValid</code> 再经过 5 拍延迟，对齐 MAC pipeline 的输出。当 <code>stall</code> 拉高时，整条 compute pipeline 会被冻结，避免下游队列满了还继续产出结果。</p>
 <hr>
-<h2 id="Phase-5：顶层集成与主-FSM"><a href="#Phase-5：顶层集成与主-FSM" class="headerlink" title="Phase 5：顶层集成与主 FSM"></a>Phase 5：顶层集成与主 FSM</h2><p>Phase 1 到 Phase 4 已经把主要模块各自做出来了。Phase 5 的任务是把它们接成一个完整的 standalone top：</p>
+<h2 id="Phase-5：顶层集成与主-FSM"><a href="#Phase-5：顶层集成与主-FSM" class="headerlink" title="Phase 5：顶层集成与主 FSM"></a>Phase 5：顶层集成与主 FSM</h2><p><strong>核心思路：</strong> 顶层 FSM 只负责阶段切换，不逐拍调度每个像素。某一拍数据能不能前进，交给 Queue 和 valid&#x2F;ready 握手决定。</p>
+<p>Phase 1 到 Phase 4 已经把主要模块各自做出来了。Phase 5 的任务是把它们接成一个完整的 standalone top：</p>
 <ul>
 <li>实例化 <code>ConvDMA</code>、<code>LineBuffer</code>、<code>ConvEngine</code> 和两个 elastic Queue。</li>
 <li>加一个 5-state execution FSM，负责任务阶段切换：load kernel、load input、compute&#x2F;store。</li>
@@ -619,23 +622,23 @@
 <thead>
 <tr>
 <th>重叠</th>
-<th>谁跟谁</th>
+<th>说明</th>
 <th>阶段</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>加载 ↔ 计算</td>
-<td>DMA 写 InputQueue</td>
-<td>LineBuffer 取</td>
+<td>DMA 写 <code>InputQueue</code>，同时 <code>LineBuffer</code> 从中取数据</td>
+<td>sLoadInput</td>
 </tr>
 <tr>
 <td>计算 ↔ 写回</td>
-<td>ConvEngine 产结果</td>
-<td>DMA 写 StoreQueue</td>
+<td><code>ConvEngine</code> 产结果，同时 DMA 从 <code>StoreQueue</code> 写回</td>
+<td>sCompute</td>
 </tr>
 <tr>
 <td>管线排空</td>
-<td>DMA load 已结束，计算仍在 drain</td>
+<td>DMA load 已结束，compute pipeline 继续 drain</td>
 <td>sCompute 尾部</td>
 </tr>
 </tbody></table>
@@ -657,6 +660,7 @@
 <p>顶层 <code>io.busy</code> 由主 FSM 驱动：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">io.busy = state =/= sIdle &amp;&amp; state =/= sDone</span><br></pre></td></tr></table></figure>
 <p>当前设计使用 polling，而不是 interrupt，所以 <code>io.interrupt</code> 一直保持低。如果后面要加中断，可以在 FSM 进入 <code>sDone</code> 时拉高。</p>
+<p>下面两个 bug 保留下来，是因为它们记录了这个项目里最容易忘的时序教训：数据走到了正确位置，并不等于 valid 信号也已经和它对齐。</p>
 <h3 id="Bug-1-colValid-早关-2-拍导致结果丢失"><a href="#Bug-1-colValid-早关-2-拍导致结果丢失" class="headerlink" title="Bug 1: colValid 早关 2 拍导致结果丢失"></a>Bug 1: colValid 早关 2 拍导致结果丢失</h3><p><strong>现象。</strong> 把 <code>goDone</code> 改成 1024 之后，测试可以跑完，但结果不对：1024 个 <code>outValid</code> 里只有 960 个真正对应图像数据，末尾 64 个结果丢了。</p>
 <p><strong>定位。</strong> 顺着 <code>resultCnt → outValid → inValid → colValid</code> 往前追，最后问题落在 <code>LineBuffer</code> 的 <code>colValid = inImage</code> 上。<code>inImage</code> 只在 <code>outputCol = 2..33</code> 为 true，也就是每行只标记 32 列。但 <code>ShiftWindow</code> 的窗口中心是 <code>reg(2)</code>，它比刚进入窗口的新列慢 2 拍：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">outputCol=33: reg = [img_31, img_30, img_29, img_28, img_27]  center = img_29</span><br><span class="line">outputCol=34: reg = [0,      img_31, img_30, img_29, img_28]  center = img_30  ← colValid=0！</span><br><span class="line">outputCol=35: reg = [0,      0,      img_31, img_30, img_29]  center = img_31  ← colValid=0！</span><br></pre></td></tr></table></figure>
@@ -698,7 +702,7 @@
 </tr>
 </tbody></table>
 <p>测试端 <code>+2</code> 跳过的是开头 2 个填充气泡（窗口中心尚未进入图像区域），不是修复前丢失的结果。</p>
-<h3 id="Bug-2-tmpRow-行切换时被覆写"><a href="#Bug-2-tmpRow-行切换时被覆写" class="headerlink" title="Bug 2: tmpRow 行切换时被覆写"></a>Bug 2: tmpRow 行切换时被覆写</h3><p><strong>现象。</strong> 测试出现 737 个 mismatch，而且不是随机错。前 4 行输出正确，从第 5 行开始整行都偏了。</p>
+<h3 id="Bug-2-tmpRow-行切换时被覆写"><a href="#Bug-2-tmpRow-行切换时被覆写" class="headerlink" title="Bug 2: tmpRow 行切换时被覆写"></a>Bug 2: tmpRow 行切换时被覆写</h3><p><strong>现象。</strong> 测试出现 737 个 mismatch，而且不是随机错。前 5 行（row0 到 row4）输出正确，从 row5 开始整行都偏了。</p>
 <p><strong>定位。</strong> 一开始只打印前 2 行，看起来完全正常。把输出扩大到全部 32 行后，问题才暴露出来：第 5 行第一个像素是 <code>0x00C0</code>，也就是 row 6 的行号。因为测试数据是递增序列，每个像素值都自带“身份信息”：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0x0000 = 第 0 行首个像素</span><br><span class="line">0x0020 = 第 1 行首个像素（32）</span><br><span class="line">0x00A0 = 第 5 行首个像素（160）</span><br><span class="line">0x00C0 = 第 6 行首个像素（192）</span><br></pre></td></tr></table></figure>
 
@@ -725,7 +729,8 @@
 
 <p>这样在 <code>outputCol = 34..35</code> 期间，<code>inImage</code> 为 false，<code>LineBuffer</code> 不再接收新的 DMA 数据，<code>tmpRow</code> 就不会被下一行提前覆写。</p>
 <hr>
-<h2 id="Phase-6：Chipyard-集成与-Verilator-构建"><a href="#Phase-6：Chipyard-集成与-Verilator-构建" class="headerlink" title="Phase 6：Chipyard 集成与 Verilator 构建"></a>Phase 6：Chipyard 集成与 Verilator 构建</h2><p>到 Phase 5 为止，加速器仍然是一个 standalone Chisel module。测试时，testbench 直接拉高 <code>start</code>，直接提供输入矩阵、kernel 和输出矩阵的基地址，并把 <code>SimpleMemIO</code> 接到一个模拟内存上。这样可以验证 datapath 是否正确，但它还不是一个真正由处理器控制的加速器。</p>
+<h2 id="Phase-6：Chipyard-集成与-Verilator-构建"><a href="#Phase-6：Chipyard-集成与-Verilator-构建" class="headerlink" title="Phase 6：Chipyard 集成与 Verilator 构建"></a>Phase 6：Chipyard 集成与 Verilator 构建</h2><p><strong>核心思路：</strong> RoCC wrapper 不重写 standalone datapath，而是在外面接上 CPU command path，并把加速器原来的简单内存接口转换成 Rocket 的 DCache 接口。</p>
+<p>到 Phase 5 为止，加速器仍然是一个 standalone Chisel module。测试时，testbench 直接拉高 <code>start</code>，直接提供输入矩阵、kernel 和输出矩阵的基地址，并把 <code>SimpleMemIO</code> 接到一个模拟内存上。这样可以验证 datapath 是否正确，但它还不是一个真正由处理器控制的加速器。</p>
 <p>Phase 6 的目标是把 standalone 设计移植到 Chipyard 里，让 Rocket core 执行裸机 C 程序，并通过 custom RoCC 指令控制卷积加速器。也就是说，软件侧仍然使用 Phase 0 里定义的 <code>SET_ADDR_IN</code>、<code>SET_ADDR_KER</code>、<code>SET_ADDR_OUT</code>、<code>START</code> 和 <code>POLL_STATUS</code> 接口，但这些命令现在会真的从 CPU 发到 RoCC accelerator。</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[C program]</span><br><span class="line">     |</span><br><span class="line">     | custom0</span><br><span class="line">     v</span><br><span class="line">[Rocket CPU] -- RoCC cmd/resp --&gt; [ConvAccelRoCC]</span><br><span class="line">                                      |-- [ConvControl]</span><br><span class="line">                                      |     decode / address / status</span><br><span class="line">                                      |</span><br><span class="line">                                      `-- [ConvAccelTop]</span><br><span class="line">                                            standalone core</span><br><span class="line">                                             |</span><br><span class="line">                                             | RoCC mem</span><br><span class="line">                                             v</span><br><span class="line">                                        [DCache] -&gt; [Memory]</span><br></pre></td></tr></table></figure>
 
@@ -736,9 +741,9 @@
 <li>cache 背后的内存系统。</li>
 <li>外设支持，例如 bare-metal 程序里的 <code>printf</code>。</li>
 <li>RoCC interface，用于连接 custom accelerator。</li>
-<li>Verilator flow，用于进行全系统逐周期仿真。</li>
+<li>Verilator flow，用于全系统逐周期仿真。</li>
 </ul>
-<p>对于这个项目来说，最重要的几个部分是 Rocket、RoCC、DCache 和 Verilator。Rocket core 负责执行 C benchmark；RoCC 负责承载 CPU 发给加速器的 custom command；DCache 负责让加速器访问内存；Verilator 则负责把整个系统按 cycle 进行仿真。</p>
+<p>对于这个项目来说，最重要的几个部分是 Rocket、RoCC、DCache 和 Verilator。Rocket core 负责执行 C benchmark；RoCC 负责承载 CPU 发给加速器的 custom command；DCache 负责让加速器访问内存；Verilator 则负责对整个系统进行 cycle-level 仿真。</p>
 <h3 id="注册加速器"><a href="#注册加速器" class="headerlink" title="注册加速器"></a>注册加速器</h3><p>卷积加速器是通过 Chipyard 的 config fragment 挂到 Rocket core 旁边的：</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WithConvAccel</span> <span class="keyword">extends</span> <span class="title">Config</span>(<span class="params">(site, here, up</span>) <span class="title">=&gt;</span> </span>&#123;</span><br><span class="line">  <span class="keyword">case</span> <span class="type">BuildRoCC</span> =&gt;</span><br><span class="line">    up(<span class="type">BuildRoCC</span>) ++ <span class="type">Seq</span>(</span><br><span class="line">      (p: <span class="type">Parameters</span>) =&gt; &#123;</span><br><span class="line">        <span class="keyword">val</span> accel = <span class="type">LazyModule</span>(<span class="keyword">new</span> <span class="type">ConvAccelRoCC</span>(<span class="type">OpcodeSet</span>.custom0)(p))</span><br><span class="line">        accel</span><br><span class="line">      &#125;</span><br><span class="line">    )</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 
@@ -757,7 +762,7 @@
 <p>这条命令只有在 <code>valid</code> 和 <code>ready</code> 同时为高时才会被真正接收：</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">io.cmd.ready := control.io.instrReady</span><br><span class="line"><span class="keyword">val</span> cmdFire = io.cmd.valid &amp;&amp; io.cmd.ready</span><br></pre></td></tr></table></figure>
 
-<p><code>cmdFire</code> 表示 RoCC 命令已经完成握手，并在当前 cycle 真正进入加速器。之后 RoCC wrapper 会把这条命令中已经解码好的字段继续转发给 <code>ConvControl</code>，让 <code>ConvControl</code> 根据 <code>funct</code> 判断这是设置输入地址、设置 kernel 地址、设置输出地址、启动计算，还是查询状态。</p>
+<p><code>cmdFire</code> 表示 RoCC 命令已经完成握手，并在当前 cycle 真正进入加速器。之后 RoCC wrapper 会把这条命令中已经解码好的字段继续转发给 <code>ConvControl</code>，让 <code>ConvControl</code> 根据 <code>funct</code> 判断这是设置 input 地址、设置 kernel 地址、设置 output 地址、启动计算，还是查询状态。</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">control.io.instrCmd.valid  := cmdFire</span><br><span class="line">control.io.instrCmd.funct7 := io.cmd.bits.inst.funct</span><br><span class="line">control.io.instrCmd.rs1    := io.cmd.bits.rs1</span><br><span class="line">control.io.instrCmd.rd     := io.cmd.bits.inst.rd</span><br></pre></td></tr></table></figure>
 
 <h3 id="内存路径"><a href="#内存路径" class="headerlink" title="内存路径"></a>内存路径</h3><p>Standalone 加速器使用的是项目里定义的 <code>SimpleMemIO</code>，它只描述了一个简单的 memory request&#x2F;response 接口。进入 RoCC 之后，真正能访问内存的是 Rocket 暴露出来的 DCache 接口，也就是 <code>io.mem</code>。因此 RoCC wrapper 需要在这两种接口之间做一次转换。</p>
@@ -770,12 +775,13 @@
 <p><code>io.mem.req.fire</code> 等价于：</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">io.mem.req.valid &amp;&amp; io.mem.req.ready</span><br></pre></td></tr></table></figure>
 
-<p>因此，<code>io.mem.req.fire</code> 为高就表示这一拍确实成功发出了一条 DCache request，并且 DCache 已经收下了它。这样一来，<code>ConvDMA</code> 仍然可以认为自己在和一个简单的 64-bit memory interface 通信，但这个请求实际会被 wrapper 翻译成 Rocket DCache request。</p>
+<p>因此，<code>io.mem.req.valid</code> 只是表示“加速器手里有请求要发”，而 <code>io.mem.req.fire</code> 才表示“这一拍 DCache 已经接收了这条请求”。把 <code>fire</code> 反馈成 <code>accel.io.mem.req.ready</code>，可以保证 <code>ConvDMA</code> 只有在 cache 侧真的完成握手之后才继续前进。这样一来，<code>ConvDMA</code> 仍然可以认为自己在和一个简单的 64-bit memory interface 通信，但这个请求实际会被 wrapper 翻译成 Rocket DCache request。</p>
 <p>响应路径则是反方向：</p>
 <figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">accel.io.mem.resp.valid := io.mem.resp.valid</span><br><span class="line">accel.io.mem.resp.bits.data := io.mem.resp.bits.data</span><br><span class="line">accel.io.mem.resp.bits.tag  := io.mem.resp.bits.tag</span><br></pre></td></tr></table></figure>
 
 <p>完成这一阶段集成后，加速器就可以读取 C 程序中分配的 input 和 kernel 数组，并把卷积结果写回软件可见的 output buffer。此时设计已经从“testbench 驱动的 standalone module”变成了“Rocket CPU 通过 RoCC 控制的系统级加速器”。</p>
-<h2 id="Phase-7：裸机-C-测试程序"><a href="#Phase-7：裸机-C-测试程序" class="headerlink" title="Phase 7：裸机 C 测试程序"></a>Phase 7：裸机 C 测试程序</h2><p>加速器接入 Chipyard 之后，下一步就是从软件侧真正控制它。这里使用的是运行在 Rocket core 上的 bare-metal C benchmark。它不是通过 device driver 或 MMIO register 访问加速器，而是直接发 RoCC custom instruction。</p>
+<h2 id="Phase-7：裸机-C-测试程序"><a href="#Phase-7：裸机-C-测试程序" class="headerlink" title="Phase 7：裸机 C 测试程序"></a>Phase 7：裸机 C 测试程序</h2><p><strong>核心思路：</strong> C 程序就是 Phase 0 协议的软件侧实现：准备 input&#x2F;kernel，发 custom0 RoCC 指令，轮询 <code>done</code>，最后把硬件输出和软件 reference 对比。</p>
+<p>加速器接入 Chipyard 之后，下一步就是从软件侧真正控制它。这里使用的是运行在 Rocket core 上的 bare-metal C benchmark。它不是通过 device driver 或 MMIO register 访问加速器，而是直接发 RoCC custom instruction。</p>
 <h3 id="RoCC-软件封装"><a href="#RoCC-软件封装" class="headerlink" title="RoCC 软件封装"></a>RoCC 软件封装</h3><p>C 程序把五条 RoCC 命令封装成几个很薄的 helper function：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span> <span class="title function_">set_addr_in</span><span class="params">(<span class="type">uint64_t</span> addr)</span> &#123;</span><br><span class="line">    ROCC_INSTRUCTION_SS(<span class="number">0</span>, addr, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span> <span class="title function_">set_addr_ker</span><span class="params">(<span class="type">uint64_t</span> addr)</span> &#123;</span><br><span class="line">    ROCC_INSTRUCTION_SS(<span class="number">0</span>, addr, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span> <span class="title function_">set_addr_out</span><span class="params">(<span class="type">uint64_t</span> addr)</span> &#123;</span><br><span class="line">    ROCC_INSTRUCTION_SS(<span class="number">0</span>, addr, <span class="number">0</span>, <span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span> <span class="title function_">start_accel</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    ROCC_INSTRUCTION_SS(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">3</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">uint64_t</span> <span class="title function_">poll_status</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    <span class="type">uint64_t</span> status;</span><br><span class="line">    ROCC_INSTRUCTION_DSS(<span class="number">0</span>, status, <span class="number">0</span>, <span class="number">0</span>, <span class="number">4</span>);</span><br><span class="line">    <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -831,7 +837,8 @@
 
 <p>当 <code>done</code> 出现后，程序再把硬件输出 buffer 和软件 reference 逐项比较。这个阶段验证了两件事：Rocket 可以通过 RoCC 控制加速器；加速器也可以正确读取 C 程序分配的内存，并把结果写回软件可见的 output buffer。</p>
 <hr>
-<h2 id="Phase-8：性能报告与总结"><a href="#Phase-8：性能报告与总结" class="headerlink" title="Phase 8：性能报告与总结"></a>Phase 8：性能报告与总结</h2><p>最后，用同一个 bare-metal benchmark 对比软件卷积和 RoCC accelerator 的 cycle 数。</p>
+<h2 id="Phase-8：性能报告与总结"><a href="#Phase-8：性能报告与总结" class="headerlink" title="Phase 8：性能报告与总结"></a>Phase 8：性能报告与总结</h2><p><strong>核心思路：</strong> 这个加速比来自把完整的卷积数据流搬进专用硬件，而不是把某一条 CPU 指令换成更快的一条指令。</p>
+<p>最后，用同一个 bare-metal benchmark 对比软件卷积和 RoCC accelerator 的 cycle 数。</p>
 <table>
 <thead>
 <tr>
@@ -857,14 +864,14 @@
 </tr>
 </tbody></table>
 <p>软件版本的大部分时间都花在嵌套循环里：地址计算、边界判断、load、multiply、add、store 和 branch。加速器把这些重复工作从 CPU 中移走，让 CPU 只负责少量 setup、start 和 polling 指令。</p>
-<p>加速并不是来自某一个更快的 multiplier，而是来自把整个 convolution dataflow 搬进了专用硬件：</p>
+<p>加速并不是来自某一个更快的 multiplier，而是来自把完整的 convolution dataflow 搬进专用硬件：</p>
 <ul>
 <li><code>LineBuffer</code> 和 <code>ShiftWindow</code> 复用输入像素，避免反复读取重叠窗口。</li>
 <li><code>ConvUnit</code> 把 25 路 MAC tree 做成流水线。</li>
 <li><code>InputQueue</code> 和 <code>StoreQueue</code> 吸收 DMA 和 compute 之间的速率差。</li>
 <li>RoCC 让 CPU 只需要发少量 custom instruction，而不是逐像素参与计算。</li>
 </ul>
-<p>到这里，整个项目已经不只是一个 standalone Chisel module。它已经变成了一个可以由 Rocket CPU 通过 RoCC 控制的系统级 accelerator：软件负责配置和启动，硬件负责内存访问、卷积计算和结果写回。</p>
+<p>到这里，整个项目已经不只是一个 standalone Chisel module。它已经变成了一个可以由 Rocket CPU 通过 RoCC 控制的系统级加速器：软件负责配置和启动，硬件负责内存访问、卷积计算和结果写回。</p>
 <hr>
 <h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p>[1] Chipyard, “Adding a RoCC Accelerator,” <em>Chipyard Documentation</em>. [Online]. Available: <a target="_blank" rel="noopener" href="https://chipyard.readthedocs.io/en/stable/Customization/RoCC-Accelerators.html">https://chipyard.readthedocs.io/en/stable/Customization/RoCC-Accelerators.html</a>. Accessed: Jun. 25, 2026.</p>
 <p>[2] CHIPS Alliance, “Rocket Chip Generator,” <em>GitHub repository</em>. [Online]. Available: <a target="_blank" rel="noopener" href="https://github.com/chipsalliance/rocket-chip">https://github.com/chipsalliance/rocket-chip</a>. Accessed: Jun. 25, 2026.</p>
