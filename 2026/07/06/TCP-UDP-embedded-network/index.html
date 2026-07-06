@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en,zh-CN,default">
+
+<head>
+  <!-- Website mata -->
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+<!-- Disable transformation -->
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<!-- Website description -->
+
+<meta name="description" content="TCP、UDP 与嵌入式网络学习笔记" />
+
+
+<!-- Website keywords -->
+
+<meta name="keywords" content="TCP, UDP, 嵌入式网络, Peanut&#39;s Notebook" />
+
+
+
+
+<!-- Website rss -->
+
+<link rel="alternate" href="/default" title="Peanut's Notebook" >
+
+
+<!-- Website favicon -->
+
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=3.0.1" />
+
+
+<!-- Canonical, good for google search engine -->
+<link rel="canonical" href="https://peanut-321.github.io/2026/07/06/TCP-UDP-embedded-network/" />
+
+<!-- Fancybox styling -->
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+
+
+<!-- MathJax (LaTeX) support -->
+
+
+<!-- Theme styling -->
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=3.0.1" />
+
+<!-- Analytics and push -->
+
+
+
+  
+
+
+
+<!-- LeanCloud Counter -->
+
+
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null,"server_url":null,"cdn":null},"toc":{"min_depth":2,"max_depth":2,"list_number":false},"fancybox":true,"latex":false};
+</script>
+  
+  <title>TCP、UDP 与嵌入式网络学习笔记 - Peanut&#39;s Notebook</title>
+
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div class="scrollPercentage"></div>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Peanut&#39;s Notebook</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+    <a href="/">
+      <li class="mobile-menu-item">
+        
+        
+        首页              </li>
+    </a>
+    
+    <a href="/archives/">
+      <li class="mobile-menu-item">
+        
+        
+        归档              </li>
+    </a>
+    
+    <a href="/about/">
+      <li class="mobile-menu-item">
+        
+        
+        关于              </li>
+    </a>
+    
+    <a href="/friends/">
+      <li class="mobile-menu-item">
+        
+        
+        Friends              </li>
+    </a>
+    
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+      <div class="logo-wrapper">  
+  <a href="/." class="logo">Peanut's Notebook</a>  
+</div>  
+  
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about/">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+  <div class="lang-switch">
+    
+      <a class="lang-switch-link" href="/2026/07/06/TCP-UDP-embedded-network/">EN</a>
+    
+  </div>
+</nav>  
+
+    </header>
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+  <header class="post-header">
+    <h1 class="post-title">
+      
+      TCP、UDP 与嵌入式网络学习笔记
+      
+    </h1>
+
+    <div class="post-meta">
+      <span class="post-time">
+        2026-07-06
+      </span>
+      
+      
+      <span class="post-category">
+        
+        <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
+        
+      </span>
+      
+      
+    </div>
+  </header>
+
+  
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87"><span class="toc-text">0. 学习目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%9ATCP"><span class="toc-text">第一部分：TCP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%9AUDP"><span class="toc-text">第二部分：UDP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86%EF%BC%9ATCP-%E4%B8%8E-UDP-%E5%AF%B9%E6%AF%94"><span class="toc-text">第三部分：TCP 与 UDP 对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86%EF%BC%9A%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%BD%91%E7%BB%9C"><span class="toc-text">第四部分：嵌入式网络</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86%EF%BC%9A%E8%BD%AF%E4%BB%B6%E5%AE%9E%E9%AA%8C"><span class="toc-text">第五部分：软件实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E9%83%A8%E5%88%86%EF%BC%9A%E6%89%8B%E5%8A%A8%E5%AE%9E%E7%8E%B0-TCP-%E8%BF%9E%E6%8E%A5"><span class="toc-text">第六部分：手动实现 TCP 连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%83%E9%83%A8%E5%88%86%EF%BC%9A%E9%97%AE%E9%A2%98%E4%B8%8E%E6%80%BB%E7%BB%93"><span class="toc-text">第七部分：问题与总结</span></a></li></ol>
+    </div>
+  </div>
+  
+
+  <div class="post-content">
+    
+    <h2 id="0-学习目标"><a href="#0-学习目标" class="headerlink" title="0. 学习目标"></a>0. 学习目标</h2><ul>
+<li>理解 TCP 和 UDP 的工作原理</li>
+<li>能通过抓包解释协议行为</li>
+<li>能编写 TCP&#x2F;UDP 客户端和服务器</li>
+<li>理解 lwIP 在嵌入式系统中的作用</li>
+<li>实现一个简化的 TCP 连接过程</li>
+</ul>
+<h2 id="第一部分：TCP"><a href="#第一部分：TCP" class="headerlink" title="第一部分：TCP"></a>第一部分：TCP</h2><h3 id="1-TCP-Basic-Model（TCP-基本模型）"><a href="#1-TCP-Basic-Model（TCP-基本模型）" class="headerlink" title="1. TCP Basic Model（TCP 基本模型）"></a>1. TCP Basic Model（TCP 基本模型）</h3><p>TCP 是一种 connection-oriented Transport Layer protocol（面向连接的传输层协议）。它在不可靠的 IP network（IP 网络）上，为 Application（应用程序）提供：</p>
+<ul>
+<li>Reliable delivery（可靠传输）</li>
+<li>Ordered delivery（按顺序交付）</li>
+<li>Full-duplex communication（全双工通信）</li>
+<li>Byte-stream service（字节流服务）</li>
+<li>Error detection（差错检测）</li>
+</ul>
+<blockquote>
+<p>TCP provides a reliable, ordered, full-duplex byte stream（TCP 提供可靠、有序、全双工的字节流）。</p>
+</blockquote>
+<h4 id="1-1-Full-Duplex-Byte-Stream（全双工字节流）"><a href="#1-1-Full-Duplex-Byte-Stream（全双工字节流）" class="headerlink" title="1.1 Full-Duplex Byte Stream（全双工字节流）"></a>1.1 Full-Duplex Byte Stream（全双工字节流）</h4><p>一条 TCP Connection（TCP 连接）包含两个独立的 Data Flow（数据流）：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Client ───────────────&gt; Server</span><br><span class="line">       Client-to-Server Stream</span><br><span class="line"></span><br><span class="line">Client &lt;─────────────── Server</span><br><span class="line">       Server-to-Client Stream</span><br></pre></td></tr></table></figure>
+
+<p>每个方向都有独立的：</p>
+<ul>
+<li>Sequence Number Space（序列号空间）</li>
+<li>Send Buffer（发送缓冲区）和 Receive Buffer（接收缓冲区）</li>
+<li>Closing Process（关闭过程）</li>
+</ul>
+<p>Client 停止发送数据，不代表 Server 也必须停止发送数据。</p>
+<p><strong>Byte Stream（字节流）</strong></p>
+<p>TCP 将 Application Data（应用层数据）看作连续的 Bytes（字节），不保留 Message Boundaries（消息边界）。</p>
+<p>发送端调用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">send(socket, <span class="string">&quot;ABC&quot;</span>, <span class="number">3</span>, <span class="number">0</span>);</span><br><span class="line">send(socket, <span class="string">&quot;DEF&quot;</span>, <span class="number">3</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>接收端可能一次收到：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ABCDEF</span><br></pre></td></tr></table></figure>
+<p>也可能多次收到：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">AB</span><br><span class="line">CDE</span><br><span class="line">F</span><br></pre></td></tr></table></figure>
+
+<p>TCP 只保证最终能够收到 <code>ABCDEF</code>，但不保证一次 <code>send()</code> 对应一次 <code>recv()</code>。因此，Embedded Application（嵌入式应用程序）需要自行设计 Application-Layer Framing（应用层消息分帧）：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">| Message Type | Payload Length | Payload |</span><br><span class="line">|   消息类型    |    数据长度     | 数据内容 |</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-2-Four-Tuple（四元组）"><a href="#1-2-Four-Tuple（四元组）" class="headerlink" title="1.2 Four-Tuple（四元组）"></a>1.2 Four-Tuple（四元组）</h4><p>一条 TCP Connection 由 Four-Tuple 唯一标识：</p>
+<ul>
+<li>Source IP Address（源 IP 地址）</li>
+<li>Source Port（源端口）</li>
+<li>Destination IP Address（目的 IP 地址）</li>
+<li>Destination Port（目的端口）</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">192.168.1.10:50000 → 192.168.1.20:8000</span><br><span class="line">└──── Endpoint ────┘   └──── Endpoint ────┘</span><br></pre></td></tr></table></figure>
+
+<p>每个 <code>IP Address + Port</code> 组成一个 Endpoint（通信端点）。由于不同连接的 Four-Tuple 不同，因此同一个 Server Port（服务器端口）可以同时连接多个 Client。</p>
+<h4 id="1-3-TCP-Segment-and-Header（TCP-报文段与首部）"><a href="#1-3-TCP-Segment-and-Header（TCP-报文段与首部）" class="headerlink" title="1.3 TCP Segment and Header（TCP 报文段与首部）"></a>1.3 TCP Segment and Header（TCP 报文段与首部）</h4><p>TCP 发送的基本单位称为 TCP Segment（TCP 报文段）：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TCP Segment = TCP Header + Payload</span><br></pre></td></tr></table></figure>
+
+<p>常见的 TCP Flags（TCP 标志位）：</p>
+<ul>
+<li><code>SYN</code> — Synchronize（同步序列号、建立连接）</li>
+<li><code>ACK</code> — Acknowledgment（确认号有效）</li>
+<li><code>FIN</code> — Finish（关闭自己的发送方向）</li>
+<li><code>RST</code> — Reset（立即重置连接）</li>
+<li><code>PSH</code> — Push（提示尽快将数据交付应用程序）</li>
+<li><code>URG</code> — Urgent（存在紧急数据）</li>
+</ul>
+<h4 id="1-4-Sequence-Number-and-Acknowledgment-Number（序列号与确认号）"><a href="#1-4-Sequence-Number-and-Acknowledgment-Number（序列号与确认号）" class="headerlink" title="1.4 Sequence Number and Acknowledgment Number（序列号与确认号）"></a>1.4 Sequence Number and Acknowledgment Number（序列号与确认号）</h4><p><strong>Sequence Number（序列号，<code>seq</code>）</strong></p>
+<p>表示当前 TCP Segment 中第一个 Payload Byte（有效载荷字节）在发送字节流中的编号。每个发送方向都有独立的 Sequence Number Space（序列号空间），因此 <code>seq</code> 描述当前发送者的数据。</p>
+<p><strong>Acknowledgment Number（确认号，<code>ack</code>）</strong></p>
+<p>表示 Next Byte Expected（接收方下一次期待收到的字节序号），因此 <code>ack</code> 确认相反方向的数据。</p>
+<h3 id="2-Connection-Management（连接管理）"><a href="#2-Connection-Management（连接管理）" class="headerlink" title="2. Connection Management（连接管理）"></a>2. Connection Management（连接管理）</h3><h4 id="2-1-Three-Way-Handshake（三次握手）"><a href="#2-1-Three-Way-Handshake（三次握手）" class="headerlink" title="2.1 Three-Way Handshake（三次握手）"></a>2.1 Three-Way Handshake（三次握手）</h4><p>Three-Way Handshake 用于 Connection Establishment（连接建立），主要完成：</p>
+<ul>
+<li>确认两个通信方向都能够工作</li>
+<li>交换 Initial Sequence Number（初始序列号，ISN）</li>
+<li>协商 MSS、Window Scale、SACK 等 TCP Options（TCP 选项）</li>
+</ul>
+<p>假设：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client ISN = 200</span><br><span class="line">Server ISN = 900</span><br></pre></td></tr></table></figure>
+
+<p>完整过程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Client                                            Server</span><br><span class="line">CLOSED                                            LISTEN</span><br><span class="line">   │                                                 │</span><br><span class="line">   │  SYN, seq=200                                   │</span><br><span class="line">   ├────────────────────────────────────────────────&gt;│</span><br><span class="line">   │                                                 │</span><br><span class="line">SYN-SENT                                      SYN-RECEIVED</span><br><span class="line">   │                                                 │</span><br><span class="line">   │  SYN+ACK, seq=900, ack=201                      │</span><br><span class="line">   │&lt;────────────────────────────────────────────────┤</span><br><span class="line">   │                                                 │</span><br><span class="line">   │  ACK, seq=201, ack=901                          │</span><br><span class="line">   ├────────────────────────────────────────────────&gt;│</span><br><span class="line">   │                                                 │</span><br><span class="line">ESTABLISHED                                    ESTABLISHED</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-1-1-First-Handshake（第一次握手）"><a href="#2-1-1-First-Handshake（第一次握手）" class="headerlink" title="2.1.1 First Handshake（第一次握手）"></a>2.1.1 First Handshake（第一次握手）</h5><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client → Server</span><br><span class="line">SYN=1, seq=200</span><br></pre></td></tr></table></figure>
+
+<p>Client 执行 Active Open（主动打开）：</p>
+<ul>
+<li>选择自己的 <code>ISN=200</code></li>
+<li>发送 SYN Segment（SYN 报文段）</li>
+<li>从 <code>CLOSED</code> 进入 <code>SYN-SENT</code></li>
+</ul>
+<p>这表示：“我想建立连接，我的初始序列号是 200。”此时 Server 必须已经执行 Passive Open（被动打开），处于 <code>LISTEN</code> 状态。</p>
+<h5 id="2-1-2-Second-Handshake（第二次握手）"><a href="#2-1-2-Second-Handshake（第二次握手）" class="headerlink" title="2.1.2 Second Handshake（第二次握手）"></a>2.1.2 Second Handshake（第二次握手）</h5><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server → Client</span><br><span class="line">SYN=1, ACK=1, seq=900, ack=201</span><br></pre></td></tr></table></figure>
+
+<p>Server 收到 SYN 后：</p>
+<ul>
+<li>通过 <code>ack=201</code> 确认 Client 的 SYN</li>
+<li>选择自己的 <code>ISN=900</code></li>
+<li>从 <code>LISTEN</code> 进入 <code>SYN-RECEIVED</code></li>
+</ul>
+<p>这个 Segment 同时完成两个动作：通过 ACK 确认 Client 的 SYN，并通过 SYN 公布 Server 自己的 ISN。</p>
+<h5 id="2-1-3-Third-Handshake（第三次握手）"><a href="#2-1-3-Third-Handshake（第三次握手）" class="headerlink" title="2.1.3 Third Handshake（第三次握手）"></a>2.1.3 Third Handshake（第三次握手）</h5><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client → Server</span><br><span class="line">ACK=1, seq=201, ack=901</span><br></pre></td></tr></table></figure>
+
+<p>Client 收到 SYN+ACK 后：</p>
+<ul>
+<li>通过 <code>ack=901</code> 确认 Server 的 SYN</li>
+<li>发送最终 ACK</li>
+<li>进入 <code>ESTABLISHED</code></li>
+</ul>
+<p>Server 收到这个 ACK 后，也进入 <code>ESTABLISHED</code>。此时双方第一个数据字节的序列号分别是：</p>
+<ul>
+<li>Client first data byte：<code>seq=201</code></li>
+<li>Server first data byte：<code>seq=901</code></li>
+</ul>
+<p>SYN consumes one Sequence Number（SYN 占用一个序列号）。</p>
+<p><strong>为什么需要三次握手？</strong></p>
+<p>两个方向都需要完成“发送自己的 ISN，并由对方确认”：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. Client 发送 Client ISN</span><br><span class="line">2. Server 确认 Client ISN，同时发送 Server ISN</span><br><span class="line">3. Client 确认 Server ISN</span><br></pre></td></tr></table></figure>
+
+<p>如果只有两次，Server 无法确认 Client 是否成功收到了 Server 的 ISN。</p>
+<h4 id="2-2-Four-Way-Handshake（四次挥手）"><a href="#2-2-Four-Way-Handshake（四次挥手）" class="headerlink" title="2.2 Four-Way Handshake（四次挥手）"></a>2.2 Four-Way Handshake（四次挥手）</h4><p>Four-Way Handshake 用于 TCP Connection Termination（TCP 连接终止）。TCP 是 Full-Duplex（全双工）的，因此两个发送方向需要分别关闭；FIN closes only one sending direction（FIN 只关闭发送者自己的发送方向）。</p>
+<p>假设 Client 主动关闭连接：</p>
+<ul>
+<li>Client 是 Active Closer（主动关闭方）</li>
+<li>Server 是 Passive Closer（被动关闭方）</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Client                                         Server</span><br><span class="line">ESTABLISHED                                    ESTABLISHED</span><br><span class="line">   │                                              │</span><br><span class="line">   │ FIN+ACK, seq=u, ack=v                        │</span><br><span class="line">   ├─────────────────────────────────────────────&gt;│</span><br><span class="line">   │                                              │</span><br><span class="line">   │ ACK, seq=v, ack=u+1                          │</span><br><span class="line">   │&lt;─────────────────────────────────────────────┤</span><br><span class="line">   │                                              │</span><br><span class="line">   │       Server 可以继续发送剩余数据             │</span><br><span class="line">   │&lt;─────────────────────────────────────────────┤</span><br><span class="line">   │                                              │</span><br><span class="line">   │ FIN+ACK, seq=w, ack=u+1                      │</span><br><span class="line">   │&lt;─────────────────────────────────────────────┤</span><br><span class="line">   │                                              │</span><br><span class="line">   │ ACK, seq=u+1, ack=w+1                        │</span><br><span class="line">   ├─────────────────────────────────────────────&gt;│</span><br><span class="line">   │                                              │</span><br><span class="line">TIME_WAIT                                       CLOSED</span><br></pre></td></tr></table></figure>
+
+<p>这里：</p>
+<ul>
+<li><code>u</code>：Client 发送方向的下一个 Sequence Number</li>
+<li><code>v</code>：Server 当前发送方向的下一个 Sequence Number</li>
+<li><code>w</code>：Server 发送完剩余数据后的 Sequence Number</li>
+</ul>
+<h5 id="2-2-1-First-Wave（第一次挥手）"><a href="#2-2-1-First-Wave（第一次挥手）" class="headerlink" title="2.2.1 First Wave（第一次挥手）"></a>2.2.1 First Wave（第一次挥手）</h5><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client → Server</span><br><span class="line">FIN+ACK, seq=u, ack=v</span><br></pre></td></tr></table></figure>
+
+<p>Client 表示自己已经没有更多数据需要发送，并关闭 Client → Server 方向，但仍然可以接收 Server 发送的数据。</p>
+<p>FIN 不是 Payload Data（有效载荷数据），但会占用一个 Sequence Number，因此 Server 应当确认 <code>u+1</code>。</p>
+<h5 id="2-2-2-Second-Wave（第二次挥手）"><a href="#2-2-2-Second-Wave（第二次挥手）" class="headerlink" title="2.2.2 Second Wave（第二次挥手）"></a>2.2.2 Second Wave（第二次挥手）</h5><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server → Client</span><br><span class="line">ACK, seq=v, ack=u+1</span><br></pre></td></tr></table></figure>
+
+<p>Server 表示已经收到 Client 的 FIN。此时 Server → Client 方向仍然开放，因此 Server 可以继续发送剩余数据。</p>
+<h5 id="2-2-3-Third-Wave（第三次挥手）"><a href="#2-2-3-Third-Wave（第三次挥手）" class="headerlink" title="2.2.3 Third Wave（第三次挥手）"></a>2.2.3 Third Wave（第三次挥手）</h5><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Server → Client</span><br><span class="line">FIN+ACK, seq=w, ack=u+1</span><br></pre></td></tr></table></figure>
+
+<p>Server 处理完剩余数据并决定关闭，表示自己也没有更多数据需要发送，从而关闭 Server → Client 方向。</p>
+<h5 id="2-2-4-Fourth-Wave（第四次挥手）"><a href="#2-2-4-Fourth-Wave（第四次挥手）" class="headerlink" title="2.2.4 Fourth Wave（第四次挥手）"></a>2.2.4 Fourth Wave（第四次挥手）</h5><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client → Server</span><br><span class="line">ACK, seq=u+1, ack=w+1</span><br></pre></td></tr></table></figure>
+
+<p>Client 确认 Server 的 FIN。Server 收到后进入 <code>CLOSED</code>；Client 进入 <code>TIME_WAIT</code>，等待一段时间后才进入 <code>CLOSED</code>。</p>
+<p><strong>为什么 ACK 和 FIN 通常不能合并？</strong></p>
+<p>收到对方的 FIN 后，TCP Stack（TCP 协议栈）需要立即回复 ACK，但本地 Application（应用程序）可能还有数据需要发送。只有应用程序发送完成并调用 <code>close()</code> 后，本地 TCP 才能发送自己的 FIN。</p>
+<p>因此，ACK 和 FIN 通常分开发送，形成四次挥手。如果没有剩余数据且应用程序立即关闭，ACK 和 FIN 可以合并为 FIN+ACK，此时可能只看到三个 TCP Segments（TCP 报文段）。</p>
+<h4 id="2-3-TCP-State-Machine（TCP-状态机）"><a href="#2-3-TCP-State-Machine（TCP-状态机）" class="headerlink" title="2.3 TCP State Machine（TCP 状态机）"></a>2.3 TCP State Machine（TCP 状态机）</h4><h4 id="2-4-TIME-WAIT"><a href="#2-4-TIME-WAIT" class="headerlink" title="2.4 TIME_WAIT"></a>2.4 TIME_WAIT</h4><h4 id="2-5-CLOSE-WAIT"><a href="#2-5-CLOSE-WAIT" class="headerlink" title="2.5 CLOSE_WAIT"></a>2.5 CLOSE_WAIT</h4><h4 id="2-6-RST"><a href="#2-6-RST" class="headerlink" title="2.6 RST"></a>2.6 RST</h4><h4 id="2-7-握手与挥手丢包"><a href="#2-7-握手与挥手丢包" class="headerlink" title="2.7 握手与挥手丢包"></a>2.7 握手与挥手丢包</h4><h3 id="3-可靠传输"><a href="#3-可靠传输" class="headerlink" title="3. 可靠传输"></a>3. 可靠传输</h3><h4 id="3-1-序列号"><a href="#3-1-序列号" class="headerlink" title="3.1 序列号"></a>3.1 序列号</h4><h4 id="3-2-累计-ACK"><a href="#3-2-累计-ACK" class="headerlink" title="3.2 累计 ACK"></a>3.2 累计 ACK</h4><h4 id="3-3-超时与重传"><a href="#3-3-超时与重传" class="headerlink" title="3.3 超时与重传"></a>3.3 超时与重传</h4><h4 id="3-4-重复-ACK"><a href="#3-4-重复-ACK" class="headerlink" title="3.4 重复 ACK"></a>3.4 重复 ACK</h4><h4 id="3-5-乱序与重复报文"><a href="#3-5-乱序与重复报文" class="headerlink" title="3.5 乱序与重复报文"></a>3.5 乱序与重复报文</h4><h4 id="3-6-RTT-与-RTO"><a href="#3-6-RTT-与-RTO" class="headerlink" title="3.6 RTT 与 RTO"></a>3.6 RTT 与 RTO</h4><h3 id="4-流量和拥塞控制"><a href="#4-流量和拥塞控制" class="headerlink" title="4. 流量和拥塞控制"></a>4. 流量和拥塞控制</h3><h4 id="4-1-滑动窗口"><a href="#4-1-滑动窗口" class="headerlink" title="4.1 滑动窗口"></a>4.1 滑动窗口</h4><h4 id="4-2-接收窗口-rwnd"><a href="#4-2-接收窗口-rwnd" class="headerlink" title="4.2 接收窗口 rwnd"></a>4.2 接收窗口 rwnd</h4><h4 id="4-3-拥塞窗口-cwnd"><a href="#4-3-拥塞窗口-cwnd" class="headerlink" title="4.3 拥塞窗口 cwnd"></a>4.3 拥塞窗口 cwnd</h4><h4 id="4-4-慢启动"><a href="#4-4-慢启动" class="headerlink" title="4.4 慢启动"></a>4.4 慢启动</h4><h4 id="4-5-拥塞避免"><a href="#4-5-拥塞避免" class="headerlink" title="4.5 拥塞避免"></a>4.5 拥塞避免</h4><h3 id="5-TCP-字节流编程"><a href="#5-TCP-字节流编程" class="headerlink" title="5. TCP 字节流编程"></a>5. TCP 字节流编程</h3><h4 id="5-1-Socket-API"><a href="#5-1-Socket-API" class="headerlink" title="5.1 Socket API"></a>5.1 Socket API</h4><h4 id="5-2-部分发送与部分接收"><a href="#5-2-部分发送与部分接收" class="headerlink" title="5.2 部分发送与部分接收"></a>5.2 部分发送与部分接收</h4><h4 id="5-3-消息边界"><a href="#5-3-消息边界" class="headerlink" title="5.3 消息边界"></a>5.3 消息边界</h4><h4 id="5-4-阻塞与非阻塞"><a href="#5-4-阻塞与非阻塞" class="headerlink" title="5.4 阻塞与非阻塞"></a>5.4 阻塞与非阻塞</h4><h4 id="5-5-超时与断线重连"><a href="#5-5-超时与断线重连" class="headerlink" title="5.5 超时与断线重连"></a>5.5 超时与断线重连</h4><h2 id="第二部分：UDP"><a href="#第二部分：UDP" class="headerlink" title="第二部分：UDP"></a>第二部分：UDP</h2><h3 id="6-UDP-原理"><a href="#6-UDP-原理" class="headerlink" title="6. UDP 原理"></a>6. UDP 原理</h3><h4 id="6-1-UDP-报文"><a href="#6-1-UDP-报文" class="headerlink" title="6.1 UDP 报文"></a>6.1 UDP 报文</h4><h4 id="6-2-数据报边界"><a href="#6-2-数据报边界" class="headerlink" title="6.2 数据报边界"></a>6.2 数据报边界</h4><h4 id="6-3-校验和"><a href="#6-3-校验和" class="headerlink" title="6.3 校验和"></a>6.3 校验和</h4><h4 id="6-4-丢包、乱序和重复"><a href="#6-4-丢包、乱序和重复" class="headerlink" title="6.4 丢包、乱序和重复"></a>6.4 丢包、乱序和重复</h4><h3 id="7-UDP-编程"><a href="#7-UDP-编程" class="headerlink" title="7. UDP 编程"></a>7. UDP 编程</h3><h4 id="7-1-sendto-与-recvfrom"><a href="#7-1-sendto-与-recvfrom" class="headerlink" title="7.1 sendto 与 recvfrom"></a>7.1 sendto 与 recvfrom</h4><h4 id="7-2-UDP-客户端和服务器"><a href="#7-2-UDP-客户端和服务器" class="headerlink" title="7.2 UDP 客户端和服务器"></a>7.2 UDP 客户端和服务器</h4><h4 id="7-3-应用层可靠性"><a href="#7-3-应用层可靠性" class="headerlink" title="7.3 应用层可靠性"></a>7.3 应用层可靠性</h4><h2 id="第三部分：TCP-与-UDP-对比"><a href="#第三部分：TCP-与-UDP-对比" class="headerlink" title="第三部分：TCP 与 UDP 对比"></a>第三部分：TCP 与 UDP 对比</h2><h3 id="8-协议选择"><a href="#8-协议选择" class="headerlink" title="8. 协议选择"></a>8. 协议选择</h3><h4 id="8-1-延迟"><a href="#8-1-延迟" class="headerlink" title="8.1 延迟"></a>8.1 延迟</h4><h4 id="8-2-可靠性"><a href="#8-2-可靠性" class="headerlink" title="8.2 可靠性"></a>8.2 可靠性</h4><h4 id="8-3-内存占用"><a href="#8-3-内存占用" class="headerlink" title="8.3 内存占用"></a>8.3 内存占用</h4><h4 id="8-4-实时性"><a href="#8-4-实时性" class="headerlink" title="8.4 实时性"></a>8.4 实时性</h4><h4 id="8-5-典型嵌入式场景"><a href="#8-5-典型嵌入式场景" class="headerlink" title="8.5 典型嵌入式场景"></a>8.5 典型嵌入式场景</h4><h2 id="第四部分：嵌入式网络"><a href="#第四部分：嵌入式网络" class="headerlink" title="第四部分：嵌入式网络"></a>第四部分：嵌入式网络</h2><h3 id="9-lwIP"><a href="#9-lwIP" class="headerlink" title="9. lwIP"></a>9. lwIP</h3><h4 id="9-1-netif"><a href="#9-1-netif" class="headerlink" title="9.1 netif"></a>9.1 netif</h4><h4 id="9-2-pbuf"><a href="#9-2-pbuf" class="headerlink" title="9.2 pbuf"></a>9.2 pbuf</h4><h4 id="9-3-tcp-pcb"><a href="#9-3-tcp-pcb" class="headerlink" title="9.3 tcp_pcb"></a>9.3 tcp_pcb</h4><h4 id="9-4-Raw-API"><a href="#9-4-Raw-API" class="headerlink" title="9.4 Raw API"></a>9.4 Raw API</h4><h4 id="9-5-Netconn-API"><a href="#9-5-Netconn-API" class="headerlink" title="9.5 Netconn API"></a>9.5 Netconn API</h4><h4 id="9-6-Socket-API"><a href="#9-6-Socket-API" class="headerlink" title="9.6 Socket API"></a>9.6 Socket API</h4><h3 id="10-嵌入式限制"><a href="#10-嵌入式限制" class="headerlink" title="10. 嵌入式限制"></a>10. 嵌入式限制</h3><h4 id="10-1-固定大小缓冲区"><a href="#10-1-固定大小缓冲区" class="headerlink" title="10.1 固定大小缓冲区"></a>10.1 固定大小缓冲区</h4><h4 id="10-2-禁止动态内存"><a href="#10-2-禁止动态内存" class="headerlink" title="10.2 禁止动态内存"></a>10.2 禁止动态内存</h4><h4 id="10-3-环形缓冲区"><a href="#10-3-环形缓冲区" class="headerlink" title="10.3 环形缓冲区"></a>10.3 环形缓冲区</h4><h4 id="10-4-RTOS-任务与队列"><a href="#10-4-RTOS-任务与队列" class="headerlink" title="10.4 RTOS 任务与队列"></a>10.4 RTOS 任务与队列</h4><h4 id="10-5-看门狗与超时"><a href="#10-5-看门狗与超时" class="headerlink" title="10.5 看门狗与超时"></a>10.5 看门狗与超时</h4><h4 id="10-6-网络字节序"><a href="#10-6-网络字节序" class="headerlink" title="10.6 网络字节序"></a>10.6 网络字节序</h4><h2 id="第五部分：软件实验"><a href="#第五部分：软件实验" class="headerlink" title="第五部分：软件实验"></a>第五部分：软件实验</h2><h3 id="实验-1：观察三次握手和四次挥手"><a href="#实验-1：观察三次握手和四次挥手" class="headerlink" title="实验 1：观察三次握手和四次挥手"></a>实验 1：观察三次握手和四次挥手</h3><h3 id="实验-2：UDP-Echo"><a href="#实验-2：UDP-Echo" class="headerlink" title="实验 2：UDP Echo"></a>实验 2：UDP Echo</h3><h3 id="实验-3：TCP-Echo"><a href="#实验-3：TCP-Echo" class="headerlink" title="实验 3：TCP Echo"></a>实验 3：TCP Echo</h3><h3 id="实验-4：自定义传感器数据协议"><a href="#实验-4：自定义传感器数据协议" class="headerlink" title="实验 4：自定义传感器数据协议"></a>实验 4：自定义传感器数据协议</h3><h3 id="实验-5：模拟断线与自动重连"><a href="#实验-5：模拟断线与自动重连" class="headerlink" title="实验 5：模拟断线与自动重连"></a>实验 5：模拟断线与自动重连</h3><h2 id="第六部分：手动实现-TCP-连接"><a href="#第六部分：手动实现-TCP-连接" class="headerlink" title="第六部分：手动实现 TCP 连接"></a>第六部分：手动实现 TCP 连接</h2><h3 id="11-实现范围"><a href="#11-实现范围" class="headerlink" title="11. 实现范围"></a>11. 实现范围</h3><h4 id="11-1-TCP-状态"><a href="#11-1-TCP-状态" class="headerlink" title="11.1 TCP 状态"></a>11.1 TCP 状态</h4><h4 id="11-2-SYN-与-ACK"><a href="#11-2-SYN-与-ACK" class="headerlink" title="11.2 SYN 与 ACK"></a>11.2 SYN 与 ACK</h4><h4 id="11-3-序列号"><a href="#11-3-序列号" class="headerlink" title="11.3 序列号"></a>11.3 序列号</h4><h4 id="11-4-超时重传"><a href="#11-4-超时重传" class="headerlink" title="11.4 超时重传"></a>11.4 超时重传</h4><h4 id="11-5-数据传输"><a href="#11-5-数据传输" class="headerlink" title="11.5 数据传输"></a>11.5 数据传输</h4><h4 id="11-6-FIN-关闭"><a href="#11-6-FIN-关闭" class="headerlink" title="11.6 FIN 关闭"></a>11.6 FIN 关闭</h4><h3 id="12-实现记录"><a href="#12-实现记录" class="headerlink" title="12. 实现记录"></a>12. 实现记录</h3><h4 id="12-1-状态机设计"><a href="#12-1-状态机设计" class="headerlink" title="12.1 状态机设计"></a>12.1 状态机设计</h4><h4 id="12-2-数据结构"><a href="#12-2-数据结构" class="headerlink" title="12.2 数据结构"></a>12.2 数据结构</h4><h4 id="12-3-报文格式"><a href="#12-3-报文格式" class="headerlink" title="12.3 报文格式"></a>12.3 报文格式</h4><h4 id="12-4-测试结果"><a href="#12-4-测试结果" class="headerlink" title="12.4 测试结果"></a>12.4 测试结果</h4><h4 id="12-5-抓包分析"><a href="#12-5-抓包分析" class="headerlink" title="12.5 抓包分析"></a>12.5 抓包分析</h4><h2 id="第七部分：问题与总结"><a href="#第七部分：问题与总结" class="headerlink" title="第七部分：问题与总结"></a>第七部分：问题与总结</h2><h3 id="13-尚未理解的问题"><a href="#13-尚未理解的问题" class="headerlink" title="13. 尚未理解的问题"></a>13. 尚未理解的问题</h3><h3 id="14-学习总结"><a href="#14-学习总结" class="headerlink" title="14. 学习总结"></a>14. 学习总结</h3>
+    
+  </div>
+
+  
+  <!-- Post Copyright -->
+
+    
+
+  
+
+  
+  <footer class="post-footer">
+    
+    <div class="post-tags">
+      
+      <a href="/tags/TCP/">TCP</a>
+      
+      <a href="/tags/UDP/">UDP</a>
+      
+      <a href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%BD%91%E7%BB%9C/">嵌入式网络</a>
+      
+    </div>
+    
+      
+  <nav class="post-nav">  
+      
+      
+      <a class="next" href="/2026/05/16/nju-os-notes/">  
+        <span class="next-text nav-default">操作系统学习笔记</span>  
+        <span class="prev-text nav-mobile">下一篇</span>  
+        <i class="iconfont icon-right"></i>  
+      </a>  
+      
+  </nav>  
+  
+
+  </footer>
+  
+
+</article>
+        </div>
+          
+  <div class="comments" id="comments">  
+      
+  </div>  
+  
+
+      </div>
+    </main>
+    <footer id="footer" class="footer">
+      <div class="copyright">
+  <span class="copyright-year">
+    <span>
+      
+      &copy;
+      
+      2026      
+    </span>
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+
+    <span class="author">Peanut-321</span>
+  </span>
+</div>
+    </footer>
+    <div class="back-to-top" id="back-to-top"> <i class="iconfont icon-up"></i> </div>
+  </div>
+    
+    
+    
+    
+    
+    
+    
+  
+
+  
+
+
+
+
+
+
+
+<script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+
+
+
+<script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+
+
+
+<script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <script type="text/javascript" src="/js/src/even.js?v=3.0.1"></script>
+</body>
+
+</html>
