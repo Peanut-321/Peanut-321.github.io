@@ -204,7 +204,7 @@
   <div class="post-toc" id="post-toc">
     <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87"><span class="toc-text">0. 学习目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-%E8%BF%9E%E6%8E%A5%E5%9F%BA%E7%A1%80"><span class="toc-text">第一阶段：TCP 连接基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%EF%BC%9AByte-Stream-%E4%B8%8E%E4%B9%B1%E5%BA%8F%E9%87%8D%E7%BB%84"><span class="toc-text">第二阶段：Byte Stream 与乱序重组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-Receiver"><span class="toc-text">第三阶段：TCP Receiver</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-Sender"><span class="toc-text">第四阶段：TCP Sender</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-%E6%B5%81%E9%87%8F%E4%B8%8E%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="toc-text">第五阶段：TCP 流量与拥塞控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E9%98%B6%E6%AE%B5%EF%BC%9ANetwork-Interface-%E4%B8%8E-IP-Router"><span class="toc-text">第六阶段：Network Interface 与 IP Router</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%83%E9%98%B6%E6%AE%B5%EF%BC%9AUDP-%E4%B8%8E%E5%8D%8F%E8%AE%AE%E9%80%89%E6%8B%A9"><span class="toc-text">第七阶段：UDP 与协议选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AB%E9%98%B6%E6%AE%B5%EF%BC%9A%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%BD%91%E7%BB%9C%E4%B8%8E-lwIP"><span class="toc-text">第八阶段：嵌入式网络与 lwIP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B9%9D%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%80%E7%BB%88%E9%A1%B9%E7%9B%AE"><span class="toc-text">第九阶段：最终项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E9%98%B6%E6%AE%B5%EF%BC%9A%E9%97%AE%E9%A2%98%E4%B8%8E%E6%80%BB%E7%BB%93"><span class="toc-text">第十阶段：问题与总结</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87"><span class="toc-text">0. 学习目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-%E8%BF%9E%E6%8E%A5%E5%9F%BA%E7%A1%80"><span class="toc-text">第一阶段：TCP 连接基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%EF%BC%9A%E5%AD%97%E8%8A%82%E6%B5%81%E4%B8%8E%E4%B9%B1%E5%BA%8F%E9%87%8D%E7%BB%84"><span class="toc-text">第二阶段：字节流与乱序重组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-%E6%8E%A5%E6%94%B6%E7%AB%AF"><span class="toc-text">第三阶段：TCP 接收端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-%E5%8F%91%E9%80%81%E7%AB%AF"><span class="toc-text">第四阶段：TCP 发送端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-%E6%B5%81%E9%87%8F%E4%B8%8E%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="toc-text">第五阶段：TCP 流量与拥塞控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E9%98%B6%E6%AE%B5%EF%BC%9A%E7%BD%91%E7%BB%9C%E6%8E%A5%E5%8F%A3%E4%B8%8E-IP-%E8%B7%AF%E7%94%B1%E5%99%A8"><span class="toc-text">第六阶段：网络接口与 IP 路由器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%83%E9%98%B6%E6%AE%B5%EF%BC%9AUDP-%E4%B8%8E%E5%8D%8F%E8%AE%AE%E9%80%89%E6%8B%A9"><span class="toc-text">第七阶段：UDP 与协议选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AB%E9%98%B6%E6%AE%B5%EF%BC%9A%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%BD%91%E7%BB%9C%E4%B8%8E-lwIP"><span class="toc-text">第八阶段：嵌入式网络与 lwIP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B9%9D%E9%98%B6%E6%AE%B5%EF%BC%9A%E6%9C%80%E7%BB%88%E9%A1%B9%E7%9B%AE"><span class="toc-text">第九阶段：最终项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%8D%81%E9%98%B6%E6%AE%B5%EF%BC%9A%E9%97%AE%E9%A2%98%E4%B8%8E%E6%80%BB%E7%BB%93"><span class="toc-text">第十阶段：问题与总结</span></a></li></ol>
     </div>
   </div>
   
@@ -219,29 +219,27 @@
 <li>完成 CS144 ByteStream、Reassembler、TCP Receiver 和 TCP Sender</li>
 <li>实现一个面向嵌入式场景的 TCP&#x2F;UDP 通信项目</li>
 </ul>
-<h2 id="第一阶段：TCP-连接基础"><a href="#第一阶段：TCP-连接基础" class="headerlink" title="第一阶段：TCP 连接基础"></a>第一阶段：TCP 连接基础</h2><h3 id="1-TCP-Basic-Model（TCP-基本模型）"><a href="#1-TCP-Basic-Model（TCP-基本模型）" class="headerlink" title="1. TCP Basic Model（TCP 基本模型）"></a>1. TCP Basic Model（TCP 基本模型）</h3><p>TCP 是一种 connection-oriented Transport Layer protocol（面向连接的传输层协议）。它在不可靠的 IP network（IP 网络）上，为 Application（应用程序）提供：</p>
+<h2 id="第一阶段：TCP-连接基础"><a href="#第一阶段：TCP-连接基础" class="headerlink" title="第一阶段：TCP 连接基础"></a>第一阶段：TCP 连接基础</h2><h3 id="1-TCP-基本模型"><a href="#1-TCP-基本模型" class="headerlink" title="1. TCP 基本模型"></a>1. TCP 基本模型</h3><p>TCP 是一种面向连接的传输层协议。它在不可靠的 IP 网络上，为应用程序提供：</p>
 <ul>
-<li>Reliable delivery（可靠传输）</li>
-<li>Ordered delivery（按顺序交付）</li>
-<li>Full-duplex communication（全双工通信）</li>
-<li>Byte-stream service（字节流服务）</li>
-<li>Error detection（差错检测）</li>
+<li>可靠传输</li>
+<li>按顺序交付</li>
+<li>全双工通信</li>
+<li>字节流服务</li>
+<li>差错检测</li>
 </ul>
-<blockquote>
-<p>TCP provides a reliable, ordered, full-duplex byte stream（TCP 提供可靠、有序、全双工的字节流）。</p>
-</blockquote>
-<h4 id="1-1-Full-Duplex-Byte-Stream（全双工字节流）"><a href="#1-1-Full-Duplex-Byte-Stream（全双工字节流）" class="headerlink" title="1.1 Full-Duplex Byte Stream（全双工字节流）"></a>1.1 Full-Duplex Byte Stream（全双工字节流）</h4><p>一条 TCP Connection（TCP 连接）包含两个独立的 Data Flow（数据流）：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Client ───────────────&gt; Server</span><br><span class="line">       Client-to-Server Stream</span><br><span class="line"></span><br><span class="line">Client &lt;─────────────── Server</span><br><span class="line">       Server-to-Client Stream</span><br></pre></td></tr></table></figure>
+<p>TCP 提供可靠、有序、全双工的字节流。</p>
+<h4 id="1-1-全双工字节流"><a href="#1-1-全双工字节流" class="headerlink" title="1.1 全双工字节流"></a>1.1 全双工字节流</h4><p>一条 TCP 连接包含两个独立的数据流：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">客户端 ───────────────&gt; 服务器</span><br><span class="line">         客户端发送方向</span><br><span class="line"></span><br><span class="line">客户端 &lt;─────────────── 服务器</span><br><span class="line">         服务器发送方向</span><br></pre></td></tr></table></figure>
 
 <p>每个方向都有独立的：</p>
 <ul>
-<li>Sequence Number Space（序列号空间）</li>
-<li>Send Buffer（发送缓冲区）和 Receive Buffer（接收缓冲区）</li>
-<li>Closing Process（关闭过程）</li>
+<li>序列号空间</li>
+<li>发送缓冲区和接收缓冲区</li>
+<li>关闭过程</li>
 </ul>
-<p>Client 停止发送数据，不代表 Server 也必须停止发送数据。</p>
-<p><strong>Byte Stream（字节流）</strong></p>
-<p>TCP 将 Application Data（应用层数据）看作连续的 Bytes（字节），不保留 Message Boundaries（消息边界）。</p>
+<p>客户端停止发送数据，不代表服务器也必须停止发送数据。</p>
+<p><strong>字节流</strong></p>
+<p>TCP 将应用层数据看作连续的字节，不保留消息边界。</p>
 <p>发送端调用：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">send(socket, <span class="string">&quot;ABC&quot;</span>, <span class="number">3</span>, <span class="number">0</span>);</span><br><span class="line">send(socket, <span class="string">&quot;DEF&quot;</span>, <span class="number">3</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
 
@@ -250,52 +248,52 @@
 <p>也可能多次收到：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">AB</span><br><span class="line">CDE</span><br><span class="line">F</span><br></pre></td></tr></table></figure>
 
-<p>TCP 只保证最终能够收到 <code>ABCDEF</code>，但不保证一次 <code>send()</code> 对应一次 <code>recv()</code>。因此，Embedded Application（嵌入式应用程序）需要自行设计 Application-Layer Framing（应用层消息分帧）：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">| Message Type | Payload Length | Payload |</span><br><span class="line">|   消息类型    |    数据长度     | 数据内容 |</span><br></pre></td></tr></table></figure>
+<p>TCP 只保证最终能够收到 <code>ABCDEF</code>，但不保证一次 <code>send()</code> 对应一次 <code>recv()</code>。因此，嵌入式应用程序需要自行设计应用层消息分帧（Application-Layer Framing）：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">| 消息类型 | 数据长度 | 数据内容 |</span><br></pre></td></tr></table></figure>
 
-<h4 id="1-2-Four-Tuple（四元组）"><a href="#1-2-Four-Tuple（四元组）" class="headerlink" title="1.2 Four-Tuple（四元组）"></a>1.2 Four-Tuple（四元组）</h4><p>一条 TCP Connection 由 Four-Tuple 唯一标识：</p>
+<h4 id="1-2-四元组"><a href="#1-2-四元组" class="headerlink" title="1.2 四元组"></a>1.2 四元组</h4><p>一条 TCP 连接由四元组唯一标识：</p>
 <ul>
-<li>Source IP Address（源 IP 地址）</li>
-<li>Source Port（源端口）</li>
-<li>Destination IP Address（目的 IP 地址）</li>
-<li>Destination Port（目的端口）</li>
+<li>源 IP 地址</li>
+<li>源端口</li>
+<li>目的 IP 地址</li>
+<li>目的端口</li>
 </ul>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">192.168.1.10:50000 → 192.168.1.20:8000</span><br><span class="line">└──── Endpoint ────┘   └──── Endpoint ────┘</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">192.168.1.10:50000 → 192.168.1.20:8000</span><br><span class="line">└────── 端点 ──────┘   └────── 端点 ──────┘</span><br></pre></td></tr></table></figure>
 
-<p>每个 <code>IP Address + Port</code> 组成一个 Endpoint（通信端点）。由于不同连接的 Four-Tuple 不同，因此同一个 Server Port（服务器端口）可以同时连接多个 Client。</p>
-<h4 id="1-3-TCP-Segment-and-Header（TCP-报文段与首部）"><a href="#1-3-TCP-Segment-and-Header（TCP-报文段与首部）" class="headerlink" title="1.3 TCP Segment and Header（TCP 报文段与首部）"></a>1.3 TCP Segment and Header（TCP 报文段与首部）</h4><p>TCP 发送的基本单位称为 TCP Segment（TCP 报文段）：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TCP Segment = TCP Header + Payload</span><br></pre></td></tr></table></figure>
+<p>每个 <code>IP 地址 + 端口</code> 组成一个通信端点。由于不同连接的四元组不同，因此同一个服务器端口可以同时连接多个客户端。</p>
+<h4 id="1-3-TCP-报文段与首部"><a href="#1-3-TCP-报文段与首部" class="headerlink" title="1.3 TCP 报文段与首部"></a>1.3 TCP 报文段与首部</h4><p>TCP 发送的基本单位称为 TCP 报文段：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TCP 报文段 = TCP 首部 + 有效载荷</span><br></pre></td></tr></table></figure>
 
-<p>常见的 TCP Flags（TCP 标志位）：</p>
+<p>常见的 TCP 标志位：</p>
 <ul>
-<li><code>SYN</code> — Synchronize（同步序列号、建立连接）</li>
-<li><code>ACK</code> — Acknowledgment（确认号有效）</li>
-<li><code>FIN</code> — Finish（关闭自己的发送方向）</li>
-<li><code>RST</code> — Reset（立即重置连接）</li>
-<li><code>PSH</code> — Push（提示尽快将数据交付应用程序）</li>
-<li><code>URG</code> — Urgent（存在紧急数据）</li>
+<li><code>SYN</code>：同步序列号、建立连接</li>
+<li><code>ACK</code>：确认号有效</li>
+<li><code>FIN</code>：关闭自己的发送方向</li>
+<li><code>RST</code>：立即重置连接</li>
+<li><code>PSH</code>：提示尽快将数据交付应用程序</li>
+<li><code>URG</code>：存在紧急数据</li>
 </ul>
-<h4 id="1-4-Sequence-Number-and-Acknowledgment-Number（序列号与确认号）"><a href="#1-4-Sequence-Number-and-Acknowledgment-Number（序列号与确认号）" class="headerlink" title="1.4 Sequence Number and Acknowledgment Number（序列号与确认号）"></a>1.4 Sequence Number and Acknowledgment Number（序列号与确认号）</h4><p><strong>Sequence Number（序列号，<code>seq</code>）</strong></p>
-<p>表示当前 TCP Segment 中第一个 Payload Byte（有效载荷字节）在发送字节流中的编号。每个发送方向都有独立的 Sequence Number Space（序列号空间），因此 <code>seq</code> 描述当前发送者的数据。</p>
-<p><strong>Acknowledgment Number（确认号，<code>ack</code>）</strong></p>
-<p>表示 Next Byte Expected（接收方下一次期待收到的字节序号），因此 <code>ack</code> 确认相反方向的数据。</p>
-<h3 id="2-Connection-Management（连接管理）"><a href="#2-Connection-Management（连接管理）" class="headerlink" title="2. Connection Management（连接管理）"></a>2. Connection Management（连接管理）</h3><h4 id="2-1-Three-Way-Handshake（三次握手）"><a href="#2-1-Three-Way-Handshake（三次握手）" class="headerlink" title="2.1 Three-Way Handshake（三次握手）"></a>2.1 Three-Way Handshake（三次握手）</h4><p>Three-Way Handshake 用于 Connection Establishment（连接建立），主要完成：</p>
+<h4 id="1-4-序列号与确认号"><a href="#1-4-序列号与确认号" class="headerlink" title="1.4 序列号与确认号"></a>1.4 序列号与确认号</h4><p><strong>序列号 <code>seq</code></strong></p>
+<p>表示当前 TCP 报文段中第一个有效载荷字节在发送字节流中的编号。每个发送方向都有独立的序列号空间，因此 <code>seq</code> 描述当前发送者的数据。</p>
+<p><strong>确认号 <code>ack</code></strong></p>
+<p>表示接收方下一次期待收到的字节序号，因此 <code>ack</code> 确认相反方向的数据。</p>
+<h3 id="2-连接管理"><a href="#2-连接管理" class="headerlink" title="2. 连接管理"></a>2. 连接管理</h3><h4 id="2-1-三次握手"><a href="#2-1-三次握手" class="headerlink" title="2.1 三次握手"></a>2.1 三次握手</h4><p>三次握手用于建立连接，主要完成：</p>
 <ul>
 <li>确认两个通信方向都能够工作</li>
-<li>交换 Initial Sequence Number（初始序列号，ISN）</li>
-<li>协商 MSS、Window Scale、SACK 等 TCP Options（TCP 选项）</li>
+<li>交换初始序列号（Initial Sequence Number，ISN）</li>
+<li>协商 MSS、Window Scale、SACK 等 TCP 选项</li>
 </ul>
 <p>假设：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Client ISN = 200</span><br><span class="line">Server ISN = 900</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">客户端 ISN = 200</span><br><span class="line">服务器 ISN = 900</span><br></pre></td></tr></table></figure>
 
 <p>完整过程：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Client                                            Server</span><br><span class="line">CLOSED                                            LISTEN</span><br><span class="line">   │                                                 │</span><br><span class="line">   │  SYN, seq=200                                   │</span><br><span class="line">   ├────────────────────────────────────────────────&gt;│</span><br><span class="line">   │                                                 │</span><br><span class="line">SYN-SENT                                      SYN-RECEIVED</span><br><span class="line">   │                                                 │</span><br><span class="line">   │  SYN+ACK, seq=900, ack=201                      │</span><br><span class="line">   │&lt;────────────────────────────────────────────────┤</span><br><span class="line">   │                                                 │</span><br><span class="line">   │  ACK, seq=201, ack=901                          │</span><br><span class="line">   ├────────────────────────────────────────────────&gt;│</span><br><span class="line">   │                                                 │</span><br><span class="line">ESTABLISHED                                    ESTABLISHED</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">客户端                                            服务器</span><br><span class="line">CLOSED                                            LISTEN</span><br><span class="line">   │                                                 │</span><br><span class="line">   │  SYN, seq=200                                   │</span><br><span class="line">   ├────────────────────────────────────────────────&gt;│</span><br><span class="line">   │                                                 │</span><br><span class="line">SYN-SENT                                      SYN-RECEIVED</span><br><span class="line">   │                                                 │</span><br><span class="line">   │  SYN+ACK, seq=900, ack=201                      │</span><br><span class="line">   │&lt;────────────────────────────────────────────────┤</span><br><span class="line">   │                                                 │</span><br><span class="line">   │  ACK, seq=201, ack=901                          │</span><br><span class="line">   ├────────────────────────────────────────────────&gt;│</span><br><span class="line">   │                                                 │</span><br><span class="line">ESTABLISHED                                    ESTABLISHED</span><br></pre></td></tr></table></figure>
 
 <table>
 <thead>
 <tr>
-<th>Step</th>
-<th>Segment</th>
+<th>步骤</th>
+<th>报文</th>
 <th>作用</th>
 <th>状态变化</th>
 </tr>
@@ -303,72 +301,72 @@
 <tbody><tr>
 <td>1</td>
 <td><code>SYN, seq=200</code></td>
-<td>Client 公布 ISN</td>
-<td>Client：<code>CLOSED → SYN-SENT</code></td>
+<td>客户端公布 ISN</td>
+<td>客户端：<code>CLOSED → SYN-SENT</code></td>
 </tr>
 <tr>
 <td>2</td>
 <td><code>SYN+ACK, seq=900, ack=201</code></td>
-<td>Server 公布 ISN，并确认 Client SYN</td>
-<td>Server：<code>LISTEN → SYN-RECEIVED</code></td>
+<td>服务器公布 ISN，并确认客户端的 SYN</td>
+<td>服务器：<code>LISTEN → SYN-RECEIVED</code></td>
 </tr>
 <tr>
 <td>3</td>
 <td><code>ACK, seq=201, ack=901</code></td>
-<td>Client 确认 Server SYN</td>
+<td>客户端确认服务器的 SYN</td>
 <td>双方进入 <code>ESTABLISHED</code></td>
 </tr>
 </tbody></table>
 <p><strong>为什么需要三次握手？</strong></p>
-<p>双方都要公布并确认各自的 ISN。第二次握手将 Server 的 SYN 与对 Client SYN 的 ACK 合并；第三次握手用于确认 Server ISN。SYN 占用一个 Sequence Number，因此双方第一个数据字节分别从 <code>201</code> 和 <code>901</code> 开始。</p>
-<h4 id="2-2-Four-Way-Handshake（四次挥手）"><a href="#2-2-Four-Way-Handshake（四次挥手）" class="headerlink" title="2.2 Four-Way Handshake（四次挥手）"></a>2.2 Four-Way Handshake（四次挥手）</h4><p>Four-Way Handshake 用于 TCP Connection Termination（TCP 连接终止）。TCP 是 Full-Duplex（全双工）的，因此两个发送方向需要分别关闭；FIN closes only one sending direction（FIN 只关闭发送者自己的发送方向）。</p>
-<p>假设 Client 主动关闭连接：</p>
+<p>双方都要公布并确认各自的 ISN。第二次握手将服务器的 SYN 与对客户端 SYN 的 ACK 合并；第三次握手用于确认服务器的 ISN。SYN 占用一个序列号，因此双方第一个数据字节分别从 <code>201</code> 和 <code>901</code> 开始。</p>
+<h4 id="2-2-四次挥手"><a href="#2-2-四次挥手" class="headerlink" title="2.2 四次挥手"></a>2.2 四次挥手</h4><p>四次挥手用于终止 TCP 连接。TCP 是全双工的，因此两个发送方向需要分别关闭；FIN 只关闭发送者自己的发送方向。</p>
+<p>假设客户端主动关闭连接：</p>
 <ul>
-<li>Client 是 Active Closer（主动关闭方）</li>
-<li>Server 是 Passive Closer（被动关闭方）</li>
+<li>客户端是主动关闭方</li>
+<li>服务器是被动关闭方</li>
 </ul>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Client                                         Server</span><br><span class="line">ESTABLISHED                                    ESTABLISHED</span><br><span class="line">   │                                              │</span><br><span class="line">   │ FIN+ACK, seq=u, ack=v                        │</span><br><span class="line">   ├─────────────────────────────────────────────&gt;│</span><br><span class="line">   │                                              │</span><br><span class="line">   │ ACK, seq=v, ack=u+1                          │</span><br><span class="line">   │&lt;─────────────────────────────────────────────┤</span><br><span class="line">   │                                              │</span><br><span class="line">   │       Server 可以继续发送剩余数据               │</span><br><span class="line">   │&lt;─────────────────────────────────────────────┤</span><br><span class="line">   │                                              │</span><br><span class="line">   │ FIN+ACK, seq=w, ack=u+1                      │</span><br><span class="line">   │&lt;─────────────────────────────────────────────┤</span><br><span class="line">   │                                              │</span><br><span class="line">   │ ACK, seq=u+1, ack=w+1                        │</span><br><span class="line">   ├─────────────────────────────────────────────&gt;│</span><br><span class="line">   │                                              │</span><br><span class="line">TIME_WAIT                                       CLOSED</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">客户端                                         服务器</span><br><span class="line">ESTABLISHED                                    ESTABLISHED</span><br><span class="line">   │                                              │</span><br><span class="line">   │ FIN+ACK, seq=u, ack=v                        │</span><br><span class="line">   ├─────────────────────────────────────────────&gt;│</span><br><span class="line">   │                                              │</span><br><span class="line">   │ ACK, seq=v, ack=u+1                          │</span><br><span class="line">   │&lt;─────────────────────────────────────────────┤</span><br><span class="line">   │                                              │</span><br><span class="line">   │       服务器可以继续发送剩余数据                  │</span><br><span class="line">   │&lt;─────────────────────────────────────────────┤</span><br><span class="line">   │                                              │</span><br><span class="line">   │ FIN+ACK, seq=w, ack=u+1                      │</span><br><span class="line">   │&lt;─────────────────────────────────────────────┤</span><br><span class="line">   │                                              │</span><br><span class="line">   │ ACK, seq=u+1, ack=w+1                        │</span><br><span class="line">   ├─────────────────────────────────────────────&gt;│</span><br><span class="line">   │                                              │</span><br><span class="line">TIME_WAIT                                       CLOSED</span><br></pre></td></tr></table></figure>
 
-<p>其中 <code>u</code>、<code>v</code> 是双方当前的下一个 Sequence Number，<code>w</code> 是 Server 发送完剩余数据后的 Sequence Number。</p>
+<p>其中 <code>u</code>、<code>v</code> 是双方当前的下一个序列号，<code>w</code> 是服务器发送完剩余数据后的序列号。</p>
 <table>
 <thead>
 <tr>
-<th>Step</th>
-<th>Segment</th>
+<th>步骤</th>
+<th>报文</th>
 <th>作用</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>1</td>
-<td><code>Client FIN, seq=u</code></td>
-<td>关闭 Client → Server 方向</td>
+<td><code>客户端 FIN, seq=u</code></td>
+<td>关闭客户端 → 服务器方向</td>
 </tr>
 <tr>
 <td>2</td>
-<td><code>Server ACK, ack=u+1</code></td>
-<td>确认 Client FIN</td>
+<td><code>服务器 ACK, ack=u+1</code></td>
+<td>确认客户端的 FIN</td>
 </tr>
 <tr>
 <td>3</td>
-<td><code>Server FIN, seq=w</code></td>
-<td>关闭 Server → Client 方向</td>
+<td><code>服务器 FIN, seq=w</code></td>
+<td>关闭服务器 → 客户端方向</td>
 </tr>
 <tr>
 <td>4</td>
-<td><code>Client ACK, ack=w+1</code></td>
-<td>确认 Server FIN</td>
+<td><code>客户端 ACK, ack=w+1</code></td>
+<td>确认服务器的 FIN</td>
 </tr>
 </tbody></table>
-<p>FIN 不是 Payload Data，但占用一个 Sequence Number；收到 FIN 的一方仍可继续发送数据。</p>
+<p>FIN 不是有效载荷，但会占用一个序列号；收到 FIN 的一方仍可继续发送数据。</p>
 <p><strong>为什么 ACK 和 FIN 通常不能合并？</strong></p>
-<p>TCP Stack 收到 FIN 后立即回复 ACK，但本地 Application 可能尚未完成发送，因此自己的 FIN 通常稍后发送。若没有剩余数据，ACK 和 FIN 可以合并，抓包中可能只看到三个 Segments。</p>
-<h4 id="2-3-TCP-State-Machine（TCP-状态机）"><a href="#2-3-TCP-State-Machine（TCP-状态机）" class="headerlink" title="2.3 TCP State Machine（TCP 状态机）"></a>2.3 TCP State Machine（TCP 状态机）</h4><p>TCP State Machine 是记录 Connection Lifecycle（连接生命周期）的 Finite State Machine（有限状态机，FSM）。每个 Endpoint 独立维护状态：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Client 建连：CLOSED → SYN-SENT → ESTABLISHED</span><br><span class="line">Server 建连：CLOSED → LISTEN → SYN-RECEIVED → ESTABLISHED</span><br><span class="line"></span><br><span class="line">Active Close： ESTABLISHED → FIN-WAIT-1 → FIN-WAIT-2</span><br><span class="line">              → TIME-WAIT → CLOSED</span><br><span class="line">Passive Close：ESTABLISHED → CLOSE-WAIT → LAST-ACK → CLOSED</span><br></pre></td></tr></table></figure>
+<p>TCP 协议栈收到 FIN 后立即回复 ACK，但本地应用程序可能尚未完成发送，因此自己的 FIN 通常稍后发送。若没有剩余数据，ACK 和 FIN 可以合并，抓包中可能只看到三个报文段。</p>
+<h4 id="2-3-TCP-状态机"><a href="#2-3-TCP-状态机" class="headerlink" title="2.3 TCP 状态机"></a>2.3 TCP 状态机</h4><p>TCP 状态机记录连接的整个生命周期，本质上是有限状态机（Finite State Machine，FSM）。每个通信端点独立维护状态：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">客户端建连：CLOSED → SYN-SENT → ESTABLISHED</span><br><span class="line">服务器建连：CLOSED → LISTEN → SYN-RECEIVED → ESTABLISHED</span><br><span class="line"></span><br><span class="line">Active Close： ESTABLISHED → FIN-WAIT-1 → FIN-WAIT-2</span><br><span class="line">              → TIME-WAIT → CLOSED</span><br><span class="line">Passive Close：ESTABLISHED → CLOSE-WAIT → LAST-ACK → CLOSED</span><br></pre></td></tr></table></figure>
 
 <table>
 <thead>
 <tr>
-<th>State</th>
+<th>状态</th>
 <th>含义</th>
 </tr>
 </thead>
@@ -390,7 +388,7 @@
 </tr>
 <tr>
 <td><code>CLOSE-WAIT</code></td>
-<td>已收到 FIN，等待本地 Application 关闭</td>
+<td>已收到 FIN，等待本地应用程序关闭</td>
 </tr>
 <tr>
 <td><code>LAST-ACK</code></td>
@@ -401,42 +399,42 @@
 <td>已发送最终 ACK，等待 2MSL</td>
 </tr>
 </tbody></table>
-<h4 id="2-4-TIME-WAIT"><a href="#2-4-TIME-WAIT" class="headerlink" title="2.4 TIME_WAIT"></a>2.4 TIME_WAIT</h4><p><code>TIME-WAIT</code>（常见工具显示为 <code>TIME_WAIT</code>）通常属于 Active Closer，用于：</p>
+<h4 id="2-4-TIME-WAIT"><a href="#2-4-TIME-WAIT" class="headerlink" title="2.4 TIME_WAIT"></a>2.4 TIME_WAIT</h4><p><code>TIME-WAIT</code>（常见工具显示为 <code>TIME_WAIT</code>）通常属于主动关闭方，用于：</p>
 <ol>
 <li>在最终 ACK 丢失时，接收重复 FIN 并再次回复 ACK。</li>
-<li>等待 <code>2MSL</code>，避免旧连接的延迟报文影响相同 Four-Tuple 的新连接。</li>
+<li>等待 <code>2MSL</code>，避免旧连接的延迟报文影响具有相同四元组的新连接。</li>
 </ol>
-<p>MSL 是 Maximum Segment Lifetime（报文段最大生存时间）。<code>TIME_WAIT</code> 是正常状态，不代表连接错误。</p>
-<h4 id="2-5-CLOSE-WAIT"><a href="#2-5-CLOSE-WAIT" class="headerlink" title="2.5 CLOSE_WAIT"></a>2.5 CLOSE_WAIT</h4><p><code>CLOSE-WAIT</code>（常见工具显示为 <code>CLOSE_WAIT</code>）表示已收到对方 FIN，但本地 Application 尚未调用 <code>close()</code>。Socket 中通常表现为：</p>
+<p>MSL 是报文段最大生存时间（Maximum Segment Lifetime）。<code>TIME_WAIT</code> 是正常状态，不代表连接错误。</p>
+<h4 id="2-5-CLOSE-WAIT"><a href="#2-5-CLOSE-WAIT" class="headerlink" title="2.5 CLOSE_WAIT"></a>2.5 CLOSE_WAIT</h4><p><code>CLOSE-WAIT</code>（常见工具显示为 <code>CLOSE_WAIT</code>）表示已收到对方 FIN，但本地应用程序尚未调用 <code>close()</code>。套接字中通常表现为：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">recv(socket, buffer, size, <span class="number">0</span>) == <span class="number">0</span>; <span class="comment">// 对方的发送方向已经结束</span></span><br></pre></td></tr></table></figure>
 
-<p>Application 随后调用 <code>close()</code>，发送 FIN 并进入 <code>LAST-ACK</code>。长期停留通常说明程序未处理 <code>recv() == 0</code>、忘记关闭 Socket，或线程阻塞。</p>
+<p>应用程序随后调用 <code>close()</code>，发送 FIN 并进入 <code>LAST-ACK</code>。长期停留通常说明程序未处理 <code>recv() == 0</code>、忘记关闭套接字，或线程阻塞。</p>
 <table>
 <thead>
 <tr>
-<th>State</th>
+<th>状态</th>
 <th>通常属于</th>
 <th>正在等待什么</th>
 </tr>
 </thead>
 <tbody><tr>
 <td><code>TIME-WAIT</code></td>
-<td>Active Closer</td>
+<td>主动关闭方</td>
 <td>等待 2MSL</td>
 </tr>
 <tr>
 <td><code>CLOSE-WAIT</code></td>
-<td>Passive Closer</td>
-<td>等待本地 Application 调用 <code>close()</code></td>
+<td>被动关闭方</td>
+<td>等待本地应用程序调用 <code>close()</code></td>
 </tr>
 </tbody></table>
-<h4 id="2-6-RST"><a href="#2-6-RST" class="headerlink" title="2.6 RST"></a>2.6 RST</h4><p>RST（Reset）用于立即拒绝或中止整个连接。常见场景：</p>
+<h4 id="2-6-RST"><a href="#2-6-RST" class="headerlink" title="2.6 RST"></a>2.6 RST</h4><p>RST 用于立即拒绝或中止整个连接。常见场景：</p>
 <ul>
-<li>SYN 到达未监听端口：Client 的 <code>connect()</code> 返回 Connection refused。</li>
+<li>SYN 到达未监听端口：客户端的 <code>connect()</code> 返回 <code>Connection refused</code>。</li>
 <li>报文不属于任何现有连接。</li>
-<li>Application 主动 Abort（异常中止）。</li>
+<li>应用程序主动异常中止。</li>
 </ul>
-<p>收到 RST 后不再进行四次挥手，未完成的数据可能丢失，Application 通常收到 <code>ECONNRESET</code>。</p>
+<p>收到 RST 后不再进行四次挥手，未完成的数据可能丢失，应用程序通常收到 <code>ECONNRESET</code>。</p>
 <table>
 <thead>
 <tr>
@@ -461,12 +459,12 @@
 <td>不保证完成传输</td>
 </tr>
 <tr>
-<td>Application 常见结果</td>
+<td>应用程序常见结果</td>
 <td><code>recv() == 0</code></td>
 <td><code>ECONNRESET</code></td>
 </tr>
 </tbody></table>
-<h4 id="2-7-握手与挥手丢包"><a href="#2-7-握手与挥手丢包" class="headerlink" title="2.7 握手与挥手丢包"></a>2.7 握手与挥手丢包</h4><p>SYN 和 FIN 占用 Sequence Number，因此可被确认和重传。Pure ACK 不占用序列号，不会因自身 Timer 到期而单独重传。</p>
+<h4 id="2-7-握手与挥手丢包"><a href="#2-7-握手与挥手丢包" class="headerlink" title="2.7 握手与挥手丢包"></a>2.7 握手与挥手丢包</h4><p>SYN 和 FIN 占用序列号，因此可被确认和重传。纯 ACK 不占用序列号，不会因自身定时器到期而单独重传。</p>
 <table>
 <thead>
 <tr>
@@ -476,15 +474,15 @@
 </thead>
 <tbody><tr>
 <td>SYN</td>
-<td>Client 重传 SYN</td>
+<td>客户端重传 SYN</td>
 </tr>
 <tr>
 <td>SYN+ACK</td>
-<td>Server 重传 SYN+ACK</td>
+<td>服务器重传 SYN+ACK</td>
 </tr>
 <tr>
 <td>第三次握手的 ACK</td>
-<td>Server 重传 SYN+ACK，Client 再次回复 ACK</td>
+<td>服务器重传 SYN+ACK，客户端再次回复 ACK</td>
 </tr>
 <tr>
 <td>FIN</td>
@@ -496,11 +494,11 @@
 </tr>
 <tr>
 <td>最终 ACK</td>
-<td>Passive Closer 重传 FIN，TIME-WAIT 方再次回复 ACK</td>
+<td>被动关闭方重传 FIN，<code>TIME-WAIT</code> 方再次回复 ACK</td>
 </tr>
 </tbody></table>
-<p>第三次握手 ACK 丢失时，Client 已进入 <code>ESTABLISHED</code>，Server 仍处于 <code>SYN-RECEIVED</code>；Server 重传 SYN+ACK 后，Client 再次回复 ACK。若重传超过限制，TCP Stack 会报告 Timeout 或连接错误。</p>
-<h3 id="实验-0：抓包观察连接建立与关闭"><a href="#实验-0：抓包观察连接建立与关闭" class="headerlink" title="实验 0：抓包观察连接建立与关闭"></a>实验 0：抓包观察连接建立与关闭</h3><h2 id="第二阶段：Byte-Stream-与乱序重组"><a href="#第二阶段：Byte-Stream-与乱序重组" class="headerlink" title="第二阶段：Byte Stream 与乱序重组"></a>第二阶段：Byte Stream 与乱序重组</h2><h3 id="3-Byte-Stream-and-Reassembly（字节流与重组）"><a href="#3-Byte-Stream-and-Reassembly（字节流与重组）" class="headerlink" title="3. Byte Stream and Reassembly（字节流与重组）"></a>3. Byte Stream and Reassembly（字节流与重组）</h3><h4 id="3-1-ByteStream-抽象"><a href="#3-1-ByteStream-抽象" class="headerlink" title="3.1 ByteStream 抽象"></a>3.1 ByteStream 抽象</h4><h4 id="3-2-Send-Buffer-与-Receive-Buffer"><a href="#3-2-Send-Buffer-与-Receive-Buffer" class="headerlink" title="3.2 Send Buffer 与 Receive Buffer"></a>3.2 Send Buffer 与 Receive Buffer</h4><h4 id="3-3-Capacity、Backpressure-与-EOF"><a href="#3-3-Capacity、Backpressure-与-EOF" class="headerlink" title="3.3 Capacity、Backpressure 与 EOF"></a>3.3 Capacity、Backpressure 与 EOF</h4><h4 id="3-4-乱序、重复和重叠数据"><a href="#3-4-乱序、重复和重叠数据" class="headerlink" title="3.4 乱序、重复和重叠数据"></a>3.4 乱序、重复和重叠数据</h4><h4 id="3-5-Interval-Reassembly（区间重组）"><a href="#3-5-Interval-Reassembly（区间重组）" class="headerlink" title="3.5 Interval Reassembly（区间重组）"></a>3.5 Interval Reassembly（区间重组）</h4><h4 id="3-6-CS144-Checkpoint-0：Networking-Warmup-与-ByteStream"><a href="#3-6-CS144-Checkpoint-0：Networking-Warmup-与-ByteStream" class="headerlink" title="3.6 CS144 Checkpoint 0：Networking Warmup 与 ByteStream"></a>3.6 CS144 Checkpoint 0：Networking Warmup 与 ByteStream</h4><h4 id="3-7-CS144-Checkpoint-1：Reassembler"><a href="#3-7-CS144-Checkpoint-1：Reassembler" class="headerlink" title="3.7 CS144 Checkpoint 1：Reassembler"></a>3.7 CS144 Checkpoint 1：Reassembler</h4><h2 id="第三阶段：TCP-Receiver"><a href="#第三阶段：TCP-Receiver" class="headerlink" title="第三阶段：TCP Receiver"></a>第三阶段：TCP Receiver</h2><h3 id="4-Receiver-Side-Reliability（接收端可靠性）"><a href="#4-Receiver-Side-Reliability（接收端可靠性）" class="headerlink" title="4. Receiver-Side Reliability（接收端可靠性）"></a>4. Receiver-Side Reliability（接收端可靠性）</h3><h4 id="4-1-Sequence-Number（序列号）"><a href="#4-1-Sequence-Number（序列号）" class="headerlink" title="4.1 Sequence Number（序列号）"></a>4.1 Sequence Number（序列号）</h4><h4 id="4-2-ISN-与-32-bit-Sequence-Number-Wrapping"><a href="#4-2-ISN-与-32-bit-Sequence-Number-Wrapping" class="headerlink" title="4.2 ISN 与 32-bit Sequence Number Wrapping"></a>4.2 ISN 与 32-bit Sequence Number Wrapping</h4><h4 id="4-3-Cumulative-ACK（累计确认）"><a href="#4-3-Cumulative-ACK（累计确认）" class="headerlink" title="4.3 Cumulative ACK（累计确认）"></a>4.3 Cumulative ACK（累计确认）</h4><h4 id="4-4-Receive-Window（接收窗口）"><a href="#4-4-Receive-Window（接收窗口）" class="headerlink" title="4.4 Receive Window（接收窗口）"></a>4.4 Receive Window（接收窗口）</h4><h4 id="4-5-SYN、FIN-与-Sequence-Space"><a href="#4-5-SYN、FIN-与-Sequence-Space" class="headerlink" title="4.5 SYN、FIN 与 Sequence Space"></a>4.5 SYN、FIN 与 Sequence Space</h4><h4 id="4-6-CS144-Checkpoint-2：TCP-Receiver"><a href="#4-6-CS144-Checkpoint-2：TCP-Receiver" class="headerlink" title="4.6 CS144 Checkpoint 2：TCP Receiver"></a>4.6 CS144 Checkpoint 2：TCP Receiver</h4><h2 id="第四阶段：TCP-Sender"><a href="#第四阶段：TCP-Sender" class="headerlink" title="第四阶段：TCP Sender"></a>第四阶段：TCP Sender</h2><h3 id="5-Sender-Side-Reliability（发送端可靠性）"><a href="#5-Sender-Side-Reliability（发送端可靠性）" class="headerlink" title="5. Sender-Side Reliability（发送端可靠性）"></a>5. Sender-Side Reliability（发送端可靠性）</h3><h4 id="5-1-Send-Buffer-与-Outstanding-Data"><a href="#5-1-Send-Buffer-与-Outstanding-Data" class="headerlink" title="5.1 Send Buffer 与 Outstanding Data"></a>5.1 Send Buffer 与 Outstanding Data</h4><h4 id="5-2-Sliding-Window（滑动窗口）"><a href="#5-2-Sliding-Window（滑动窗口）" class="headerlink" title="5.2 Sliding Window（滑动窗口）"></a>5.2 Sliding Window（滑动窗口）</h4><h4 id="5-3-Timeout-and-Retransmission（超时与重传）"><a href="#5-3-Timeout-and-Retransmission（超时与重传）" class="headerlink" title="5.3 Timeout and Retransmission（超时与重传）"></a>5.3 Timeout and Retransmission（超时与重传）</h4><h4 id="5-4-RTT-与-RTO"><a href="#5-4-RTT-与-RTO" class="headerlink" title="5.4 RTT 与 RTO"></a>5.4 RTT 与 RTO</h4><h4 id="5-5-Exponential-Backoff（指数退避）"><a href="#5-5-Exponential-Backoff（指数退避）" class="headerlink" title="5.5 Exponential Backoff（指数退避）"></a>5.5 Exponential Backoff（指数退避）</h4><h4 id="5-6-Duplicate-ACK-与-Fast-Retransmit"><a href="#5-6-Duplicate-ACK-与-Fast-Retransmit" class="headerlink" title="5.6 Duplicate ACK 与 Fast Retransmit"></a>5.6 Duplicate ACK 与 Fast Retransmit</h4><h4 id="5-7-CS144-Checkpoint-3：TCP-Sender"><a href="#5-7-CS144-Checkpoint-3：TCP-Sender" class="headerlink" title="5.7 CS144 Checkpoint 3：TCP Sender"></a>5.7 CS144 Checkpoint 3：TCP Sender</h4><h2 id="第五阶段：TCP-流量与拥塞控制"><a href="#第五阶段：TCP-流量与拥塞控制" class="headerlink" title="第五阶段：TCP 流量与拥塞控制"></a>第五阶段：TCP 流量与拥塞控制</h2><h3 id="6-TCP-Performance（TCP-性能）"><a href="#6-TCP-Performance（TCP-性能）" class="headerlink" title="6. TCP Performance（TCP 性能）"></a>6. TCP Performance（TCP 性能）</h3><h4 id="6-1-Flow-Control-与-rwnd"><a href="#6-1-Flow-Control-与-rwnd" class="headerlink" title="6.1 Flow Control 与 rwnd"></a>6.1 Flow Control 与 rwnd</h4><h4 id="6-2-Congestion-Control-与-cwnd"><a href="#6-2-Congestion-Control-与-cwnd" class="headerlink" title="6.2 Congestion Control 与 cwnd"></a>6.2 Congestion Control 与 cwnd</h4><h4 id="6-3-Slow-Start（慢启动）"><a href="#6-3-Slow-Start（慢启动）" class="headerlink" title="6.3 Slow Start（慢启动）"></a>6.3 Slow Start（慢启动）</h4><h4 id="6-4-Congestion-Avoidance（拥塞避免）"><a href="#6-4-Congestion-Avoidance（拥塞避免）" class="headerlink" title="6.4 Congestion Avoidance（拥塞避免）"></a>6.4 Congestion Avoidance（拥塞避免）</h4><h4 id="6-5-Fast-Retransmit-与-Fast-Recovery"><a href="#6-5-Fast-Retransmit-与-Fast-Recovery" class="headerlink" title="6.5 Fast Retransmit 与 Fast Recovery"></a>6.5 Fast Retransmit 与 Fast Recovery</h4><h4 id="6-6-Bandwidth-Delay-Product-与吞吐率"><a href="#6-6-Bandwidth-Delay-Product-与吞吐率" class="headerlink" title="6.6 Bandwidth-Delay Product 与吞吐率"></a>6.6 Bandwidth-Delay Product 与吞吐率</h4><h4 id="6-7-CS144-Checkpoint-4：Measuring-the-Real-World"><a href="#6-7-CS144-Checkpoint-4：Measuring-the-Real-World" class="headerlink" title="6.7 CS144 Checkpoint 4：Measuring the Real World"></a>6.7 CS144 Checkpoint 4：Measuring the Real World</h4><h2 id="第六阶段：Network-Interface-与-IP-Router"><a href="#第六阶段：Network-Interface-与-IP-Router" class="headerlink" title="第六阶段：Network Interface 与 IP Router"></a>第六阶段：Network Interface 与 IP Router</h2><h3 id="7-Link-and-Network-Layers（链路层与网络层）"><a href="#7-Link-and-Network-Layers（链路层与网络层）" class="headerlink" title="7. Link and Network Layers（链路层与网络层）"></a>7. Link and Network Layers（链路层与网络层）</h3><h4 id="7-1-Ethernet-Frame-与-MAC-Address"><a href="#7-1-Ethernet-Frame-与-MAC-Address" class="headerlink" title="7.1 Ethernet Frame 与 MAC Address"></a>7.1 Ethernet Frame 与 MAC Address</h4><h4 id="7-2-ARP"><a href="#7-2-ARP" class="headerlink" title="7.2 ARP"></a>7.2 ARP</h4><h4 id="7-3-IPv4-Datagram"><a href="#7-3-IPv4-Datagram" class="headerlink" title="7.3 IPv4 Datagram"></a>7.3 IPv4 Datagram</h4><h4 id="7-4-Network-Interface"><a href="#7-4-Network-Interface" class="headerlink" title="7.4 Network Interface"></a>7.4 Network Interface</h4><h4 id="7-5-IP-Routing-与-Longest-Prefix-Match"><a href="#7-5-IP-Routing-与-Longest-Prefix-Match" class="headerlink" title="7.5 IP Routing 与 Longest Prefix Match"></a>7.5 IP Routing 与 Longest Prefix Match</h4><h4 id="7-6-CS144-Checkpoint-5：Network-Interface"><a href="#7-6-CS144-Checkpoint-5：Network-Interface" class="headerlink" title="7.6 CS144 Checkpoint 5：Network Interface"></a>7.6 CS144 Checkpoint 5：Network Interface</h4><h4 id="7-7-CS144-Checkpoint-6：IP-Router"><a href="#7-7-CS144-Checkpoint-6：IP-Router" class="headerlink" title="7.7 CS144 Checkpoint 6：IP Router"></a>7.7 CS144 Checkpoint 6：IP Router</h4><h4 id="7-8-CS144-Checkpoint-7：End-to-End-Internet"><a href="#7-8-CS144-Checkpoint-7：End-to-End-Internet" class="headerlink" title="7.8 CS144 Checkpoint 7：End-to-End Internet"></a>7.8 CS144 Checkpoint 7：End-to-End Internet</h4><h2 id="第七阶段：UDP-与协议选择"><a href="#第七阶段：UDP-与协议选择" class="headerlink" title="第七阶段：UDP 与协议选择"></a>第七阶段：UDP 与协议选择</h2><h3 id="8-UDP"><a href="#8-UDP" class="headerlink" title="8. UDP"></a>8. UDP</h3><h4 id="8-1-Datagram-Model-与-Message-Boundary"><a href="#8-1-Datagram-Model-与-Message-Boundary" class="headerlink" title="8.1 Datagram Model 与 Message Boundary"></a>8.1 Datagram Model 与 Message Boundary</h4><h4 id="8-2-UDP-Header-与-Checksum"><a href="#8-2-UDP-Header-与-Checksum" class="headerlink" title="8.2 UDP Header 与 Checksum"></a>8.2 UDP Header 与 Checksum</h4><h4 id="8-3-sendto、recvfrom-与-UDP-Echo"><a href="#8-3-sendto、recvfrom-与-UDP-Echo" class="headerlink" title="8.3 sendto、recvfrom 与 UDP Echo"></a>8.3 sendto、recvfrom 与 UDP Echo</h4><h4 id="8-4-Broadcast-与-Multicast"><a href="#8-4-Broadcast-与-Multicast" class="headerlink" title="8.4 Broadcast 与 Multicast"></a>8.4 Broadcast 与 Multicast</h4><h4 id="8-5-应用层序列号、超时与重传"><a href="#8-5-应用层序列号、超时与重传" class="headerlink" title="8.5 应用层序列号、超时与重传"></a>8.5 应用层序列号、超时与重传</h4><h4 id="8-6-TCP-与-UDP-对比"><a href="#8-6-TCP-与-UDP-对比" class="headerlink" title="8.6 TCP 与 UDP 对比"></a>8.6 TCP 与 UDP 对比</h4><h4 id="8-7-典型嵌入式使用场景"><a href="#8-7-典型嵌入式使用场景" class="headerlink" title="8.7 典型嵌入式使用场景"></a>8.7 典型嵌入式使用场景</h4><h2 id="第八阶段：嵌入式网络与-lwIP"><a href="#第八阶段：嵌入式网络与-lwIP" class="headerlink" title="第八阶段：嵌入式网络与 lwIP"></a>第八阶段：嵌入式网络与 lwIP</h2><h3 id="9-lwIP-Architecture（lwIP-架构）"><a href="#9-lwIP-Architecture（lwIP-架构）" class="headerlink" title="9. lwIP Architecture（lwIP 架构）"></a>9. lwIP Architecture（lwIP 架构）</h3><h4 id="9-1-协议栈分层与数据流"><a href="#9-1-协议栈分层与数据流" class="headerlink" title="9.1 协议栈分层与数据流"></a>9.1 协议栈分层与数据流</h4><h4 id="9-2-netif"><a href="#9-2-netif" class="headerlink" title="9.2 netif"></a>9.2 netif</h4><h4 id="9-3-pbuf"><a href="#9-3-pbuf" class="headerlink" title="9.3 pbuf"></a>9.3 pbuf</h4><h4 id="9-4-tcp-pcb-与-udp-pcb"><a href="#9-4-tcp-pcb-与-udp-pcb" class="headerlink" title="9.4 tcp_pcb 与 udp_pcb"></a>9.4 tcp_pcb 与 udp_pcb</h4><h4 id="9-5-Raw-API"><a href="#9-5-Raw-API" class="headerlink" title="9.5 Raw API"></a>9.5 Raw API</h4><h4 id="9-6-Netconn-API"><a href="#9-6-Netconn-API" class="headerlink" title="9.6 Netconn API"></a>9.6 Netconn API</h4><h4 id="9-7-Socket-API"><a href="#9-7-Socket-API" class="headerlink" title="9.7 Socket API"></a>9.7 Socket API</h4><h3 id="10-Embedded-Constraints（嵌入式约束）"><a href="#10-Embedded-Constraints（嵌入式约束）" class="headerlink" title="10. Embedded Constraints（嵌入式约束）"></a>10. Embedded Constraints（嵌入式约束）</h3><h4 id="10-1-固定大小缓冲区与内存池"><a href="#10-1-固定大小缓冲区与内存池" class="headerlink" title="10.1 固定大小缓冲区与内存池"></a>10.1 固定大小缓冲区与内存池</h4><h4 id="10-2-Ring-Buffer（环形缓冲区）"><a href="#10-2-Ring-Buffer（环形缓冲区）" class="headerlink" title="10.2 Ring Buffer（环形缓冲区）"></a>10.2 Ring Buffer（环形缓冲区）</h4><h4 id="10-3-Timer-与-Timeout"><a href="#10-3-Timer-与-Timeout" class="headerlink" title="10.3 Timer 与 Timeout"></a>10.3 Timer 与 Timeout</h4><h4 id="10-4-RTOS-Task、Queue-与线程安全"><a href="#10-4-RTOS-Task、Queue-与线程安全" class="headerlink" title="10.4 RTOS Task、Queue 与线程安全"></a>10.4 RTOS Task、Queue 与线程安全</h4><h4 id="10-5-Network-Byte-Order-与二进制协议"><a href="#10-5-Network-Byte-Order-与二进制协议" class="headerlink" title="10.5 Network Byte Order 与二进制协议"></a>10.5 Network Byte Order 与二进制协议</h4><h4 id="10-6-Heartbeat、Watchdog-与断线重连"><a href="#10-6-Heartbeat、Watchdog-与断线重连" class="headerlink" title="10.6 Heartbeat、Watchdog 与断线重连"></a>10.6 Heartbeat、Watchdog 与断线重连</h4><h4 id="10-7-Link-State、DHCP-与-DNS"><a href="#10-7-Link-State、DHCP-与-DNS" class="headerlink" title="10.7 Link State、DHCP 与 DNS"></a>10.7 Link State、DHCP 与 DNS</h4><h2 id="第九阶段：最终项目"><a href="#第九阶段：最终项目" class="headerlink" title="第九阶段：最终项目"></a>第九阶段：最终项目</h2><h3 id="11-Virtual-Embedded-Telemetry-Device（虚拟嵌入式遥测设备）"><a href="#11-Virtual-Embedded-Telemetry-Device（虚拟嵌入式遥测设备）" class="headerlink" title="11. Virtual Embedded Telemetry Device（虚拟嵌入式遥测设备）"></a>11. Virtual Embedded Telemetry Device（虚拟嵌入式遥测设备）</h3><h4 id="11-1-项目需求与系统架构"><a href="#11-1-项目需求与系统架构" class="headerlink" title="11.1 项目需求与系统架构"></a>11.1 项目需求与系统架构</h4><h4 id="11-2-自定义二进制-Frame-Format"><a href="#11-2-自定义二进制-Frame-Format" class="headerlink" title="11.2 自定义二进制 Frame Format"></a>11.2 自定义二进制 Frame Format</h4><h4 id="11-3-TCP-传输模式"><a href="#11-3-TCP-传输模式" class="headerlink" title="11.3 TCP 传输模式"></a>11.3 TCP 传输模式</h4><h4 id="11-4-UDP-传输模式"><a href="#11-4-UDP-传输模式" class="headerlink" title="11.4 UDP 传输模式"></a>11.4 UDP 传输模式</h4><h4 id="11-5-固定内存与-Buffer-管理"><a href="#11-5-固定内存与-Buffer-管理" class="headerlink" title="11.5 固定内存与 Buffer 管理"></a>11.5 固定内存与 Buffer 管理</h4><h4 id="11-6-Heartbeat、Timeout-与-Reconnection"><a href="#11-6-Heartbeat、Timeout-与-Reconnection" class="headerlink" title="11.6 Heartbeat、Timeout 与 Reconnection"></a>11.6 Heartbeat、Timeout 与 Reconnection</h4><h4 id="11-7-抓包、丢包和断线测试"><a href="#11-7-抓包、丢包和断线测试" class="headerlink" title="11.7 抓包、丢包和断线测试"></a>11.7 抓包、丢包和断线测试</h4><h3 id="12-项目记录"><a href="#12-项目记录" class="headerlink" title="12. 项目记录"></a>12. 项目记录</h3><h4 id="12-1-状态机与数据结构"><a href="#12-1-状态机与数据结构" class="headerlink" title="12.1 状态机与数据结构"></a>12.1 状态机与数据结构</h4><h4 id="12-2-内存使用情况"><a href="#12-2-内存使用情况" class="headerlink" title="12.2 内存使用情况"></a>12.2 内存使用情况</h4><h4 id="12-3-测试结果"><a href="#12-3-测试结果" class="headerlink" title="12.3 测试结果"></a>12.3 测试结果</h4><h4 id="12-4-抓包分析"><a href="#12-4-抓包分析" class="headerlink" title="12.4 抓包分析"></a>12.4 抓包分析</h4><h4 id="12-5-README-与求职展示"><a href="#12-5-README-与求职展示" class="headerlink" title="12.5 README 与求职展示"></a>12.5 README 与求职展示</h4><h2 id="第十阶段：问题与总结"><a href="#第十阶段：问题与总结" class="headerlink" title="第十阶段：问题与总结"></a>第十阶段：问题与总结</h2><h3 id="13-尚未理解的问题"><a href="#13-尚未理解的问题" class="headerlink" title="13. 尚未理解的问题"></a>13. 尚未理解的问题</h3><h3 id="14-学习总结"><a href="#14-学习总结" class="headerlink" title="14. 学习总结"></a>14. 学习总结</h3>
+<p>第三次握手的 ACK 丢失时，客户端已进入 <code>ESTABLISHED</code>，服务器仍处于 <code>SYN-RECEIVED</code>；服务器重传 SYN+ACK 后，客户端再次回复 ACK。若重传超过限制，TCP 协议栈会报告超时或连接错误。</p>
+<h3 id="实验-0：抓包观察连接建立与关闭"><a href="#实验-0：抓包观察连接建立与关闭" class="headerlink" title="实验 0：抓包观察连接建立与关闭"></a>实验 0：抓包观察连接建立与关闭</h3><h2 id="第二阶段：字节流与乱序重组"><a href="#第二阶段：字节流与乱序重组" class="headerlink" title="第二阶段：字节流与乱序重组"></a>第二阶段：字节流与乱序重组</h2><h3 id="3-字节流与重组"><a href="#3-字节流与重组" class="headerlink" title="3. 字节流与重组"></a>3. 字节流与重组</h3><h4 id="3-1-ByteStream-抽象"><a href="#3-1-ByteStream-抽象" class="headerlink" title="3.1 ByteStream 抽象"></a>3.1 ByteStream 抽象</h4><h4 id="3-2-发送缓冲区与接收缓冲区"><a href="#3-2-发送缓冲区与接收缓冲区" class="headerlink" title="3.2 发送缓冲区与接收缓冲区"></a>3.2 发送缓冲区与接收缓冲区</h4><h4 id="3-3-容量、反压（Backpressure）与-EOF"><a href="#3-3-容量、反压（Backpressure）与-EOF" class="headerlink" title="3.3 容量、反压（Backpressure）与 EOF"></a>3.3 容量、反压（Backpressure）与 EOF</h4><h4 id="3-4-乱序、重复和重叠数据"><a href="#3-4-乱序、重复和重叠数据" class="headerlink" title="3.4 乱序、重复和重叠数据"></a>3.4 乱序、重复和重叠数据</h4><h4 id="3-5-区间重组"><a href="#3-5-区间重组" class="headerlink" title="3.5 区间重组"></a>3.5 区间重组</h4><h4 id="3-6-CS144-Checkpoint-0：Networking-Warmup-与-ByteStream"><a href="#3-6-CS144-Checkpoint-0：Networking-Warmup-与-ByteStream" class="headerlink" title="3.6 CS144 Checkpoint 0：Networking Warmup 与 ByteStream"></a>3.6 CS144 Checkpoint 0：Networking Warmup 与 ByteStream</h4><h4 id="3-7-CS144-Checkpoint-1：Reassembler"><a href="#3-7-CS144-Checkpoint-1：Reassembler" class="headerlink" title="3.7 CS144 Checkpoint 1：Reassembler"></a>3.7 CS144 Checkpoint 1：Reassembler</h4><h2 id="第三阶段：TCP-接收端"><a href="#第三阶段：TCP-接收端" class="headerlink" title="第三阶段：TCP 接收端"></a>第三阶段：TCP 接收端</h2><h3 id="4-接收端可靠性"><a href="#4-接收端可靠性" class="headerlink" title="4. 接收端可靠性"></a>4. 接收端可靠性</h3><h4 id="4-1-序列号"><a href="#4-1-序列号" class="headerlink" title="4.1 序列号"></a>4.1 序列号</h4><h4 id="4-2-ISN-与-32-位序列号回绕"><a href="#4-2-ISN-与-32-位序列号回绕" class="headerlink" title="4.2 ISN 与 32 位序列号回绕"></a>4.2 ISN 与 32 位序列号回绕</h4><h4 id="4-3-累计确认"><a href="#4-3-累计确认" class="headerlink" title="4.3 累计确认"></a>4.3 累计确认</h4><h4 id="4-4-接收窗口"><a href="#4-4-接收窗口" class="headerlink" title="4.4 接收窗口"></a>4.4 接收窗口</h4><h4 id="4-5-SYN、FIN-与序列号空间"><a href="#4-5-SYN、FIN-与序列号空间" class="headerlink" title="4.5 SYN、FIN 与序列号空间"></a>4.5 SYN、FIN 与序列号空间</h4><h4 id="4-6-CS144-Checkpoint-2：TCP-Receiver"><a href="#4-6-CS144-Checkpoint-2：TCP-Receiver" class="headerlink" title="4.6 CS144 Checkpoint 2：TCP Receiver"></a>4.6 CS144 Checkpoint 2：TCP Receiver</h4><h2 id="第四阶段：TCP-发送端"><a href="#第四阶段：TCP-发送端" class="headerlink" title="第四阶段：TCP 发送端"></a>第四阶段：TCP 发送端</h2><h3 id="5-发送端可靠性"><a href="#5-发送端可靠性" class="headerlink" title="5. 发送端可靠性"></a>5. 发送端可靠性</h3><h4 id="5-1-发送缓冲区与未确认数据"><a href="#5-1-发送缓冲区与未确认数据" class="headerlink" title="5.1 发送缓冲区与未确认数据"></a>5.1 发送缓冲区与未确认数据</h4><h4 id="5-2-滑动窗口"><a href="#5-2-滑动窗口" class="headerlink" title="5.2 滑动窗口"></a>5.2 滑动窗口</h4><h4 id="5-3-超时与重传"><a href="#5-3-超时与重传" class="headerlink" title="5.3 超时与重传"></a>5.3 超时与重传</h4><h4 id="5-4-RTT-与-RTO"><a href="#5-4-RTT-与-RTO" class="headerlink" title="5.4 RTT 与 RTO"></a>5.4 RTT 与 RTO</h4><h4 id="5-5-指数退避（Exponential-Backoff）"><a href="#5-5-指数退避（Exponential-Backoff）" class="headerlink" title="5.5 指数退避（Exponential Backoff）"></a>5.5 指数退避（Exponential Backoff）</h4><h4 id="5-6-重复-ACK-与快速重传"><a href="#5-6-重复-ACK-与快速重传" class="headerlink" title="5.6 重复 ACK 与快速重传"></a>5.6 重复 ACK 与快速重传</h4><h4 id="5-7-CS144-Checkpoint-3：TCP-Sender"><a href="#5-7-CS144-Checkpoint-3：TCP-Sender" class="headerlink" title="5.7 CS144 Checkpoint 3：TCP Sender"></a>5.7 CS144 Checkpoint 3：TCP Sender</h4><h2 id="第五阶段：TCP-流量与拥塞控制"><a href="#第五阶段：TCP-流量与拥塞控制" class="headerlink" title="第五阶段：TCP 流量与拥塞控制"></a>第五阶段：TCP 流量与拥塞控制</h2><h3 id="6-TCP-性能"><a href="#6-TCP-性能" class="headerlink" title="6. TCP 性能"></a>6. TCP 性能</h3><h4 id="6-1-流量控制与-rwnd"><a href="#6-1-流量控制与-rwnd" class="headerlink" title="6.1 流量控制与 rwnd"></a>6.1 流量控制与 rwnd</h4><h4 id="6-2-拥塞控制与-cwnd"><a href="#6-2-拥塞控制与-cwnd" class="headerlink" title="6.2 拥塞控制与 cwnd"></a>6.2 拥塞控制与 cwnd</h4><h4 id="6-3-慢启动"><a href="#6-3-慢启动" class="headerlink" title="6.3 慢启动"></a>6.3 慢启动</h4><h4 id="6-4-拥塞避免"><a href="#6-4-拥塞避免" class="headerlink" title="6.4 拥塞避免"></a>6.4 拥塞避免</h4><h4 id="6-5-快速重传与快速恢复"><a href="#6-5-快速重传与快速恢复" class="headerlink" title="6.5 快速重传与快速恢复"></a>6.5 快速重传与快速恢复</h4><h4 id="6-6-带宽时延积（Bandwidth-Delay-Product）与吞吐率"><a href="#6-6-带宽时延积（Bandwidth-Delay-Product）与吞吐率" class="headerlink" title="6.6 带宽时延积（Bandwidth-Delay Product）与吞吐率"></a>6.6 带宽时延积（Bandwidth-Delay Product）与吞吐率</h4><h4 id="6-7-CS144-Checkpoint-4：Measuring-the-Real-World"><a href="#6-7-CS144-Checkpoint-4：Measuring-the-Real-World" class="headerlink" title="6.7 CS144 Checkpoint 4：Measuring the Real World"></a>6.7 CS144 Checkpoint 4：Measuring the Real World</h4><h2 id="第六阶段：网络接口与-IP-路由器"><a href="#第六阶段：网络接口与-IP-路由器" class="headerlink" title="第六阶段：网络接口与 IP 路由器"></a>第六阶段：网络接口与 IP 路由器</h2><h3 id="7-链路层与网络层"><a href="#7-链路层与网络层" class="headerlink" title="7. 链路层与网络层"></a>7. 链路层与网络层</h3><h4 id="7-1-以太网帧与-MAC-地址"><a href="#7-1-以太网帧与-MAC-地址" class="headerlink" title="7.1 以太网帧与 MAC 地址"></a>7.1 以太网帧与 MAC 地址</h4><h4 id="7-2-ARP"><a href="#7-2-ARP" class="headerlink" title="7.2 ARP"></a>7.2 ARP</h4><h4 id="7-3-IPv4-数据报"><a href="#7-3-IPv4-数据报" class="headerlink" title="7.3 IPv4 数据报"></a>7.3 IPv4 数据报</h4><h4 id="7-4-网络接口"><a href="#7-4-网络接口" class="headerlink" title="7.4 网络接口"></a>7.4 网络接口</h4><h4 id="7-5-IP-路由与最长前缀匹配"><a href="#7-5-IP-路由与最长前缀匹配" class="headerlink" title="7.5 IP 路由与最长前缀匹配"></a>7.5 IP 路由与最长前缀匹配</h4><h4 id="7-6-CS144-Checkpoint-5：Network-Interface"><a href="#7-6-CS144-Checkpoint-5：Network-Interface" class="headerlink" title="7.6 CS144 Checkpoint 5：Network Interface"></a>7.6 CS144 Checkpoint 5：Network Interface</h4><h4 id="7-7-CS144-Checkpoint-6：IP-路由器"><a href="#7-7-CS144-Checkpoint-6：IP-路由器" class="headerlink" title="7.7 CS144 Checkpoint 6：IP 路由器"></a>7.7 CS144 Checkpoint 6：IP 路由器</h4><h4 id="7-8-CS144-Checkpoint-7：端到端互联网"><a href="#7-8-CS144-Checkpoint-7：端到端互联网" class="headerlink" title="7.8 CS144 Checkpoint 7：端到端互联网"></a>7.8 CS144 Checkpoint 7：端到端互联网</h4><h2 id="第七阶段：UDP-与协议选择"><a href="#第七阶段：UDP-与协议选择" class="headerlink" title="第七阶段：UDP 与协议选择"></a>第七阶段：UDP 与协议选择</h2><h3 id="8-UDP"><a href="#8-UDP" class="headerlink" title="8. UDP"></a>8. UDP</h3><h4 id="8-1-数据报模型与消息边界"><a href="#8-1-数据报模型与消息边界" class="headerlink" title="8.1 数据报模型与消息边界"></a>8.1 数据报模型与消息边界</h4><h4 id="8-2-UDP-首部与校验和"><a href="#8-2-UDP-首部与校验和" class="headerlink" title="8.2 UDP 首部与校验和"></a>8.2 UDP 首部与校验和</h4><h4 id="8-3-sendto-、recvfrom-与-UDP-回显"><a href="#8-3-sendto-、recvfrom-与-UDP-回显" class="headerlink" title="8.3 sendto()、recvfrom() 与 UDP 回显"></a>8.3 <code>sendto()</code>、<code>recvfrom()</code> 与 UDP 回显</h4><h4 id="8-4-广播与多播"><a href="#8-4-广播与多播" class="headerlink" title="8.4 广播与多播"></a>8.4 广播与多播</h4><h4 id="8-5-应用层序列号、超时与重传"><a href="#8-5-应用层序列号、超时与重传" class="headerlink" title="8.5 应用层序列号、超时与重传"></a>8.5 应用层序列号、超时与重传</h4><h4 id="8-6-TCP-与-UDP-对比"><a href="#8-6-TCP-与-UDP-对比" class="headerlink" title="8.6 TCP 与 UDP 对比"></a>8.6 TCP 与 UDP 对比</h4><h4 id="8-7-典型嵌入式使用场景"><a href="#8-7-典型嵌入式使用场景" class="headerlink" title="8.7 典型嵌入式使用场景"></a>8.7 典型嵌入式使用场景</h4><h2 id="第八阶段：嵌入式网络与-lwIP"><a href="#第八阶段：嵌入式网络与-lwIP" class="headerlink" title="第八阶段：嵌入式网络与 lwIP"></a>第八阶段：嵌入式网络与 lwIP</h2><h3 id="9-lwIP-架构"><a href="#9-lwIP-架构" class="headerlink" title="9. lwIP 架构"></a>9. lwIP 架构</h3><h4 id="9-1-协议栈分层与数据流"><a href="#9-1-协议栈分层与数据流" class="headerlink" title="9.1 协议栈分层与数据流"></a>9.1 协议栈分层与数据流</h4><h4 id="9-2-netif"><a href="#9-2-netif" class="headerlink" title="9.2 netif"></a>9.2 netif</h4><h4 id="9-3-pbuf"><a href="#9-3-pbuf" class="headerlink" title="9.3 pbuf"></a>9.3 pbuf</h4><h4 id="9-4-tcp-pcb-与-udp-pcb"><a href="#9-4-tcp-pcb-与-udp-pcb" class="headerlink" title="9.4 tcp_pcb 与 udp_pcb"></a>9.4 tcp_pcb 与 udp_pcb</h4><h4 id="9-5-Raw-API"><a href="#9-5-Raw-API" class="headerlink" title="9.5 Raw API"></a>9.5 Raw API</h4><h4 id="9-6-Netconn-API"><a href="#9-6-Netconn-API" class="headerlink" title="9.6 Netconn API"></a>9.6 Netconn API</h4><h4 id="9-7-Socket-API"><a href="#9-7-Socket-API" class="headerlink" title="9.7 Socket API"></a>9.7 Socket API</h4><h3 id="10-嵌入式约束"><a href="#10-嵌入式约束" class="headerlink" title="10. 嵌入式约束"></a>10. 嵌入式约束</h3><h4 id="10-1-固定大小缓冲区与内存池"><a href="#10-1-固定大小缓冲区与内存池" class="headerlink" title="10.1 固定大小缓冲区与内存池"></a>10.1 固定大小缓冲区与内存池</h4><h4 id="10-2-环形缓冲区"><a href="#10-2-环形缓冲区" class="headerlink" title="10.2 环形缓冲区"></a>10.2 环形缓冲区</h4><h4 id="10-3-定时器与超时"><a href="#10-3-定时器与超时" class="headerlink" title="10.3 定时器与超时"></a>10.3 定时器与超时</h4><h4 id="10-4-RTOS-任务、队列与线程安全"><a href="#10-4-RTOS-任务、队列与线程安全" class="headerlink" title="10.4 RTOS 任务、队列与线程安全"></a>10.4 RTOS 任务、队列与线程安全</h4><h4 id="10-5-网络字节序与二进制协议"><a href="#10-5-网络字节序与二进制协议" class="headerlink" title="10.5 网络字节序与二进制协议"></a>10.5 网络字节序与二进制协议</h4><h4 id="10-6-心跳、看门狗与断线重连"><a href="#10-6-心跳、看门狗与断线重连" class="headerlink" title="10.6 心跳、看门狗与断线重连"></a>10.6 心跳、看门狗与断线重连</h4><h4 id="10-7-链路状态、DHCP-与-DNS"><a href="#10-7-链路状态、DHCP-与-DNS" class="headerlink" title="10.7 链路状态、DHCP 与 DNS"></a>10.7 链路状态、DHCP 与 DNS</h4><h2 id="第九阶段：最终项目"><a href="#第九阶段：最终项目" class="headerlink" title="第九阶段：最终项目"></a>第九阶段：最终项目</h2><h3 id="11-虚拟嵌入式遥测设备"><a href="#11-虚拟嵌入式遥测设备" class="headerlink" title="11. 虚拟嵌入式遥测设备"></a>11. 虚拟嵌入式遥测设备</h3><h4 id="11-1-项目需求与系统架构"><a href="#11-1-项目需求与系统架构" class="headerlink" title="11.1 项目需求与系统架构"></a>11.1 项目需求与系统架构</h4><h4 id="11-2-自定义二进制帧格式"><a href="#11-2-自定义二进制帧格式" class="headerlink" title="11.2 自定义二进制帧格式"></a>11.2 自定义二进制帧格式</h4><h4 id="11-3-TCP-传输模式"><a href="#11-3-TCP-传输模式" class="headerlink" title="11.3 TCP 传输模式"></a>11.3 TCP 传输模式</h4><h4 id="11-4-UDP-传输模式"><a href="#11-4-UDP-传输模式" class="headerlink" title="11.4 UDP 传输模式"></a>11.4 UDP 传输模式</h4><h4 id="11-5-固定内存与缓冲区管理"><a href="#11-5-固定内存与缓冲区管理" class="headerlink" title="11.5 固定内存与缓冲区管理"></a>11.5 固定内存与缓冲区管理</h4><h4 id="11-6-心跳、超时与断线重连"><a href="#11-6-心跳、超时与断线重连" class="headerlink" title="11.6 心跳、超时与断线重连"></a>11.6 心跳、超时与断线重连</h4><h4 id="11-7-抓包、丢包和断线测试"><a href="#11-7-抓包、丢包和断线测试" class="headerlink" title="11.7 抓包、丢包和断线测试"></a>11.7 抓包、丢包和断线测试</h4><h3 id="12-项目记录"><a href="#12-项目记录" class="headerlink" title="12. 项目记录"></a>12. 项目记录</h3><h4 id="12-1-状态机与数据结构"><a href="#12-1-状态机与数据结构" class="headerlink" title="12.1 状态机与数据结构"></a>12.1 状态机与数据结构</h4><h4 id="12-2-内存使用情况"><a href="#12-2-内存使用情况" class="headerlink" title="12.2 内存使用情况"></a>12.2 内存使用情况</h4><h4 id="12-3-测试结果"><a href="#12-3-测试结果" class="headerlink" title="12.3 测试结果"></a>12.3 测试结果</h4><h4 id="12-4-抓包分析"><a href="#12-4-抓包分析" class="headerlink" title="12.4 抓包分析"></a>12.4 抓包分析</h4><h4 id="12-5-README-与求职展示"><a href="#12-5-README-与求职展示" class="headerlink" title="12.5 README 与求职展示"></a>12.5 README 与求职展示</h4><h2 id="第十阶段：问题与总结"><a href="#第十阶段：问题与总结" class="headerlink" title="第十阶段：问题与总结"></a>第十阶段：问题与总结</h2><h3 id="13-尚未理解的问题"><a href="#13-尚未理解的问题" class="headerlink" title="13. 尚未理解的问题"></a>13. 尚未理解的问题</h3><h3 id="14-学习总结"><a href="#14-学习总结" class="headerlink" title="14. 学习总结"></a>14. 学习总结</h3>
     
   </div>
 
