@@ -56,23 +56,23 @@
 }
 
 .home-note-section {
-  margin: 0 0 92px;
+  margin: 0 0 100px;
 }
 
 .home-note-section-header {
   display: flex;
   align-items: center;
-  gap: 22px;
-  margin-bottom: 34px;
+  gap: 26px;
+  margin-bottom: 38px;
 }
 
 .home-note-section-title {
   margin: 0;
   flex: 0 0 auto;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-  font-size: 31px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  font-size: 33px;
+  font-weight: 850;
+  letter-spacing: 0.06em;
   line-height: 1.2;
 }
 .home-note-section-title a {
@@ -91,7 +91,7 @@
 .home-note-section-line {
   height: 2px;
   flex: 1 1 auto;
-  background: #d8cec0;
+  background: #c4b8a8;
 }
 
 .home-note-list {
@@ -100,9 +100,9 @@
 }
 
 .home-note-item {
-  padding: 28px 0 30px;
+  padding: 34px 0 34px;
   margin: 0;
-  border-top: 1.5px solid #d6ccbf;
+  border-top: 2px solid #cfc3b4;
 }
 
 .home-note-item:first-child {
