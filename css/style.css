@@ -70,7 +70,7 @@
   margin: 0;
   flex: 0 0 auto;
   font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
-  font-size: 35px;
+  font-size: 29px;
   font-weight: 600;
   letter-spacing: -0.025em;
   line-height: 1.15;
@@ -122,7 +122,7 @@
   margin: 0;
   min-width: 0;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 25px;
+  font-size: 21px;
   font-weight: 500;
   line-height: 1.35;
 }
@@ -170,7 +170,7 @@
     margin-bottom: 30px;
   }
   .home-note-section-title {
-    font-size: 27px;
+    font-size: 23px;
   }
   .home-note-section-count {
     font-size: 13px;
@@ -184,7 +184,7 @@
   }
   .home-note-title {
     margin-bottom: 8px;
-    font-size: 21px;
+    font-size: 18px;
   }
   .home-note-date {
     display: block;
