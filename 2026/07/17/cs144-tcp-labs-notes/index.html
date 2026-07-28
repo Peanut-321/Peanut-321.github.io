@@ -204,77 +204,41 @@
   <div class="post-toc" id="post-toc">
     <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E8%AE%B0%E5%BD%95%E7%9B%AE%E6%A0%87"><span class="toc-text">0. 记录目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Checkpoint-0%EF%BC%9AByteStream"><span class="toc-text">1. Checkpoint 0：ByteStream</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Checkpoint-1%EF%BC%9AReassembler"><span class="toc-text">2. Checkpoint 1：Reassembler</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Checkpoint-2%EF%BC%9ATCPReceiver"><span class="toc-text">3. Checkpoint 2：TCPReceiver</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Checkpoint-3%EF%BC%9ATCPSender"><span class="toc-text">4. Checkpoint 3：TCPSender</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Checkpoint-4%EF%BC%9AMeasuring-the-Real-World"><span class="toc-text">5. Checkpoint 4：Measuring the Real World</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Checkpoint-5%EF%BC%9ANetwork-Interface"><span class="toc-text">6. Checkpoint 5：Network Interface</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-Checkpoint-6%EF%BC%9AIP-Router"><span class="toc-text">7. Checkpoint 6：IP Router</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-Checkpoint-7%EF%BC%9AEnd-to-End-Internet"><span class="toc-text">8. Checkpoint 7：End-to-End Internet</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-Checkpoint-0%EF%BC%9AByteStream"><span class="toc-text">0. Checkpoint 0：ByteStream</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Checkpoint-1%EF%BC%9AReassembler"><span class="toc-text">1. Checkpoint 1：Reassembler</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Checkpoint-2%EF%BC%9ATCPReceiver"><span class="toc-text">2. Checkpoint 2：TCPReceiver</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Checkpoint-3%EF%BC%9ATCPSender"><span class="toc-text">3. Checkpoint 3：TCPSender</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Network-Interface%EF%BC%88Checkpoint-5%EF%BC%89"><span class="toc-text">4. Network Interface（Checkpoint 5）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-IP-%E8%B7%AF%E7%94%B1%E5%9F%BA%E7%A1%80%EF%BC%88Checkpoint-6-%E9%80%89%E5%AD%A6%EF%BC%89"><span class="toc-text">5. IP 路由基础（Checkpoint 6 选学）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-End-to-End-TCP-IP-Integration%EF%BC%88Checkpoint-7-%E7%B2%BE%E9%80%89%EF%BC%89"><span class="toc-text">6. End-to-End TCP&#x2F;IP Integration（Checkpoint 7 精选）</span></a></li></ol>
     </div>
   </div>
   
 
   <div class="post-content">
     
-    <h2 id="0-记录目标"><a href="#0-记录目标" class="headerlink" title="0. 记录目标"></a>0. 记录目标</h2><p>这篇文章单独记录 CS144 TCP labs 的实现过程。TCP&#x2F;UDP 的理论概念放在另一篇笔记里，这里重点记录：</p>
-<ul>
-<li>每个 checkpoint 要实现什么</li>
-<li>写了哪些核心代码</li>
-<li>哪些测试通过</li>
-<li>当时卡住的 C++ &#x2F; TCP 概念</li>
-</ul>
-<p>当前进度：</p>
-<table>
-<thead>
-<tr>
-<th>Checkpoint</th>
-<th>内容</th>
-<th>状态</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Checkpoint 0</td>
-<td>ByteStream</td>
-<td>已完成</td>
-</tr>
-<tr>
-<td>Checkpoint 1</td>
-<td>Reassembler</td>
-<td>已完成</td>
-</tr>
-<tr>
-<td>Checkpoint 2</td>
-<td>TCPReceiver</td>
-<td>学习版核心测试通过</td>
-</tr>
-<tr>
-<td>Checkpoint 3</td>
-<td>TCPSender</td>
-<td>准备开始</td>
-</tr>
-</tbody></table>
-<h2 id="1-Checkpoint-0：ByteStream"><a href="#1-Checkpoint-0：ByteStream" class="headerlink" title="1. Checkpoint 0：ByteStream"></a>1. Checkpoint 0：ByteStream</h2><p>Checkpoint 0 实现的是一个有限容量的 FIFO 字节流。</p>
+    <p>这篇文章单独记录 CS144 TCP labs 的实现过程。</p>
+<h2 id="0-Checkpoint-0：ByteStream"><a href="#0-Checkpoint-0：ByteStream" class="headerlink" title="0. Checkpoint 0：ByteStream"></a>0. Checkpoint 0：ByteStream</h2><p>Checkpoint 0 实现的是一个有限容量的 FIFO 字节流。</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Writer -&gt; buffer -&gt; Reader</span><br></pre></td></tr></table></figure>
 
 <p>核心状态：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">capacity_  : buffer 最大容量</span><br><span class="line">buffer_    : 当前还没被读取的数据</span><br><span class="line">pushed_    : 历史累计写入字节数</span><br><span class="line">popped_    : 历史累计读取字节数</span><br><span class="line">closed_    : writer 是否关闭</span><br></pre></td></tr></table></figure>
 
-<h3 id="1-1-push"><a href="#1-1-push" class="headerlink" title="1.1 push"></a>1.1 push</h3><p>写入时不能超过剩余容量。</p>
+<h3 id="0-1-push"><a href="#0-1-push" class="headerlink" title="0.1 push"></a>0.1 push</h3><p>写入时不能超过剩余容量。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Writer::push</span><span class="params">( string data )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> ( closed_ ) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="type">uint64_t</span> writable = <span class="built_in">min</span>( <span class="built_in">static_cast</span>&lt;<span class="type">uint64_t</span>&gt;( data.<span class="built_in">size</span>() ), <span class="built_in">available_capacity</span>() );</span><br><span class="line">  buffer_.<span class="built_in">append</span>( data.<span class="built_in">substr</span>( <span class="number">0</span>, writable ) );</span><br><span class="line">  pushed_ += writable;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="1-2-pop"><a href="#1-2-pop" class="headerlink" title="1.2 pop"></a>1.2 pop</h3><p>读取时不能超过当前 buffer 中已有的数据。</p>
+<h3 id="0-2-pop"><a href="#0-2-pop" class="headerlink" title="0.2 pop"></a>0.2 pop</h3><p>读取时不能超过当前 buffer 中已有的数据。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Reader::pop</span><span class="params">( <span class="type">uint64_t</span> len )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">uint64_t</span> popable = <span class="built_in">min</span>( len, <span class="built_in">static_cast</span>&lt;<span class="type">uint64_t</span>&gt;( buffer_.<span class="built_in">size</span>() ) );</span><br><span class="line">  buffer_.<span class="built_in">erase</span>( <span class="number">0</span>, popable );</span><br><span class="line">  popped_ += popable;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="1-3-close-与-is-finished"><a href="#1-3-close-与-is-finished" class="headerlink" title="1.3 close 与 is_finished"></a>1.3 close 与 is_finished</h3><p><code>close()</code> 只表示 writer 不再写入；只有 buffer 也被读空，整个 stream 才算 finished。</p>
+<h3 id="0-3-close-与-is-finished"><a href="#0-3-close-与-is-finished" class="headerlink" title="0.3 close 与 is_finished"></a>0.3 close 与 is_finished</h3><p><code>close()</code> 只表示 writer 不再写入；只有 buffer 也被读空，整个 stream 才算 finished。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">Reader::is_finished</span><span class="params">()</span> <span class="type">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> closed_ &amp;&amp; buffer_.<span class="built_in">empty</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这和 TCP 的 FIN 很像：收到 FIN 后，之前已经收到的数据仍然要继续交给应用层读取。</p>
-<h2 id="2-Checkpoint-1：Reassembler"><a href="#2-Checkpoint-1：Reassembler" class="headerlink" title="2. Checkpoint 1：Reassembler"></a>2. Checkpoint 1：Reassembler</h2><p>Checkpoint 1 实现的是 <code>Reassembler</code>，用于把乱序、重复、重叠的 substring 重新拼成连续 ByteStream。</p>
+<h2 id="1-Checkpoint-1：Reassembler"><a href="#1-Checkpoint-1：Reassembler" class="headerlink" title="1. Checkpoint 1：Reassembler"></a>1. Checkpoint 1：Reassembler</h2><p>Checkpoint 1 实现的是 <code>Reassembler</code>，用于把乱序、重复、重叠的 substring 重新拼成连续 ByteStream。</p>
 <p>接口：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Reassembler::insert</span><span class="params">( <span class="type">uint64_t</span> first_index, string data, <span class="type">bool</span> is_last_substring )</span></span></span><br></pre></td></tr></table></figure>
 
 <p>核心状态：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">next_index : 下一个可以写入 ByteStream 的 index</span><br><span class="line">pending_   : 已经收到但暂时不能输出的乱序片段</span><br><span class="line">eof_index_ : 字节流结束位置</span><br></pre></td></tr></table></figure>
 
-<h3 id="2-1-已输出数据裁剪"><a href="#2-1-已输出数据裁剪" class="headerlink" title="2.1 已输出数据裁剪"></a>2.1 已输出数据裁剪</h3><p>如果收到的数据前缀已经输出过，需要裁掉旧前缀。</p>
+<h3 id="1-1-已输出数据裁剪"><a href="#1-1-已输出数据裁剪" class="headerlink" title="1.1 已输出数据裁剪"></a>1.1 已输出数据裁剪</h3><p>如果收到的数据前缀已经输出过，需要裁掉旧前缀。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">uint64_t</span> current_index = output_.<span class="built_in">writer</span>().<span class="built_in">bytes_pushed</span>();</span><br><span class="line"><span class="type">const</span> <span class="type">uint64_t</span> end_index = first_index + data.<span class="built_in">size</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ( end_index &lt;= current_index ) &#123;</span><br><span class="line">  <span class="built_in">try_close</span>();</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ( first_index &lt; current_index ) &#123;</span><br><span class="line">  <span class="type">const</span> <span class="type">uint64_t</span> trim_len = current_index - first_index;</span><br><span class="line">  data = data.<span class="built_in">substr</span>( trim_len );</span><br><span class="line">  first_index = current_index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="2-2-正好接上-next-index"><a href="#2-2-正好接上-next-index" class="headerlink" title="2.2 正好接上 next_index"></a>2.2 正好接上 next_index</h3><p>如果新片段正好接上当前 ByteStream 的末尾，就直接写入，并尝试 flush pending。</p>
+<h3 id="1-2-正好接上-next-index"><a href="#1-2-正好接上-next-index" class="headerlink" title="1.2 正好接上 next_index"></a>1.2 正好接上 next_index</h3><p>如果新片段正好接上当前 ByteStream 的末尾，就直接写入，并尝试 flush pending。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( first_index == <span class="built_in">next_index</span>() ) &#123;</span><br><span class="line">  output_.<span class="built_in">writer</span>().<span class="built_in">push</span>( data );</span><br><span class="line">  <span class="built_in">flush_pending</span>();</span><br><span class="line">  <span class="built_in">try_close</span>();</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="2-3-重叠区间合并"><a href="#2-3-重叠区间合并" class="headerlink" title="2.3 重叠区间合并"></a>2.3 重叠区间合并</h3><p>重叠数据不能重复保存，需要合并成更大的区间。</p>
@@ -284,14 +248,41 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">uint64_t</span> merged_start = <span class="built_in">min</span>( new_start, old_start );</span><br><span class="line"><span class="type">const</span> <span class="type">uint64_t</span> merged_end = <span class="built_in">max</span>( new_end, old_end );</span><br><span class="line"><span class="function">string <span class="title">merged</span><span class="params">( merged_end - merged_start, <span class="string">&#x27;\0&#x27;</span> )</span></span>;</span><br><span class="line"></span><br><span class="line">merged.<span class="built_in">replace</span>( new_start - merged_start, new_data.<span class="built_in">size</span>(), new_data );</span><br><span class="line">merged.<span class="built_in">replace</span>( old_start - merged_start, old_data.<span class="built_in">size</span>(), old_data );</span><br></pre></td></tr></table></figure>
 
 <p>这里的 offset 用来把 stream index 转换成 <code>merged</code> 字符串内部下标。</p>
-<h3 id="2-4-遍历时删除-map-元素"><a href="#2-4-遍历时删除-map-元素" class="headerlink" title="2.4 遍历时删除 map 元素"></a>2.4 遍历时删除 map 元素</h3><p>如果遍历过程中要删除 <code>map</code> 元素，应使用 iterator，而不是 range-for。</p>
+<h3 id="1-4-遍历时删除-map-元素"><a href="#1-4-遍历时删除-map-元素" class="headerlink" title="1.4 遍历时删除 map 元素"></a>1.4 遍历时删除 map 元素</h3><p>如果遍历过程中要删除 <code>map</code> 元素，应使用 iterator，而不是 range-for。</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">it = pending_.<span class="built_in">erase</span>( it );</span><br></pre></td></tr></table></figure>
 
 <p><code>erase(it)</code> 会删除当前元素，并返回下一个有效 iterator。</p>
-<h2 id="3-Checkpoint-2：TCPReceiver"><a href="#3-Checkpoint-2：TCPReceiver" class="headerlink" title="3. Checkpoint 2：TCPReceiver"></a>3. Checkpoint 2：TCPReceiver</h2><p>Checkpoint 2 把 TCP segment 接到 Reassembler 上。</p>
+<h2 id="2-Checkpoint-2：TCPReceiver"><a href="#2-Checkpoint-2：TCPReceiver" class="headerlink" title="2. Checkpoint 2：TCPReceiver"></a>2. Checkpoint 2：TCPReceiver</h2><p>Checkpoint 2 把 TCP segment 接到 Reassembler 上。</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">TCPSenderMessage</span><br><span class="line">  ├── seqno</span><br><span class="line">  ├── SYN</span><br><span class="line">  ├── payload</span><br><span class="line">  └── FIN</span><br><span class="line">        ↓</span><br><span class="line">TCPReceiver::receive()</span><br><span class="line">        ↓</span><br><span class="line">Reassembler::insert(first_index, data, is_last_substring)</span><br></pre></td></tr></table></figure>
 
-<h3 id="3-1-Wrap32"><a href="#3-1-Wrap32" class="headerlink" title="3.1 Wrap32"></a>3.1 Wrap32</h3><h3 id="3-2-unwrap"><a href="#3-2-unwrap" class="headerlink" title="3.2 unwrap"></a>3.2 unwrap</h3><h3 id="3-3-TCPReceiver-receive"><a href="#3-3-TCPReceiver-receive" class="headerlink" title="3.3 TCPReceiver::receive"></a>3.3 TCPReceiver::receive</h3><h3 id="3-4-TCPReceiver-send"><a href="#3-4-TCPReceiver-send" class="headerlink" title="3.4 TCPReceiver::send"></a>3.4 TCPReceiver::send</h3><h2 id="4-Checkpoint-3：TCPSender"><a href="#4-Checkpoint-3：TCPSender" class="headerlink" title="4. Checkpoint 3：TCPSender"></a>4. Checkpoint 3：TCPSender</h2><h2 id="5-Checkpoint-4：Measuring-the-Real-World"><a href="#5-Checkpoint-4：Measuring-the-Real-World" class="headerlink" title="5. Checkpoint 4：Measuring the Real World"></a>5. Checkpoint 4：Measuring the Real World</h2><h2 id="6-Checkpoint-5：Network-Interface"><a href="#6-Checkpoint-5：Network-Interface" class="headerlink" title="6. Checkpoint 5：Network Interface"></a>6. Checkpoint 5：Network Interface</h2><h2 id="7-Checkpoint-6：IP-Router"><a href="#7-Checkpoint-6：IP-Router" class="headerlink" title="7. Checkpoint 6：IP Router"></a>7. Checkpoint 6：IP Router</h2><h2 id="8-Checkpoint-7：End-to-End-Internet"><a href="#8-Checkpoint-7：End-to-End-Internet" class="headerlink" title="8. Checkpoint 7：End-to-End Internet"></a>8. Checkpoint 7：End-to-End Internet</h2>
+<h3 id="2-1-Wrap32-Unwrap"><a href="#2-1-Wrap32-Unwrap" class="headerlink" title="2.1 Wrap32 &amp; Unwrap"></a>2.1 Wrap32 &amp; Unwrap</h3><ol>
+<li>Wrap()<br>Wrap将64位的绝对序列号转换成32位的TCP序列号。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> zero_point + <span class="built_in">static_cast</span>&lt;<span class="type">uint32_t</span>&gt;(n);</span><br></pre></td></tr></table></figure>
+<p>保留n的低32位，同时加上此时的ISN。<br>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ISN = 1000</span><br><span class="line">absolute seqno = 5    =&gt;TCP seqnp = 1005</span><br></pre></td></tr></table></figure>
+<p>如果此时<code>absolute seqno = 2^32 + 5 </code>， TCP seqno仍然是1005.</p>
+<ol start="2">
+<li>Unwrap()</li>
+</ol>
+<ul>
+<li>计算offset：offset在做什么？<br>当前TCP序列号相对ISN向前移动了多少。是当前TCP seqno相对于ISN 32位的环形距离，也是绝对序列号的低32位</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">uint32_t</span> offset = raw_value_ - zero_point.raw_value_;</span><br><span class="line"><span class="comment">//raw_value_ 当前收到的32位TCP seqno</span></span><br><span class="line"><span class="comment">//zero_point.raw_value_ 连接开始时候的ISN</span></span><br></pre></td></tr></table></figure>
+<p>因此只知道offset，无法知道它属于哪一轮。</p>
+<ul>
+<li>checkpoint的作用<br>如果 <code>checkpoint &lt;= offset</code>，<code>offset</code> 是距离 checkpoint 最近的非负候选值，可以直接返回。这里不能据此断言实际是否发生过回绕；checkpoint 只是帮助选择候选值的参考位置。</li>
+</ul>
+<p>否则需要根据 checkpoint 估算目标绝对序号位于第几个回绕周期。所有候选值都满足 <code>offset + k × 2^32</code>，相邻候选值之间相差 <code>2^32</code>。<code>k</code> 先找到 checkpoint 左边的候选值；余数再判断左边和右边哪一个离 checkpoint 更近。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">L = offset + k × 2^32                         R = offset + (k + 1) × 2^32</span><br><span class="line">●──────────────────────────│────────▲──────────────────●</span><br><span class="line">                           │        checkpoint</span><br><span class="line">                       中点 L + 2^31</span><br><span class="line">|&lt;─────────── remainder ───────────&gt;|</span><br><span class="line">                                    |&lt;─2^32-remainder──&gt;|</span><br></pre></td></tr></table></figure>
+
+<p>图中 <code>remainder</code> 是 checkpoint 到左侧候选值 <code>L</code> 的距离。当它达到半个周期 <code>2^31</code> 时，右侧候选值 <code>R</code> 不再比 <code>L</code> 更远，因此代码选择下一轮。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//offset只是绝对序列号的低32位</span></span><br><span class="line"><span class="type">uint64_t</span> diff = checkpoint - offset; <span class="comment">//diff表示checkpoint与最小候选值offset的距离</span></span><br><span class="line"><span class="type">uint64_t</span> k = diff &gt;&gt; <span class="number">32</span>;  <span class="comment">//diff / 2^32 :checkpoint左侧候选值所在的回绕周期</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//如果 checkpoint 已经越过左右两个候选值的中点，就选择下一轮的候选值。 1ULL &lt;&lt; 31 =&gt; 2^31</span></span><br><span class="line"><span class="comment">//超过左右中点则进入下一轮，未超过则在当前轮次</span></span><br><span class="line"><span class="keyword">if</span>((diff &amp; <span class="number">0xFFFFFFFF</span>) &gt;= <span class="number">1ULL</span> &lt;&lt; <span class="number">31</span>)&#123; </span><br><span class="line">  k += <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">return</span> offset + (k &lt;&lt; <span class="number">32</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> offset + (k &lt;&lt; <span class="number">32</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-TCPReceiver-receive"><a href="#2-2-TCPReceiver-receive" class="headerlink" title="2.2 TCPReceiver::receive"></a>2.2 TCPReceiver::receive</h3><h3 id="2-3-TCPReceiver-send"><a href="#2-3-TCPReceiver-send" class="headerlink" title="2.3 TCPReceiver::send"></a>2.3 TCPReceiver::send</h3><h2 id="3-Checkpoint-3：TCPSender"><a href="#3-Checkpoint-3：TCPSender" class="headerlink" title="3. Checkpoint 3：TCPSender"></a>3. Checkpoint 3：TCPSender</h2><h2 id="4-Network-Interface（Checkpoint-5）"><a href="#4-Network-Interface（Checkpoint-5）" class="headerlink" title="4. Network Interface（Checkpoint 5）"></a>4. Network Interface（Checkpoint 5）</h2><p>保留 Ethernet frame、ARP、IP 与网卡接口，这是嵌入式网络开发的核心内容。</p>
+<h2 id="5-IP-路由基础（Checkpoint-6-选学）"><a href="#5-IP-路由基础（Checkpoint-6-选学）" class="headerlink" title="5. IP 路由基础（Checkpoint 6 选学）"></a>5. IP 路由基础（Checkpoint 6 选学）</h2><p>只学习路由表、默认网关、TTL 与最长前缀匹配，不要求完整实现路由器项目。</p>
+<h2 id="6-End-to-End-TCP-IP-Integration（Checkpoint-7-精选）"><a href="#6-End-to-End-TCP-IP-Integration（Checkpoint-7-精选）" class="headerlink" title="6. End-to-End TCP&#x2F;IP Integration（Checkpoint 7 精选）"></a>6. End-to-End TCP&#x2F;IP Integration（Checkpoint 7 精选）</h2><p>只完成单机端到端联调和数据传输，跳过多人组网与创意项目。</p>
+
     
   </div>
 
