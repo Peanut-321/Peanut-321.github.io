@@ -203,7 +203,7 @@
 <li>写 32 位寄存器时，高 32 位会被清零</li>
 </ul>
 <h2 id="2-Phase-1：字符串比较"><a href="#2-Phase-1：字符串比较" class="headerlink" title="2. Phase 1：字符串比较"></a>2. Phase 1：字符串比较</h2><p>汇编：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000400ee0 &lt;+0&gt;:  sub    $0x8,%rsp</span><br><span class="line">0x0000000000400ee4 &lt;+4&gt;:  mov    $0x402400,%esi</span><br><span class="line">0x0000000000400ee9 &lt;+9&gt;:  call   0x401338 &lt;strings_not_equal&gt;</span><br><span class="line">0x0000000000400eee &lt;+14&gt;: test   %eax,%eax</span><br><span class="line">0x0000000000400ef0 &lt;+16&gt;: je     0x400ef7 &lt;phase_1+23&gt;</span><br><span class="line">0x0000000000400ef2 &lt;+18&gt;: call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x0000000000400ef7 &lt;+23&gt;: add    $0x8,%rsp</span><br><span class="line">0x0000000000400efb &lt;+27&gt;: ret</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000400ee0 &lt;+0&gt;:  sub    $0x8,%rsp          //栈在x86-64中向低地址生长，给栈调整 8 字节，主要是为了满足函数调用前 16 字节对齐的 ABI 要求。</span><br><span class="line">0x0000000000400ee4 &lt;+4&gt;:  mov    $0x402400,%esi     //$0x402400中的&quot;$&quot;表示立即数，0x402400 是隐藏字符串的地址；把这个地址放进 %rsi，作为 strings_not_equal 的第二个参数。</span><br><span class="line">0x0000000000400ee9 &lt;+9&gt;:  call   0x401338 &lt;strings_not_equal&gt; //进入phase1时，%rdi已经保存了用户输入字符串，mov只是准备第二个参数%rsi，call string_not_equal等价于string_not_equal(input, secret)</span><br><span class="line">0x0000000000400eee &lt;+14&gt;: test   %eax,%eax</span><br><span class="line">0x0000000000400ef0 &lt;+16&gt;: je     0x400ef7 &lt;phase_1+23&gt;  //jump if equal</span><br><span class="line">0x0000000000400ef2 &lt;+18&gt;: call   0x40143a &lt;explode_bomb&gt;</span><br><span class="line">0x0000000000400ef7 &lt;+23&gt;: add    $0x8,%rsp          //把栈恢复原状</span><br><span class="line">0x0000000000400efb &lt;+27&gt;: ret</span><br></pre></td></tr></table></figure>
 
 <p>还原成 C：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">phase_1</span><span class="params">(<span class="type">char</span> *input)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">char</span> *secret = (<span class="type">char</span> *)<span class="number">0x402400</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (strings_not_equal(input, secret) != <span class="number">0</span>) &#123;</span><br><span class="line">        explode_bomb();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -218,81 +218,6 @@
 </ul>
 <p>调试命令：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x/s 0x402400</span><br><span class="line">x/s $rdi</span><br><span class="line">x/s $rsi</span><br></pre></td></tr></table></figure>
-
-<h2 id="3-Phase-2：六个数字"><a href="#3-Phase-2：六个数字" class="headerlink" title="3. Phase 2：六个数字"></a>3. Phase 2：六个数字</h2><p>核心逻辑：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">read_six_numbers(input, nums);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (nums[<span class="number">0</span>] != <span class="number">1</span>) &#123;</span><br><span class="line">    explode_bomb();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (nums[i] != nums[i - <span class="number">1</span>] * <span class="number">2</span>) &#123;</span><br><span class="line">        explode_bomb();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这一关训练的是：</p>
-<ul>
-<li>栈上数组</li>
-<li>指针移动</li>
-<li><code>read_six_numbers</code></li>
-<li>循环条件</li>
-</ul>
-<h2 id="4-Phase-3：跳转表"><a href="#4-Phase-3：跳转表" class="headerlink" title="4. Phase 3：跳转表"></a>4. Phase 3：跳转表</h2><p>看到这种形式：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmp *0x402470(,%rax,8)</span><br></pre></td></tr></table></figure>
-
-<p>大概率就是 <code>switch</code>。</p>
-<p>核心逻辑：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span> (x) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">0</span>: expected = ...; <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">1</span>: expected = ...; <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">2</span>: expected = ...; <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>: explode_bomb();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (y != expected) &#123;</span><br><span class="line">    explode_bomb();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这一关训练的是：</p>
-<ul>
-<li>间接跳转</li>
-<li>跳转表</li>
-<li>数组寻址模式</li>
-<li><code>x/8gx addr</code> 查看地址表</li>
-</ul>
-<h2 id="5-Phase-4：递归二分查找"><a href="#5-Phase-4：递归二分查找" class="headerlink" title="5. Phase 4：递归二分查找"></a>5. Phase 4：递归二分查找</h2><p>核心逻辑：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">func4</span><span class="params">(<span class="type">int</span> target, <span class="type">int</span> low, <span class="type">int</span> high)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> mid = low + (high - low) / <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (target &lt; mid) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">2</span> * func4(target, low, mid - <span class="number">1</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &gt; mid) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">2</span> * func4(target, mid + <span class="number">1</span>, high) + <span class="number">1</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这一关训练的是：</p>
-<ul>
-<li>递归调用</li>
-<li>返回值如何层层回传</li>
-<li>二分查找</li>
-<li>路径编码</li>
-</ul>
-<h2 id="6-Phase-5：低-4-位查表"><a href="#6-Phase-5：低-4-位查表" class="headerlink" title="6. Phase 5：低 4 位查表"></a>6. Phase 5：低 4 位查表</h2><p>核心逻辑：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++) &#123;</span><br><span class="line">    <span class="type">int</span> index = input[i] &amp; <span class="number">0xf</span>;</span><br><span class="line">    result[i] = table[index];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (strings_not_equal(result, <span class="string">&quot;flyers&quot;</span>)) &#123;</span><br><span class="line">    explode_bomb();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>关键点：</p>
-<ul>
-<li><code>&amp; 0xf</code> 表示只取低 4 位</li>
-<li><code>movzbl</code> 表示把 1 字节零扩展成 32 位</li>
-<li>很多字符低 4 位相同，所以它们等价</li>
-<li>栈金丝雀用于检测栈破坏</li>
-</ul>
-<h2 id="7-Phase-6：链表重排"><a href="#7-Phase-6：链表重排" class="headerlink" title="7. Phase 6：链表重排"></a>7. Phase 6：链表重排</h2><p>核心流程：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">读入 6 个数字</span><br><span class="line">检查范围必须是 1 到 6</span><br><span class="line">检查不能重复</span><br><span class="line">把每个数字变成 7 - x</span><br><span class="line">按数字选择链表节点</span><br><span class="line">重新连接链表</span><br><span class="line">检查链表节点值是否从大到小排列</span><br></pre></td></tr></table></figure>
-
-<p>这一关训练的是：</p>
-<ul>
-<li>栈上数组</li>
-<li>指针数组</li>
-<li>链表节点</li>
-<li>结构体内存布局</li>
-<li>指针改链</li>
-</ul>
-<h2 id="8-Secret-Phase：二叉树路径"><a href="#8-Secret-Phase：二叉树路径" class="headerlink" title="8. Secret Phase：二叉树路径"></a>8. Secret Phase：二叉树路径</h2><p>核心逻辑：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">fun7</span><span class="params">(node *root, <span class="type">int</span> target)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (root == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (target &lt; root-&gt;value) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">2</span> * fun7(root-&gt;left, target);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (target &gt; root-&gt;value) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">2</span> * fun7(root-&gt;right, target) + <span class="number">1</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这一关训练的是：</p>
-<ul>
-<li>二叉树结构体</li>
-<li>递归</li>
-<li>路径编码</li>
-<li>用 GDB 查看内存中的树节点</li>
-</ul>
-<h2 id="9-复盘重点"><a href="#9-复盘重点" class="headerlink" title="9. 复盘重点"></a>9. 复盘重点</h2><p>Bomb Lab 真正要训练的是：</p>
-<ul>
-<li>看到 <code>call</code> 前几行，能判断参数是什么</li>
-<li>看到 <code>cmp/test + jump</code>，能还原 <code>if</code></li>
-<li>看到循环跳回去，能还原 <code>for</code> &#x2F; <code>while</code></li>
-<li>看到 <code>jmp *table(,%rax,8)</code>，能想到 <code>switch</code></li>
-<li>看到 <code>(%rsp,%rax,4)</code>，能想到数组</li>
-<li>看到 <code>0x8(%node)</code>，能想到结构体字段或链表指针</li>
-</ul>
 
   </div>
 </article>
