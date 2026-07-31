@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en,zh-CN,default">
+
+<head>
+  <!-- Website mata -->
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+<!-- Disable transformation -->
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<!-- Website description -->
+
+<meta name="description" content="CSAPP Malloc Lab 复盘" />
+
+
+<!-- Website keywords -->
+
+<meta name="keywords" content="CSAPP, Malloc Lab, 内存管理, C, Peanut&#39;s Notebook" />
+
+
+
+
+<!-- Website rss -->
+
+<link rel="alternate" href="/default" title="Peanut's Notebook" >
+
+
+<!-- Website favicon -->
+
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=3.0.4" />
+
+
+<!-- Canonical, good for google search engine -->
+<link rel="canonical" href="https://peanut-321.github.io/2026/07/31/csapp-malloclab-notes/" />
+
+<!-- Fancybox styling -->
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+
+
+<!-- MathJax (LaTeX) support -->
+
+
+<!-- Theme styling -->
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=3.0.4" />
+
+<!-- Analytics and push -->
+
+
+
+  
+
+
+
+<!-- LeanCloud Counter -->
+
+
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null,"server_url":null,"cdn":null},"toc":{"min_depth":2,"max_depth":2,"list_number":false},"fancybox":true,"latex":false};
+</script>
+  
+  <title>CSAPP Malloc Lab 复盘 - Peanut&#39;s Notebook</title>
+
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div class="scrollPercentage"></div>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">Peanut&#39;s Notebook</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+    <a href="/">
+      <li class="mobile-menu-item">
+        
+        
+        首页              </li>
+    </a>
+    
+    <a href="/archives/">
+      <li class="mobile-menu-item">
+        
+        
+        归档              </li>
+    </a>
+    
+    <a href="/about/">
+      <li class="mobile-menu-item">
+        
+        
+        关于              </li>
+    </a>
+    
+    <a href="/friends/">
+      <li class="mobile-menu-item">
+        
+        
+        Friends              </li>
+    </a>
+    
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+      <div class="logo-wrapper">  
+  <a href="/." class="logo">Peanut's Notebook</a>  
+</div>  
+  
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about/">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+  <div class="lang-switch">
+    
+      <a class="lang-switch-link" href="/2026/07/31/csapp-malloclab-notes/">EN</a>
+    
+  </div>
+</nav>  
+
+    </header>
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+  <header class="post-header">
+    <h1 class="post-title">
+      
+      CSAPP Malloc Lab 复盘
+      
+    </h1>
+
+    <div class="post-meta">
+      <span class="post-time">
+        2026-07-31
+      </span>
+      
+      
+      <span class="post-category">
+        
+        <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
+        
+      </span>
+      
+      
+    </div>
+  </header>
+
+  
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E7%9B%AE%E6%A0%87"><span class="toc-text">0. 目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%A0%86%E5%9D%97%E5%B8%83%E5%B1%80"><span class="toc-text">1. 堆块布局</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%9A%90%E5%BC%8F%E7%A9%BA%E9%97%B2%E9%93%BE%E8%A1%A8"><span class="toc-text">2. 隐式空闲链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%98%BE%E5%BC%8F%E7%A9%BA%E9%97%B2%E9%93%BE%E8%A1%A8"><span class="toc-text">3. 显式空闲链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%85%B3%E8%81%94"><span class="toc-text">4. 嵌入式关联</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%A4%8D%E7%9B%98%E9%87%8D%E7%82%B9"><span class="toc-text">5. 复盘重点</span></a></li></ol>
+    </div>
+  </div>
+  
+
+  <div class="post-content">
+    
+    <p>这篇文章单独记录 Malloc Lab。它是 CSAPP 里最能训练 C 指针、堆布局和内存管理的一组实验。</p>
+<h2 id="0-目标"><a href="#0-目标" class="headerlink" title="0. 目标"></a>0. 目标</h2><p>Malloc Lab 要自己实现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> *<span class="title function_">malloc</span><span class="params">(<span class="type">size_t</span> size)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">free</span><span class="params">(<span class="type">void</span> *ptr)</span>;</span><br><span class="line"><span class="type">void</span> *<span class="title function_">realloc</span><span class="params">(<span class="type">void</span> *ptr, <span class="type">size_t</span> size)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>核心目标：</p>
+<ul>
+<li>正确性</li>
+<li>空间利用率</li>
+<li>吞吐量</li>
+</ul>
+<h2 id="1-堆块布局"><a href="#1-堆块布局" class="headerlink" title="1. 堆块布局"></a>1. 堆块布局</h2><p>一个最基本的 block 通常包含：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">header</span><br><span class="line">payload</span><br><span class="line">footer</span><br></pre></td></tr></table></figure>
+
+<p><code>header</code> 里通常记录：</p>
+<ul>
+<li>block 大小</li>
+<li>是否已分配</li>
+</ul>
+<p>因为对齐要求，block size 通常是 8 或 16 的倍数。</p>
+<h2 id="2-隐式空闲链表"><a href="#2-隐式空闲链表" class="headerlink" title="2. 隐式空闲链表"></a>2. 隐式空闲链表</h2><p>最简单的实现是 implicit free list：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">从堆开头一路扫描 block</span><br><span class="line">看到空闲且足够大的 block 就分配</span><br></pre></td></tr></table></figure>
+
+<p>优点：</p>
+<ul>
+<li>思路简单</li>
+<li>适合入门</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>每次分配都可能扫很久</li>
+<li>吞吐量差</li>
+</ul>
+<h2 id="3-显式空闲链表"><a href="#3-显式空闲链表" class="headerlink" title="3. 显式空闲链表"></a>3. 显式空闲链表</h2><p>explicit free list 只把空闲块串起来：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">free block -&gt; free block -&gt; free block</span><br></pre></td></tr></table></figure>
+
+<p>优点：</p>
+<ul>
+<li>查找更快</li>
+<li>性能更好</li>
+</ul>
+<p>代价：</p>
+<ul>
+<li>指针操作更复杂</li>
+<li>更容易写出内存破坏 bug</li>
+</ul>
+<h2 id="4-嵌入式关联"><a href="#4-嵌入式关联" class="headerlink" title="4. 嵌入式关联"></a>4. 嵌入式关联</h2><p>Malloc Lab 对嵌入式的价值：</p>
+<ul>
+<li>理解堆碎片</li>
+<li>理解长期运行程序为什么会内存退化</li>
+<li>理解内存池设计</li>
+<li>理解 RTOS &#x2F; 裸机里为什么常常限制动态分配</li>
+<li>更容易排查 double free、use-after-free、越界写</li>
+</ul>
+<h2 id="5-复盘重点"><a href="#5-复盘重点" class="headerlink" title="5. 复盘重点"></a>5. 复盘重点</h2><p>学完后要能回答：</p>
+<ul>
+<li><code>malloc</code> 返回的是 block 的哪一部分？</li>
+<li>为什么需要对齐？</li>
+<li>内部碎片和外部碎片有什么区别？</li>
+<li><code>free</code> 后相邻空闲块为什么要合并？</li>
+<li>隐式链表和显式链表的权衡是什么？</li>
+</ul>
+
+    
+  </div>
+
+  
+  <!-- Post Copyright -->
+
+    
+
+  
+
+  
+  <footer class="post-footer">
+    
+    <div class="post-tags">
+      
+      <a href="/tags/CSAPP/">CSAPP</a>
+      
+      <a href="/tags/Malloc-Lab/">Malloc Lab</a>
+      
+      <a href="/tags/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">内存管理</a>
+      
+      <a href="/tags/C/">C</a>
+      
+    </div>
+    
+      
+  <nav class="post-nav">  
+      
+      <a class="prev" href="/2026/07/31/csapp-archlab-notes/">  
+        <i class="iconfont icon-left"></i>  
+        <span class="prev-text nav-default">CSAPP Arch Lab 复盘</span>  
+        <span class="prev-text nav-mobile">上一篇</span>  
+      </a>  
+      
+      
+      <a class="next" href="/2026/07/31/csapp-cachelab-notes/">  
+        <span class="next-text nav-default">CSAPP Cache Lab 复盘</span>  
+        <span class="prev-text nav-mobile">下一篇</span>  
+        <i class="iconfont icon-right"></i>  
+      </a>  
+      
+  </nav>  
+  
+
+  </footer>
+  
+
+</article>
+        </div>
+          
+  <div class="comments" id="comments">  
+      
+  </div>  
+  
+
+      </div>
+    </main>
+    <footer id="footer" class="footer">
+      <div class="copyright">
+  <span class="copyright-year">
+    <span>
+      
+      &copy;
+      
+      2026      
+    </span>
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+
+    <span class="author">Peanut-321</span>
+  </span>
+</div>
+    </footer>
+    <div class="back-to-top" id="back-to-top"> <i class="iconfont icon-up"></i> </div>
+  </div>
+    
+    
+    
+    
+    
+    
+    
+  
+
+  
+
+
+
+
+
+
+
+<script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+
+
+
+<script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+
+
+
+<script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <script type="text/javascript" src="/js/src/even.js?v=3.0.4"></script>
+</body>
+
+</html>

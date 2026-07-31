@@ -201,12 +201,154 @@
   </header>
 
   
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Lab-%E5%85%A5%E5%8F%A3"><span class="toc-text">Lab 入口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF"><span class="toc-text">学习路线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5%E5%AE%89%E6%8E%92"><span class="toc-text">阶段安排</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E7%9B%98%E9%97%AE%E9%A2%98"><span class="toc-text">复盘问题</span></a></li></ol>
+    </div>
+  </div>
+  
 
   <div class="post-content">
     
-    <blockquote>
-<p>TODO</p>
-</blockquote>
+    <p>这篇文章作为 CSAPP 学习总入口。具体 lab 单独拆成文章，否则 Bomb Lab、Attack Lab、Arch Lab、Cache Lab、Shell Lab、Malloc Lab 全塞在一起会太长，也不方便之后复盘。</p>
+<h2 id="Lab-入口"><a href="#Lab-入口" class="headerlink" title="Lab 入口"></a>Lab 入口</h2><ul>
+<li><a href="/2026/07/31/csapp-bomblab-notes/">Bomb Lab 复盘</a></li>
+<li><a href="/2026/07/31/csapp-attacklab-notes/">Attack Lab 复盘</a></li>
+<li><a href="/2026/07/31/csapp-archlab-notes/">Arch Lab 复盘</a></li>
+<li><a href="/2026/07/31/csapp-cachelab-notes/">Cache Lab 复盘</a></li>
+<li><a href="/2026/07/31/csapp-shelllab-notes/">Shell Lab 复盘</a></li>
+<li><a href="/2026/07/31/csapp-malloclab-notes/">Malloc Lab 复盘</a></li>
+</ul>
+<h2 id="学习路线"><a href="#学习路线" class="headerlink" title="学习路线"></a>学习路线</h2><p>当前目标偏嵌入式，不按原书平均推进。优先顺序：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">第 2 章 信息表示</span><br><span class="line">第 3 章 机器级表示</span><br><span class="line">第 7 章 链接</span><br><span class="line">第 6 章 存储器层次结构</span><br><span class="line">第 9 章 虚拟内存与动态内存分配</span><br><span class="line">第 8 章 异常控制流</span><br></pre></td></tr></table></figure>
+
+<h2 id="阶段安排"><a href="#阶段安排" class="headerlink" title="阶段安排"></a>阶段安排</h2><h3 id="第-1-阶段：信息表示与位运算"><a href="#第-1-阶段：信息表示与位运算" class="headerlink" title="第 1 阶段：信息表示与位运算"></a>第 1 阶段：信息表示与位运算</h3><p>对应内容：</p>
+<ul>
+<li>第 2 章：信息的表示和处理</li>
+<li>Data Lab 的前半部分</li>
+</ul>
+<p>重点：</p>
+<ul>
+<li>十六进制、二进制、字节、字长</li>
+<li>补码、有符号数、无符号数</li>
+<li>溢出、截断、符号扩展</li>
+<li>位运算：<code>&amp;</code>、<code>|</code>、<code>^</code>、<code>~</code>、<code>&lt;&lt;</code>、<code>&gt;&gt;</code></li>
+<li>大端序和小端序</li>
+<li>浮点数基本结构</li>
+</ul>
+<p>嵌入式价值：</p>
+<ul>
+<li>配置寄存器</li>
+<li>写 bit mask</li>
+<li>解析通信协议</li>
+<li>理解传感器原始数据</li>
+<li>避免整数溢出和类型转换 bug</li>
+</ul>
+<h3 id="第-2-阶段：机器级表示"><a href="#第-2-阶段：机器级表示" class="headerlink" title="第 2 阶段：机器级表示"></a>第 2 阶段：机器级表示</h3><p>对应内容：</p>
+<ul>
+<li>第 3 章：程序的机器级表示</li>
+<li>Bomb Lab</li>
+<li>Attack Lab</li>
+</ul>
+<p>重点：</p>
+<ul>
+<li>x86-64 汇编的基本阅读能力</li>
+<li>函数传参、返回值、栈帧</li>
+<li>条件码、跳转、循环、递归</li>
+<li>数组、指针、结构体、内存布局</li>
+<li>GDB 调试和反汇编</li>
+</ul>
+<p>嵌入式价值：</p>
+<ul>
+<li>看懂反汇编</li>
+<li>调试 crash</li>
+<li>理解栈溢出和内存破坏</li>
+<li>为后续看 ARM 汇编、启动代码、中断现场打基础</li>
+</ul>
+<h3 id="第-3-阶段：链接"><a href="#第-3-阶段：链接" class="headerlink" title="第 3 阶段：链接"></a>第 3 阶段：链接</h3><p>对应内容：</p>
+<ul>
+<li>第 7 章：链接</li>
+</ul>
+<p>重点：</p>
+<ul>
+<li><code>.c</code>、<code>.s</code>、<code>.o</code>、可执行文件</li>
+<li>符号表、重定位</li>
+<li>静态库、动态库</li>
+<li><code>undefined reference</code>、<code>multiple definition</code></li>
+</ul>
+<p>嵌入式价值：</p>
+<ul>
+<li>理解 Makefile &#x2F; CMake</li>
+<li>理解交叉编译</li>
+<li>看懂链接脚本和启动文件</li>
+<li>处理全局变量、静态变量、段布局问题</li>
+</ul>
+<h3 id="第-4-阶段：存储器层次结构"><a href="#第-4-阶段：存储器层次结构" class="headerlink" title="第 4 阶段：存储器层次结构"></a>第 4 阶段：存储器层次结构</h3><p>对应内容：</p>
+<ul>
+<li>第 6 章：存储器层次结构</li>
+<li>Cache Lab</li>
+</ul>
+<p>重点：</p>
+<ul>
+<li>SRAM、DRAM、Flash</li>
+<li>局部性</li>
+<li>cache line、set、tag</li>
+<li>cache miss</li>
+<li>cache 友好的代码</li>
+</ul>
+<p>嵌入式价值：</p>
+<ul>
+<li>理解 memory map</li>
+<li>理解 cache 和 DMA 的关系</li>
+<li>优化数组、矩阵、图像处理代码</li>
+<li>为 memory barrier &#x2F; cache coherence 打基础</li>
+</ul>
+<h3 id="第-5-阶段：虚拟内存与动态分配"><a href="#第-5-阶段：虚拟内存与动态分配" class="headerlink" title="第 5 阶段：虚拟内存与动态分配"></a>第 5 阶段：虚拟内存与动态分配</h3><p>对应内容：</p>
+<ul>
+<li>第 9 章：虚拟内存</li>
+<li>Malloc Lab</li>
+</ul>
+<p>重点：</p>
+<ul>
+<li>虚拟地址、物理地址、页表</li>
+<li>堆、栈、全局区</li>
+<li><code>malloc</code> &#x2F; <code>free</code></li>
+<li>内部碎片、外部碎片</li>
+<li>隐式空闲链表、显式空闲链表</li>
+</ul>
+<p>嵌入式价值：</p>
+<ul>
+<li>嵌入式 Linux：理解进程地址空间和 <code>mmap</code></li>
+<li>RTOS &#x2F; 裸机：理解堆管理、碎片、内存池</li>
+<li>写长期运行程序时避免内存泄漏</li>
+</ul>
+<h3 id="第-6-阶段：异常控制流"><a href="#第-6-阶段：异常控制流" class="headerlink" title="第 6 阶段：异常控制流"></a>第 6 阶段：异常控制流</h3><p>对应内容：</p>
+<ul>
+<li>第 8 章：异常控制流</li>
+<li>Shell Lab 的概念部分</li>
+</ul>
+<p>重点：</p>
+<ul>
+<li>异常、中断、陷阱、故障</li>
+<li>进程、上下文切换</li>
+<li><code>fork</code>、<code>execve</code>、<code>waitpid</code></li>
+<li>信号</li>
+</ul>
+<p>嵌入式价值：</p>
+<ul>
+<li>理解嵌入式 Linux 应用和服务进程</li>
+<li>理解信号处理、子进程回收</li>
+<li>和裸机中断&#x2F;异常建立类比</li>
+</ul>
+<h2 id="复盘问题"><a href="#复盘问题" class="headerlink" title="复盘问题"></a>复盘问题</h2><p>每学完一小节，用这些问题检查：</p>
+<ul>
+<li>这个概念在 C 代码里表现成什么？</li>
+<li>如果出 bug，会出现什么现象？</li>
+<li>我能不能画出内存布局？</li>
+<li>我能不能用一个最小例子验证它？</li>
+<li>它和嵌入式里的寄存器、内存、编译、调试有什么关系？</li>
+</ul>
 
     
   </div>
@@ -239,8 +381,8 @@
       </a>  
       
       
-      <a class="next" href="/2026/05/10/RoCC-Conv-Accel-zh/">  
-        <span class="next-text nav-default">基于 RISC-V RoCC 的卷积加速器</span>  
+      <a class="next" href="/2026/05/09/RoCC-Conv-Accel/">  
+        <span class="next-text nav-default">A RISC-V Based RoCC Convolution Accelerator</span>  
         <span class="prev-text nav-mobile">下一篇</span>  
         <i class="iconfont icon-right"></i>  
       </a>  
