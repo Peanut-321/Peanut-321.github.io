@@ -18,8 +18,12 @@
 
 <!-- Website description -->
 
+<meta name="description" content="CSAPP Arch Lab 复盘" />
+
 
 <!-- Website keywords -->
+
+<meta name="keywords" content=", , , , Peanut&#39;s Notebook" />
 
 
 
@@ -35,7 +39,7 @@
 
 
 <!-- Canonical, good for google search engine -->
-<link rel="canonical" href="https://peanut-321.github.io/tags/Y86-64/" />
+<link rel="canonical" href="https://peanut-321.github.io/csapp-labs/archlab/" />
 
 <!-- Fancybox styling -->
 
@@ -63,7 +67,7 @@
   window.config = {"leancloud":{"app_id":null,"app_key":null,"server_url":null,"cdn":null},"toc":{"min_depth":2,"max_depth":2,"list_number":false},"fancybox":true,"latex":false};
 </script>
   
-  <title>Y86-64 · Peanut&#39;s Notebook</title>
+  <title>menu.csapp arch lab 复盘 · Peanut&#39;s Notebook</title>
 
 <meta name="generator" content="Hexo 8.1.2"></head>
 
@@ -87,21 +91,21 @@
       <li class="mobile-menu-item">
         
         
-        Home              </li>
+        首页              </li>
     </a>
     
     <a href="/archives/">
       <li class="mobile-menu-item">
         
         
-        Archives              </li>
+        归档              </li>
     </a>
     
     <a href="/about/">
       <li class="mobile-menu-item">
         
         
-        About              </li>
+        关于              </li>
     </a>
     
     <a href="/friends/">
@@ -127,7 +131,7 @@
           <a class="menu-item-link" href="/">
             
             
-              Home
+              首页
             
           </a>
         </li>
@@ -136,7 +140,7 @@
           <a class="menu-item-link" href="/archives/">
             
             
-              Archives
+              归档
             
           </a>
         </li>
@@ -145,7 +149,7 @@
           <a class="menu-item-link" href="/about/">
             
             
-              About
+              关于
             
           </a>
         </li>
@@ -163,7 +167,7 @@
   
   <div class="lang-switch">
     
-      <a class="lang-switch-link" href="/tags/Y86-64/index.html">中文</a>
+      <a class="lang-switch-link" href="/csapp-labs/archlab/index.html">EN</a>
     
   </div>
 </nav>  
@@ -172,45 +176,74 @@
     <main id="main" class="main">
       <div class="content-wrapper">
         <div id="content" class="content">
-          
+          <article class="post">
+  <div class="post-content">
+    <p>这篇文章单独记录 Arch Lab。它对应 CSAPP 第 4 章，重点不是应用层 C 程序，而是理解一条指令如何被 CPU 执行。</p>
+<h2 id="0-目标"><a href="#0-目标" class="headerlink" title="0. 目标"></a>0. 目标</h2><p>Arch Lab 的核心是 Y86-64。</p>
+<p>Y86-64 是 CSAPP 设计的简化版 x86-64 指令集，用来学习：</p>
+<ul>
+<li>指令集架构</li>
+<li>顺序处理器</li>
+<li>流水线处理器</li>
+<li>数据冒险</li>
+<li>控制冒险</li>
+<li>性能优化</li>
+</ul>
+<h2 id="1-Part-A：写-Y86-64-汇编"><a href="#1-Part-A：写-Y86-64-汇编" class="headerlink" title="1. Part A：写 Y86-64 汇编"></a>1. Part A：写 Y86-64 汇编</h2><p>这一部分通常要求用 Y86-64 汇编实现几个简单函数。</p>
+<p>重点：</p>
+<ul>
+<li>熟悉 Y86-64 指令</li>
+<li>理解寄存器使用</li>
+<li>理解栈和函数调用</li>
+<li>把 C 逻辑翻译成汇编</li>
+</ul>
+<h2 id="2-Part-B：修改顺序处理器"><a href="#2-Part-B：修改顺序处理器" class="headerlink" title="2. Part B：修改顺序处理器"></a>2. Part B：修改顺序处理器</h2><p>这一部分通常要给 SEQ 处理器加新指令，例如 <code>iaddq</code>。</p>
+<p>重点：</p>
+<ul>
+<li>取指</li>
+<li>译码</li>
+<li>执行</li>
+<li>访存</li>
+<li>写回</li>
+<li>PC 更新</li>
+</ul>
+<p>要理解的是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">一条指令不是魔法，它会被拆成多个阶段流过处理器。</span><br></pre></td></tr></table></figure>
 
-<section id="archive" class="archive">
-  
-  
-  <div class="archive-title tag">
-    <h2 class="archive-name">Y86-64</h2>
+<h2 id="3-Part-C：优化流水线处理器"><a href="#3-Part-C：优化流水线处理器" class="headerlink" title="3. Part C：优化流水线处理器"></a>3. Part C：优化流水线处理器</h2><p>这一部分通常要优化程序或流水线控制逻辑。</p>
+<p>重点：</p>
+<ul>
+<li>流水线阶段</li>
+<li>forwarding</li>
+<li>stall</li>
+<li>bubble</li>
+<li>分支预测</li>
+<li>CPE</li>
+</ul>
+<h2 id="4-嵌入式关联"><a href="#4-嵌入式关联" class="headerlink" title="4. 嵌入式关联"></a>4. 嵌入式关联</h2><p>Arch Lab 对嵌入式的价值：</p>
+<ul>
+<li>理解 CPU 如何执行指令</li>
+<li>理解流水线为什么会被分支和数据依赖影响</li>
+<li>为后续学习 ARM Cortex-M &#x2F; Cortex-A 打基础</li>
+<li>理解性能不只由 C 代码决定，也和微架构有关</li>
+</ul>
+<h2 id="5-复盘重点"><a href="#5-复盘重点" class="headerlink" title="5. 复盘重点"></a>5. 复盘重点</h2><p>学完后要能回答：</p>
+<ul>
+<li>ISA 和 microarchitecture 有什么区别？</li>
+<li>一条指令执行时会经过哪些阶段？</li>
+<li>为什么流水线会出现冒险？</li>
+<li>stall 和 bubble 分别在解决什么问题？</li>
+<li>为什么增加一条指令需要改处理器控制逻辑？</li>
+</ul>
+
   </div>
-  
-  
-
-  
-  
-  
-
-  <div class="archive-post">
-    <span class="archive-post-time">
-      
-      2026-07-31
-      
-    </span>
-    <span class="archive-post-title">
-      <a href="/2026/07/31/csapp-archlab-notes/" class="archive-post-link">
-        CSAPP Arch Lab 复盘
-      </a>
-    </span>
-  </div>
-  
-</section>
-
-  
-  <nav class="pagination">  
-      
-      
-  </nav>  
-  
-
+</article>
         </div>
           
+  <div class="comments" id="comments">  
+      
+  </div>  
+  
 
       </div>
     </main>

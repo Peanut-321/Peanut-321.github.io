@@ -23,7 +23,7 @@
 
 <!-- Website keywords -->
 
-<meta name="keywords" content="CSAPP, Malloc Lab, 内存管理, C, Peanut&#39;s Notebook" />
+<meta name="keywords" content=", , , , Peanut&#39;s Notebook" />
 
 
 
@@ -39,7 +39,7 @@
 
 
 <!-- Canonical, good for google search engine -->
-<link rel="canonical" href="https://peanut-321.github.io/2026/07/31/csapp-malloclab-notes/" />
+<link rel="canonical" href="https://peanut-321.github.io/csapp-labs/malloclab/" />
 
 <!-- Fancybox styling -->
 
@@ -67,7 +67,7 @@
   window.config = {"leancloud":{"app_id":null,"app_key":null,"server_url":null,"cdn":null},"toc":{"min_depth":2,"max_depth":2,"list_number":false},"fancybox":true,"latex":false};
 </script>
   
-  <title>CSAPP Malloc Lab 复盘 - Peanut&#39;s Notebook</title>
+  <title>menu.csapp malloc lab 复盘 · Peanut&#39;s Notebook</title>
 
 <meta name="generator" content="Hexo 8.1.2"></head>
 
@@ -167,7 +167,7 @@
   
   <div class="lang-switch">
     
-      <a class="lang-switch-link" href="/2026/07/31/csapp-malloclab-notes/">EN</a>
+      <a class="lang-switch-link" href="/csapp-labs/malloclab/index.html">EN</a>
     
   </div>
 </nav>  
@@ -177,40 +177,7 @@
       <div class="content-wrapper">
         <div id="content" class="content">
           <article class="post">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      CSAPP Malloc Lab 复盘
-      
-    </h1>
-
-    <div class="post-meta">
-      <span class="post-time">
-        2026-07-31
-      </span>
-      
-      
-      <span class="post-category">
-        
-        <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
-        
-      </span>
-      
-      
-    </div>
-  </header>
-
-  
-  <div class="post-toc" id="post-toc">
-    <h2 class="post-toc-title">文章目录</h2>
-    <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E7%9B%AE%E6%A0%87"><span class="toc-text">0. 目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%A0%86%E5%9D%97%E5%B8%83%E5%B1%80"><span class="toc-text">1. 堆块布局</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%9A%90%E5%BC%8F%E7%A9%BA%E9%97%B2%E9%93%BE%E8%A1%A8"><span class="toc-text">2. 隐式空闲链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%98%BE%E5%BC%8F%E7%A9%BA%E9%97%B2%E9%93%BE%E8%A1%A8"><span class="toc-text">3. 显式空闲链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%85%B3%E8%81%94"><span class="toc-text">4. 嵌入式关联</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%A4%8D%E7%9B%98%E9%87%8D%E7%82%B9"><span class="toc-text">5. 复盘重点</span></a></li></ol>
-    </div>
-  </div>
-  
-
   <div class="post-content">
-    
     <p>这篇文章单独记录 Malloc Lab。它是 CSAPP 里最能训练 C 指针、堆布局和内存管理的一组实验。</p>
 <h2 id="0-目标"><a href="#0-目标" class="headerlink" title="0. 目标"></a>0. 目标</h2><p>Malloc Lab 要自己实现：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> *<span class="title function_">malloc</span><span class="params">(<span class="type">size_t</span> size)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">free</span><span class="params">(<span class="type">void</span> *ptr)</span>;</span><br><span class="line"><span class="type">void</span> *<span class="title function_">realloc</span><span class="params">(<span class="type">void</span> *ptr, <span class="type">size_t</span> size)</span>;</span><br></pre></td></tr></table></figure>
@@ -273,53 +240,7 @@
 <li>隐式链表和显式链表的权衡是什么？</li>
 </ul>
 
-    
   </div>
-
-  
-  <!-- Post Copyright -->
-
-    
-
-  
-
-  
-  <footer class="post-footer">
-    
-    <div class="post-tags">
-      
-      <a href="/tags/CSAPP/">CSAPP</a>
-      
-      <a href="/tags/Malloc-Lab/">Malloc Lab</a>
-      
-      <a href="/tags/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">内存管理</a>
-      
-      <a href="/tags/C/">C</a>
-      
-    </div>
-    
-      
-  <nav class="post-nav">  
-      
-      <a class="prev" href="/2026/07/31/csapp-archlab-notes/">  
-        <i class="iconfont icon-left"></i>  
-        <span class="prev-text nav-default">CSAPP Arch Lab 复盘</span>  
-        <span class="prev-text nav-mobile">上一篇</span>  
-      </a>  
-      
-      
-      <a class="next" href="/2026/07/31/csapp-cachelab-notes/">  
-        <span class="next-text nav-default">CSAPP Cache Lab 复盘</span>  
-        <span class="prev-text nav-mobile">下一篇</span>  
-        <i class="iconfont icon-right"></i>  
-      </a>  
-      
-  </nav>  
-  
-
-  </footer>
-  
-
 </article>
         </div>
           

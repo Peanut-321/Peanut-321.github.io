@@ -23,7 +23,7 @@
 
 <!-- Website keywords -->
 
-<meta name="keywords" content="CSAPP, Attack Lab, 汇编, 栈, Peanut&#39;s Notebook" />
+<meta name="keywords" content=", , , , Peanut&#39;s Notebook" />
 
 
 
@@ -39,7 +39,7 @@
 
 
 <!-- Canonical, good for google search engine -->
-<link rel="canonical" href="https://peanut-321.github.io/2026/07/31/csapp-attacklab-notes/" />
+<link rel="canonical" href="https://peanut-321.github.io/csapp-labs/attacklab/" />
 
 <!-- Fancybox styling -->
 
@@ -67,7 +67,7 @@
   window.config = {"leancloud":{"app_id":null,"app_key":null,"server_url":null,"cdn":null},"toc":{"min_depth":2,"max_depth":2,"list_number":false},"fancybox":true,"latex":false};
 </script>
   
-  <title>CSAPP Attack Lab 复盘 - Peanut&#39;s Notebook</title>
+  <title>menu.csapp attack lab 复盘 · Peanut&#39;s Notebook</title>
 
 <meta name="generator" content="Hexo 8.1.2"></head>
 
@@ -167,7 +167,7 @@
   
   <div class="lang-switch">
     
-      <a class="lang-switch-link" href="/2026/07/31/csapp-attacklab-notes/">EN</a>
+      <a class="lang-switch-link" href="/csapp-labs/attacklab/index.html">EN</a>
     
   </div>
 </nav>  
@@ -177,40 +177,7 @@
       <div class="content-wrapper">
         <div id="content" class="content">
           <article class="post">
-  <header class="post-header">
-    <h1 class="post-title">
-      
-      CSAPP Attack Lab 复盘
-      
-    </h1>
-
-    <div class="post-meta">
-      <span class="post-time">
-        2026-07-31
-      </span>
-      
-      
-      <span class="post-category">
-        
-        <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
-        
-      </span>
-      
-      
-    </div>
-  </header>
-
-  
-  <div class="post-toc" id="post-toc">
-    <h2 class="post-toc-title">文章目录</h2>
-    <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%AE%9E%E9%AA%8C%E5%AF%B9%E8%B1%A1"><span class="toc-text">0. 实验对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%9C%80%E5%B0%8F%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="toc-text">1. 最小工作流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Level-1%EF%BC%9A%E8%A6%86%E7%9B%96%E8%BF%94%E5%9B%9E%E5%9C%B0%E5%9D%80"><span class="toc-text">2. Level 1：覆盖返回地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Level-2%EF%BC%9A%E4%BC%A0-cookie-%E7%BB%99-touch2"><span class="toc-text">3. Level 2：传 cookie 给 touch2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-ROP-%E5%85%A5%E9%97%A8"><span class="toc-text">4. ROP 入门</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%A4%8D%E7%9B%98%E9%87%8D%E7%82%B9"><span class="toc-text">5. 复盘重点</span></a></li></ol>
-    </div>
-  </div>
-  
-
   <div class="post-content">
-    
     <p>这篇文章单独记录 Attack Lab。目标是理解栈溢出、返回地址、代码注入和 ROP，不把它和 Bomb Lab 混在一起。</p>
 <h2 id="0-实验对象"><a href="#0-实验对象" class="headerlink" title="0. 实验对象"></a>0. 实验对象</h2><p>Attack Lab 常见文件：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cookie.txt</span><br><span class="line">ctarget</span><br><span class="line">rtarget</span><br><span class="line">farm.c</span><br><span class="line">hex2raw</span><br><span class="line">README.txt</span><br></pre></td></tr></table></figure>
@@ -277,53 +244,7 @@
 <li>代码注入和 ROP 的区别</li>
 </ul>
 
-    
   </div>
-
-  
-  <!-- Post Copyright -->
-
-    
-
-  
-
-  
-  <footer class="post-footer">
-    
-    <div class="post-tags">
-      
-      <a href="/tags/CSAPP/">CSAPP</a>
-      
-      <a href="/tags/Attack-Lab/">Attack Lab</a>
-      
-      <a href="/tags/%E6%B1%87%E7%BC%96/">汇编</a>
-      
-      <a href="/tags/%E6%A0%88/">栈</a>
-      
-    </div>
-    
-      
-  <nav class="post-nav">  
-      
-      <a class="prev" href="/2026/07/31/csapp-cachelab-notes/">  
-        <i class="iconfont icon-left"></i>  
-        <span class="prev-text nav-default">CSAPP Cache Lab 复盘</span>  
-        <span class="prev-text nav-mobile">上一篇</span>  
-      </a>  
-      
-      
-      <a class="next" href="/2026/07/31/csapp-bomblab-notes/">  
-        <span class="next-text nav-default">CSAPP Bomb Lab 复盘</span>  
-        <span class="prev-text nav-mobile">下一篇</span>  
-        <i class="iconfont icon-right"></i>  
-      </a>  
-      
-  </nav>  
-  
-
-  </footer>
-  
-
 </article>
         </div>
           

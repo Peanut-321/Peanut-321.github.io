@@ -18,8 +18,12 @@
 
 <!-- Website description -->
 
+<meta name="description" content="CSAPP Cache Lab 复盘" />
+
 
 <!-- Website keywords -->
+
+<meta name="keywords" content=", , , , Peanut&#39;s Notebook" />
 
 
 
@@ -35,7 +39,7 @@
 
 
 <!-- Canonical, good for google search engine -->
-<link rel="canonical" href="https://peanut-321.github.io/tags/Cache/" />
+<link rel="canonical" href="https://peanut-321.github.io/csapp-labs/cachelab/" />
 
 <!-- Fancybox styling -->
 
@@ -63,7 +67,7 @@
   window.config = {"leancloud":{"app_id":null,"app_key":null,"server_url":null,"cdn":null},"toc":{"min_depth":2,"max_depth":2,"list_number":false},"fancybox":true,"latex":false};
 </script>
   
-  <title>Cache · Peanut&#39;s Notebook</title>
+  <title>menu.csapp cache lab 复盘 · Peanut&#39;s Notebook</title>
 
 <meta name="generator" content="Hexo 8.1.2"></head>
 
@@ -87,21 +91,21 @@
       <li class="mobile-menu-item">
         
         
-        Home              </li>
+        首页              </li>
     </a>
     
     <a href="/archives/">
       <li class="mobile-menu-item">
         
         
-        Archives              </li>
+        归档              </li>
     </a>
     
     <a href="/about/">
       <li class="mobile-menu-item">
         
         
-        About              </li>
+        关于              </li>
     </a>
     
     <a href="/friends/">
@@ -127,7 +131,7 @@
           <a class="menu-item-link" href="/">
             
             
-              Home
+              首页
             
           </a>
         </li>
@@ -136,7 +140,7 @@
           <a class="menu-item-link" href="/archives/">
             
             
-              Archives
+              归档
             
           </a>
         </li>
@@ -145,7 +149,7 @@
           <a class="menu-item-link" href="/about/">
             
             
-              About
+              关于
             
           </a>
         </li>
@@ -163,7 +167,7 @@
   
   <div class="lang-switch">
     
-      <a class="lang-switch-link" href="/tags/Cache/index.html">中文</a>
+      <a class="lang-switch-link" href="/csapp-labs/cachelab/index.html">EN</a>
     
   </div>
 </nav>  
@@ -172,45 +176,64 @@
     <main id="main" class="main">
       <div class="content-wrapper">
         <div id="content" class="content">
-          
+          <article class="post">
+  <div class="post-content">
+    <p>这篇文章单独记录 Cache Lab。它比 Bomb Lab 更适合作为恢复 CSAPP 手感后的下一个 lab，因为它更偏 C 代码、数组和性能。</p>
+<h2 id="0-目标"><a href="#0-目标" class="headerlink" title="0. 目标"></a>0. 目标</h2><p>Cache Lab 通常分两部分：</p>
+<ul>
+<li>Part A：写一个 cache simulator</li>
+<li>Part B：优化矩阵转置，减少 cache miss</li>
+</ul>
+<h2 id="1-Part-A：Cache-Simulator"><a href="#1-Part-A：Cache-Simulator" class="headerlink" title="1. Part A：Cache Simulator"></a>1. Part A：Cache Simulator</h2><p>要模拟的核心参数：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">s：set index 位数</span><br><span class="line">E：每个 set 里的 line 数量</span><br><span class="line">b：block offset 位数</span><br></pre></td></tr></table></figure>
 
-<section id="archive" class="archive">
-  
-  
-  <div class="archive-title tag">
-    <h2 class="archive-name">Cache</h2>
+<p>cache 地址拆分：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">| tag | set index | block offset |</span><br></pre></td></tr></table></figure>
+
+<p>模拟器需要处理：</p>
+<ul>
+<li>hit</li>
+<li>miss</li>
+<li>eviction</li>
+<li>LRU 替换</li>
+</ul>
+<h2 id="2-Part-B：矩阵转置"><a href="#2-Part-B：矩阵转置" class="headerlink" title="2. Part B：矩阵转置"></a>2. Part B：矩阵转置</h2><p>目标：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">B[j][i] = A[i][j];</span><br></pre></td></tr></table></figure>
+
+<p>直接写容易 cache miss：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; i++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; M; j++) &#123;</span><br><span class="line">        B[j][i] = A[i][j];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>优化思路：</p>
+<ul>
+<li>分块</li>
+<li>利用空间局部性</li>
+<li>减少冲突 miss</li>
+<li>特殊处理对角线</li>
+</ul>
+<h2 id="3-嵌入式关联"><a href="#3-嵌入式关联" class="headerlink" title="3. 嵌入式关联"></a>3. 嵌入式关联</h2><p>Cache Lab 对嵌入式很有价值：</p>
+<ul>
+<li>理解数组访问顺序为什么影响性能</li>
+<li>理解 cache line</li>
+<li>理解 DMA 和 cache 不一致问题的背景</li>
+<li>为图像处理、信号处理、矩阵计算优化打基础</li>
+</ul>
+<h2 id="4-复盘重点"><a href="#4-复盘重点" class="headerlink" title="4. 复盘重点"></a>4. 复盘重点</h2><p>学完后要能回答：</p>
+<ul>
+<li>一个地址如何拆成 tag &#x2F; set &#x2F; offset？</li>
+<li>为什么连续访问数组更快？</li>
+<li>为什么矩阵转置容易 cache miss？</li>
+<li>什么是 LRU？</li>
+<li>分块为什么能减少 miss？</li>
+</ul>
+
   </div>
-  
-  
-
-  
-  
-  
-
-  <div class="archive-post">
-    <span class="archive-post-time">
-      
-      2026-07-31
-      
-    </span>
-    <span class="archive-post-title">
-      <a href="/2026/07/31/csapp-cachelab-notes/" class="archive-post-link">
-        CSAPP Cache Lab 复盘
-      </a>
-    </span>
-  </div>
-  
-</section>
-
-  
-  <nav class="pagination">  
-      
-      
-  </nav>  
-  
-
+</article>
         </div>
           
+  <div class="comments" id="comments">  
+      
+  </div>  
+  
 
       </div>
     </main>
