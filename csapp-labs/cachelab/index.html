@@ -18,7 +18,7 @@
 
 <!-- Website description -->
 
-<meta name="description" content="CSAPP Cache Lab 复盘" />
+<meta name="description" content="CSAPP Cache Lab" />
 
 
 <!-- Website keywords -->
@@ -67,7 +67,7 @@
   window.config = {"leancloud":{"app_id":null,"app_key":null,"server_url":null,"cdn":null},"toc":{"min_depth":2,"max_depth":2,"list_number":false},"fancybox":true,"latex":false};
 </script>
   
-  <title>menu.csapp cache lab 复盘 · Peanut&#39;s Notebook</title>
+  <title>menu.csapp cache lab · Peanut&#39;s Notebook</title>
 
 <meta name="generator" content="Hexo 8.1.2"></head>
 
@@ -178,54 +178,105 @@
         <div id="content" class="content">
           <article class="post">
   <div class="post-content">
-    <p>这篇文章单独记录 Cache Lab。它比 Bomb Lab 更适合作为恢复 CSAPP 手感后的下一个 lab，因为它更偏 C 代码、数组和性能。</p>
-<h2 id="0-目标"><a href="#0-目标" class="headerlink" title="0. 目标"></a>0. 目标</h2><p>Cache Lab 通常分两部分：</p>
-<ul>
-<li>Part A：写一个 cache simulator</li>
-<li>Part B：优化矩阵转置，减少 cache miss</li>
-</ul>
-<h2 id="1-Part-A：Cache-Simulator"><a href="#1-Part-A：Cache-Simulator" class="headerlink" title="1. Part A：Cache Simulator"></a>1. Part A：Cache Simulator</h2><p>要模拟的核心参数：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">s：set index 位数</span><br><span class="line">E：每个 set 里的 line 数量</span><br><span class="line">b：block offset 位数</span><br></pre></td></tr></table></figure>
+    <h1 id="The-Memory-Hierarchy"><a href="#The-Memory-Hierarchy" class="headerlink" title="The Memory Hierarchy"></a>The Memory Hierarchy</h1><p>为什么程序明明是在写 C 代码，最后性能却经常被“内存访问方式”决定？</p>
+<p>这部分先建立一个直觉：CPU 很快，但数据不一定能及时送到 CPU 手里。Cache 的意义，就是利用程序访问内存的规律，让常用的数据尽量待在更快的位置。</p>
+<h2 id="1-Load-Store"><a href="#1-Load-Store" class="headerlink" title="1. Load &amp; Store"></a>1. Load &amp; Store</h2><p><code>load</code> 是从内存读数据到寄存器：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">movq 8(%rsp), %rax</span><br></pre></td></tr></table></figure>
 
-<p>cache 地址拆分：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">| tag | set index | block offset |</span><br></pre></td></tr></table></figure>
+<p>这条指令的意思是：去内存地址 <code>8(%rsp)</code> 读取数据，并把它放进 <code>%rax</code>。</p>
+<p><code>store</code> 是从寄存器写数据回内存：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">movq %rax, 8(%rsp)</span><br></pre></td></tr></table></figure>
 
-<p>模拟器需要处理：</p>
-<ul>
-<li>hit</li>
-<li>miss</li>
-<li>eviction</li>
-<li>LRU 替换</li>
-</ul>
-<h2 id="2-Part-B：矩阵转置"><a href="#2-Part-B：矩阵转置" class="headerlink" title="2. Part B：矩阵转置"></a>2. Part B：矩阵转置</h2><p>目标：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">B[j][i] = A[i][j];</span><br></pre></td></tr></table></figure>
+<p>所以 CPU 工作时，数据经常沿着这条路径流动：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">内存 -&gt; 寄存器 -&gt; ALU 计算 -&gt; 寄存器 -&gt; 内存</span><br></pre></td></tr></table></figure>
 
-<p>直接写容易 cache miss：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; i++) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; M; j++) &#123;</span><br><span class="line">        B[j][i] = A[i][j];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>寄存器离 CPU 最近，速度最快；主存离 CPU 更远，访问慢得多。</p>
+<h2 id="2-RAM：主存是什么？"><a href="#2-RAM：主存是什么？" class="headerlink" title="2. RAM：主存是什么？"></a>2. RAM：主存是什么？</h2><p>RAM 是 Random-Access Memory，随机访问存储器。这里的“随机访问”不是指乱访问，而是指访问任意地址的时间大致差不多。</p>
+<ul>
+<li><strong>SRAM</strong>：快、贵、不需要刷新，常用来做 Cache。</li>
+<li><strong>DRAM</strong>：慢一些、便宜、需要刷新，常用来做主存。</li>
+</ul>
+<p>先记住这个对应关系：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Cache       -&gt; SRAM</span><br><span class="line">Main Memory -&gt; DRAM</span><br></pre></td></tr></table></figure>
 
-<p>优化思路：</p>
-<ul>
-<li>分块</li>
-<li>利用空间局部性</li>
-<li>减少冲突 miss</li>
-<li>特殊处理对角线</li>
-</ul>
-<h2 id="3-嵌入式关联"><a href="#3-嵌入式关联" class="headerlink" title="3. 嵌入式关联"></a>3. 嵌入式关联</h2><p>Cache Lab 对嵌入式很有价值：</p>
-<ul>
-<li>理解数组访问顺序为什么影响性能</li>
-<li>理解 cache line</li>
-<li>理解 DMA 和 cache 不一致问题的背景</li>
-<li>为图像处理、信号处理、矩阵计算优化打基础</li>
-</ul>
-<h2 id="4-复盘重点"><a href="#4-复盘重点" class="headerlink" title="4. 复盘重点"></a>4. 复盘重点</h2><p>学完后要能回答：</p>
-<ul>
-<li>一个地址如何拆成 tag &#x2F; set &#x2F; offset？</li>
-<li>为什么连续访问数组更快？</li>
-<li>为什么矩阵转置容易 cache miss？</li>
-<li>什么是 LRU？</li>
-<li>分块为什么能减少 miss？</li>
-</ul>
+<h2 id="3-Locality：局部性"><a href="#3-Locality：局部性" class="headerlink" title="3. Locality：局部性"></a>3. Locality：局部性</h2><p>程序访问内存不是完全随机的，它通常有规律。Cache 能提高速度，就是因为程序通常具有局部性。</p>
+<h3 id="Temporal-Locality：时间局部性"><a href="#Temporal-Locality：时间局部性" class="headerlink" title="Temporal Locality：时间局部性"></a>Temporal Locality：时间局部性</h3><p>刚刚访问过的数据，很可能很快又会被访问。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">    sum += a[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p><code>sum</code> 每一轮循环都在用，所以它有很强的时间局部性。</p>
+<h3 id="Spatial-Locality：空间局部性"><a href="#Spatial-Locality：空间局部性" class="headerlink" title="Spatial Locality：空间局部性"></a>Spatial Locality：空间局部性</h3><p>访问了某个地址之后，很可能马上访问它附近的地址。</p>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[0], a[1], a[2], a[3]</span><br></pre></td></tr></table></figure>
+
+<p>访问了 <code>a[0]</code>，接下来很可能访问旁边的 <code>a[1]</code>。地址挨着，这就是空间局部性。</p>
+<h2 id="4-为什么按行遍历二维数组更快？"><a href="#4-为什么按行遍历二维数组更快？" class="headerlink" title="4. 为什么按行遍历二维数组更快？"></a>4. 为什么按行遍历二维数组更快？</h2><p>C 语言的二维数组是按行连续存储的。例如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a[<span class="number">3</span>][<span class="number">4</span>];</span><br></pre></td></tr></table></figure>
+
+<p>它在内存中大概这样排列：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[0][0] a[0][1] a[0][2] a[0][3] a[1][0] a[1][1] ...</span><br></pre></td></tr></table></figure>
+
+<p>按行访问时，程序是在顺着内存走：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[0][0] -&gt; a[0][1] -&gt; a[0][2] -&gt; a[0][3]</span><br></pre></td></tr></table></figure>
+
+<p>这种访问方式空间局部性好，Cache 很喜欢。</p>
+<p>反过来，按列访问时，每次都要跨过一整行：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[0][0] -&gt; a[1][0] -&gt; a[2][0]</span><br></pre></td></tr></table></figure>
+
+<p>这种访问方式叫 <code>stride-N access pattern</code>，空间局部性比较差。</p>
+<h2 id="5-Memory-Hierarchy：存储器层次结构"><a href="#5-Memory-Hierarchy：存储器层次结构" class="headerlink" title="5. Memory Hierarchy：存储器层次结构"></a>5. Memory Hierarchy：存储器层次结构</h2><p>存储系统大致可以理解成一层一层：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">寄存器</span><br><span class="line">L1 Cache</span><br><span class="line">L2 Cache</span><br><span class="line">L3 Cache</span><br><span class="line">主存 DRAM</span><br><span class="line">SSD / 磁盘</span><br><span class="line">远程服务器</span><br></pre></td></tr></table></figure>
+
+<p>越靠上，越小、越快、越贵；越靠下，越大、越慢、越便宜。</p>
+<p>每一层都可以看作下一层的缓存：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">L1 Cache 缓存 L2 的数据</span><br><span class="line">L2 Cache 缓存 L3 的数据</span><br><span class="line">L3 Cache 缓存主存的数据</span><br><span class="line">主存缓存磁盘的数据</span><br><span class="line">磁盘缓存远程服务器的数据</span><br></pre></td></tr></table></figure>
+
+<p>存储层次结构想制造一种错觉：程序好像拥有一个又大又快的内存。</p>
+<h2 id="6-Cache-的本质"><a href="#6-Cache-的本质" class="headerlink" title="6. Cache 的本质"></a>6. Cache 的本质</h2><p>Cache 是一个小而快的地方，用来临时保存大而慢的地方的一部分数据。</p>
+<p>CPU 访问某个地址时，会先检查 Cache：</p>
+<ul>
+<li>如果数据在 Cache 里，就是 <strong>cache hit</strong>，可以很快拿到。</li>
+<li>如果数据不在 Cache 里，就是 <strong>cache miss</strong>，需要去下一层存储里拿。</li>
+</ul>
+<p>Cache 拿数据时通常不是只拿一个变量，而是按块搬运。比如访问 <code>a[0]</code> 时，Cache 可能把下面这些数据一起搬进来：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[0] a[1] a[2] a[3] a[4] a[5] a[6] a[7]</span><br></pre></td></tr></table></figure>
+
+<p>这样后面连续访问 <code>a[1]</code>、<code>a[2]</code>、<code>a[3]</code> 时，就可能直接命中 Cache。</p>
+<h2 id="7-三种-Cache-Miss"><a href="#7-三种-Cache-Miss" class="headerlink" title="7. 三种 Cache Miss"></a>7. 三种 Cache Miss</h2><ul>
+<li><strong>Cold miss</strong>：第一次访问某个块，Cache 里肯定没有。</li>
+<li><strong>Capacity miss</strong>：正在使用的数据太多，Cache 放不下，只能不断替换。</li>
+<li><strong>Conflict miss</strong>：Cache 总容量够，但几个数据刚好被映射到同一个位置，于是互相挤掉。</li>
+</ul>
+<h2 id="8-Working-Set"><a href="#8-Working-Set" class="headerlink" title="8. Working Set"></a>8. Working Set</h2><p>Working set 指的是程序在某一小段时间里正在频繁使用的数据集合。</p>
+<p>如果 working set 能放进 Cache，程序通常会比较快；如果 working set 比 Cache 大，程序就容易频繁 miss，速度会明显下降。</p>
+<h1 id="Cache-Memories"><a href="#Cache-Memories" class="headerlink" title="Cache Memories"></a>Cache Memories</h1><h2 id="1-Cache-组织方式：S、E、B"><a href="#1-Cache-组织方式：S、E、B" class="headerlink" title="1. Cache 组织方式：S、E、B"></a>1. Cache 组织方式：S、E、B</h2><p><img src="/images/cache-organization-seb.png" alt="General Cache Organization (S, E, B)"></p>
+<p>如果想象Cache是一个柜子，他有三层概念：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set：柜子的某一层/某一格区域 =&gt; S = 一共有多少个set</span><br><span class="line">line：这个柜子里面的具体槽位 =&gt; E = 每个set里有多少line</span><br><span class="line">block：line里真正装的数据块 =&gt; B = 每个block有多少字节</span><br></pre></td></tr></table></figure>
+<p>例如，S &#x3D; 4, E &#x3D; 2, B &#x3D; 8 &#x3D;&gt; 这个 cache 有四个set<br>                            这个 set 有两条line<br>                            每一条 line 能装8字节数据<br>E越大，每个set能容纳的候选数据越多，冲突越少。</p>
+<h3 id="1-1-Cache-Line：valid-bit、tag、block-data"><a href="#1-1-Cache-Line：valid-bit、tag、block-data" class="headerlink" title="1.1 Cache Line：valid bit、tag、block data"></a>1.1 Cache Line：valid bit、tag、block data</h3><p>每一条Cache不止数据本身：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valid bit | tag | block data</span><br></pre></td></tr></table></figure>
+<ul>
+<li>valid bit: 这条line现在有没有有效数据</li>
+<li>tag: line中存的是内存的那一块</li>
+<li>block data: 真正缓存的数据</li>
+</ul>
+<p><strong>为什么需要 valid bit？</strong><br>刚运行时，cache里面可能是空的，如果只有 valid bit，CPU看到某个tag匹配，也不知道这条line中东西是否有效。因此判断hit时必须满足：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">valid bit = 1</span><br><span class="line">tag 匹配</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-Cache-容量：C-S-x-E-x-B"><a href="#1-2-Cache-容量：C-S-x-E-x-B" class="headerlink" title="1.2 Cache 容量：C &#x3D; S x E x B"></a>1.2 Cache 容量：C &#x3D; S x E x B</h3><p>这里C只计算真正容量–block data</p>
+<h3 id="1-3-地址拆分：tag、set-index、block-offset"><a href="#1-3-地址拆分：tag、set-index、block-offset" class="headerlink" title="1.3 地址拆分：tag、set index、block offset"></a>1.3 地址拆分：tag、set index、block offset</h3><p>Cache 读一个地址时，会把这个地址直接拆成三段：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tag | set index | block offset</span><br></pre></td></tr></table></figure>
+
+<p>这三段不是三个新的变量，而是从同一个地址里切出来的不同 bit 段。</p>
+<ul>
+<li><strong>block offset</strong>：从地址里直接切出来的低位，表示“我要的字节，在这个 block 里排第几个”。例如一个 block 是 64 字节，就需要 6 个 bit 表示 <code>0 ~ 63</code> 的位置。</li>
+<li><strong>set index</strong>：从地址里直接切出来的中间位，直接当索引用，不需要比较。它规定了“这个地址必须去第几号 set 里查”。</li>
+<li><strong>tag</strong>：从地址里直接切出来的高位，不能直接当索引用，而是要和目标 set 里当前实际存放的几个 tag 逐一比较。只有 tag 对上，并且 valid bit 为 1，才说明“这个 set 里现在存的，正好是我要的那块内存”。否则就是 cache miss。</li>
+</ul>
+<p>所以可以这样记：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">block offset：进了 block 之后，找具体字节</span><br><span class="line">set index：先决定去哪个 set</span><br><span class="line">tag：到了 set 之后，确认是不是我要的那块</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-Cache-Read：一次读操作怎么判断-hit-miss"><a href="#2-Cache-Read：一次读操作怎么判断-hit-miss" class="headerlink" title="2. Cache Read：一次读操作怎么判断 hit&#x2F;miss"></a>2. Cache Read：一次读操作怎么判断 hit&#x2F;miss</h2><h2 id="3-Direct-Mapped-Cache：每个-set-只有一条-line"><a href="#3-Direct-Mapped-Cache：每个-set-只有一条-line" class="headerlink" title="3. Direct-Mapped Cache：每个 set 只有一条 line"></a>3. Direct-Mapped Cache：每个 set 只有一条 line</h2><h2 id="4-E-way-Set-Associative-Cache：每个-set-有多条-line"><a href="#4-E-way-Set-Associative-Cache：每个-set-有多条-line" class="headerlink" title="4. E-way Set Associative Cache：每个 set 有多条 line"></a>4. E-way Set Associative Cache：每个 set 有多条 line</h2><h2 id="5-Cache-Simulation：手算访问序列"><a href="#5-Cache-Simulation：手算访问序列" class="headerlink" title="5. Cache Simulation：手算访问序列"></a>5. Cache Simulation：手算访问序列</h2><h2 id="6-写操作：write-through、write-back-与-dirty-bit"><a href="#6-写操作：write-through、write-back-与-dirty-bit" class="headerlink" title="6. 写操作：write-through、write-back 与 dirty bit"></a>6. 写操作：write-through、write-back 与 dirty bit</h2><h2 id="7-Cache-Performance-Metrics：miss-rate、hit-time、miss-penalty"><a href="#7-Cache-Performance-Metrics：miss-rate、hit-time、miss-penalty" class="headerlink" title="7. Cache Performance Metrics：miss rate、hit time、miss penalty"></a>7. Cache Performance Metrics：miss rate、hit time、miss penalty</h2><h2 id="8-Memory-Mountain：working-set-size-与-stride"><a href="#8-Memory-Mountain：working-set-size-与-stride" class="headerlink" title="8. Memory Mountain：working set size 与 stride"></a>8. Memory Mountain：working set size 与 stride</h2><h2 id="9-Writing-Cache-Friendly-Code：写对-Cache-友好的代码"><a href="#9-Writing-Cache-Friendly-Code：写对-Cache-友好的代码" class="headerlink" title="9. Writing Cache Friendly Code：写对 Cache 友好的代码"></a>9. Writing Cache Friendly Code：写对 Cache 友好的代码</h2><h2 id="10-Matrix-Multiplication：循环顺序与空间局部性"><a href="#10-Matrix-Multiplication：循环顺序与空间局部性" class="headerlink" title="10. Matrix Multiplication：循环顺序与空间局部性"></a>10. Matrix Multiplication：循环顺序与空间局部性</h2><h3 id="10-1-ijk-jik"><a href="#10-1-ijk-jik" class="headerlink" title="10.1 ijk &#x2F; jik"></a>10.1 ijk &#x2F; jik</h3><h3 id="10-2-kij-ikj"><a href="#10-2-kij-ikj" class="headerlink" title="10.2 kij &#x2F; ikj"></a>10.2 kij &#x2F; ikj</h3><h3 id="10-3-jki-kji"><a href="#10-3-jki-kji" class="headerlink" title="10.3 jki &#x2F; kji"></a>10.3 jki &#x2F; kji</h3><h2 id="11-Blocking：用分块提高时间局部性"><a href="#11-Blocking：用分块提高时间局部性" class="headerlink" title="11. Blocking：用分块提高时间局部性"></a>11. Blocking：用分块提高时间局部性</h2><h2 id="12-Cache-Summary"><a href="#12-Cache-Summary" class="headerlink" title="12. Cache Summary"></a>12. Cache Summary</h2>
   </div>
 </article>
         </div>
