@@ -18,12 +18,12 @@
 
 <!-- Website description -->
 
-<meta name="description" content="TCP、UDP 与嵌入式网络学习笔记" />
+<meta name="description" content="TCP 与嵌入式网络学习笔记" />
 
 
 <!-- Website keywords -->
 
-<meta name="keywords" content="TCP, UDP, 嵌入式网络, Peanut&#39;s Notebook" />
+<meta name="keywords" content="TCP, CS144, 嵌入式网络, Peanut&#39;s Notebook" />
 
 
 
@@ -67,7 +67,7 @@
   window.config = {"leancloud":{"app_id":null,"app_key":null,"server_url":null,"cdn":null},"toc":{"min_depth":2,"max_depth":2,"list_number":false},"fancybox":true,"latex":false};
 </script>
   
-  <title>TCP、UDP 与嵌入式网络学习笔记 - Peanut&#39;s Notebook</title>
+  <title>TCP 与嵌入式网络学习笔记 - Peanut&#39;s Notebook</title>
 
 <meta name="generator" content="Hexo 8.1.2"></head>
 
@@ -180,7 +180,7 @@
   <header class="post-header">
     <h1 class="post-title">
       
-      TCP、UDP 与嵌入式网络学习笔记
+      TCP 与嵌入式网络学习笔记
       
     </h1>
 
@@ -204,7 +204,7 @@
   <div class="post-toc" id="post-toc">
     <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87"><span class="toc-text">0. 学习目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-%E8%BF%9E%E6%8E%A5%E5%9F%BA%E7%A1%80"><span class="toc-text">第一阶段：TCP 连接基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%EF%BC%9A%E5%AD%97%E8%8A%82%E6%B5%81%E4%B8%8E%E4%B9%B1%E5%BA%8F%E9%87%8D%E7%BB%84"><span class="toc-text">第二阶段：字节流与乱序重组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-%E6%8E%A5%E6%94%B6%E7%AB%AF"><span class="toc-text">第三阶段：TCP 接收端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-%E5%8F%91%E9%80%81%E7%AB%AF"><span class="toc-text">第四阶段：TCP 发送端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-%E6%B5%81%E9%87%8F%E4%B8%8E%E6%80%A7%E8%83%BD"><span class="toc-text">第五阶段：TCP 流量与性能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E9%98%B6%E6%AE%B5%EF%BC%9A%E7%BD%91%E7%BB%9C%E6%8E%A5%E5%8F%A3%E4%B8%8E-IP"><span class="toc-text">第六阶段：网络接口与 IP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%83%E9%98%B6%E6%AE%B5%EF%BC%9AUDP-%E4%B8%8E%E5%8D%8F%E8%AE%AE%E9%80%89%E6%8B%A9"><span class="toc-text">第七阶段：UDP 与协议选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AB%E9%98%B6%E6%AE%B5%EF%BC%9A%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%BD%91%E7%BB%9C%E4%B8%8E-lwIP"><span class="toc-text">第八阶段：嵌入式网络与 lwIP</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%AD%A6%E4%B9%A0%E7%9B%AE%E6%A0%87"><span class="toc-text">0. 学习目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-%E8%BF%9E%E6%8E%A5%E5%9F%BA%E7%A1%80"><span class="toc-text">第一阶段：TCP 连接基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%EF%BC%9A%E5%AD%97%E8%8A%82%E6%B5%81%E4%B8%8E%E4%B9%B1%E5%BA%8F%E9%87%8D%E7%BB%84"><span class="toc-text">第二阶段：字节流与乱序重组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-%E6%8E%A5%E6%94%B6%E7%AB%AF"><span class="toc-text">第三阶段：TCP 接收端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-%E5%8F%91%E9%80%81%E7%AB%AF"><span class="toc-text">第四阶段：TCP 发送端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E9%98%B6%E6%AE%B5%EF%BC%9ATCP-%E6%B5%81%E9%87%8F%E4%B8%8E%E6%80%A7%E8%83%BD"><span class="toc-text">第五阶段：TCP 流量与性能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E9%98%B6%E6%AE%B5%EF%BC%9A%E7%BD%91%E7%BB%9C%E6%8E%A5%E5%8F%A3%E4%B8%8E-IP"><span class="toc-text">第六阶段：网络接口与 IP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%93"><span class="toc-text">阶段总结</span></a></li></ol>
     </div>
   </div>
   
@@ -212,10 +212,9 @@
   <div class="post-content">
     
     <h2 id="0-学习目标"><a href="#0-学习目标" class="headerlink" title="0. 学习目标"></a>0. 学习目标</h2><ul>
-<li>理解 TCP 和 UDP 的工作原理</li>
+<li>理解 TCP 的基本模型与可靠传输机制</li>
 <li>能通过抓包解释协议行为</li>
-<li>能编写 TCP&#x2F;UDP 客户端和服务器</li>
-<li>理解 lwIP 在嵌入式系统中的作用</li>
+<li>理解 TCP 与 IP、ARP、以太网之间的关系</li>
 <li>完成 CS144 ByteStream、Reassembler、TCP Receiver 和 TCP Sender</li>
 </ul>
 <h2 id="第一阶段：TCP-连接基础"><a href="#第一阶段：TCP-连接基础" class="headerlink" title="第一阶段：TCP 连接基础"></a>第一阶段：TCP 连接基础</h2><h3 id="1-TCP-基本模型"><a href="#1-TCP-基本模型" class="headerlink" title="1. TCP 基本模型"></a>1. TCP 基本模型</h3><p>TCP 是一种面向连接的传输层协议。它在不可靠的 IP 网络上，为应用程序提供：</p>
@@ -789,10 +788,9 @@
 <li>MTU 或 MSS 设置不当；</li>
 <li>网卡驱动没有把收到的数据交给协议栈。</li>
 </ul>
-<h4 id="7-1-以太网帧与-MAC-地址"><a href="#7-1-以太网帧与-MAC-地址" class="headerlink" title="7.1 以太网帧与 MAC 地址"></a>7.1 以太网帧与 MAC 地址</h4><h4 id="7-2-ARP-与-ARP-Cache"><a href="#7-2-ARP-与-ARP-Cache" class="headerlink" title="7.2 ARP 与 ARP Cache"></a>7.2 ARP 与 ARP Cache</h4><h4 id="7-3-IPv4、MTU-与默认网关"><a href="#7-3-IPv4、MTU-与默认网关" class="headerlink" title="7.3 IPv4、MTU 与默认网关"></a>7.3 IPv4、MTU 与默认网关</h4><h4 id="7-4-网络接口"><a href="#7-4-网络接口" class="headerlink" title="7.4 网络接口"></a>7.4 网络接口</h4><h4 id="7-5-路由选择基础"><a href="#7-5-路由选择基础" class="headerlink" title="7.5 路由选择基础"></a>7.5 路由选择基础</h4><blockquote>
-<p>本阶段只需理解数据如何从 TCP 交给网卡，以及嵌入式设备如何判断下一跳，不需要实现完整的 IP Router。</p>
-</blockquote>
-<h2 id="第七阶段：UDP-与协议选择"><a href="#第七阶段：UDP-与协议选择" class="headerlink" title="第七阶段：UDP 与协议选择"></a>第七阶段：UDP 与协议选择</h2><h3 id="8-UDP"><a href="#8-UDP" class="headerlink" title="8. UDP"></a>8. UDP</h3><h4 id="8-1-数据报模型与消息边界"><a href="#8-1-数据报模型与消息边界" class="headerlink" title="8.1 数据报模型与消息边界"></a>8.1 数据报模型与消息边界</h4><h4 id="8-2-UDP-首部与校验和概览"><a href="#8-2-UDP-首部与校验和概览" class="headerlink" title="8.2 UDP 首部与校验和概览"></a>8.2 UDP 首部与校验和概览</h4><h4 id="8-3-sendto-、recvfrom-与-UDP-回显"><a href="#8-3-sendto-、recvfrom-与-UDP-回显" class="headerlink" title="8.3 sendto()、recvfrom() 与 UDP 回显"></a>8.3 <code>sendto()</code>、<code>recvfrom()</code> 与 UDP 回显</h4><h4 id="8-4-广播与多播基础"><a href="#8-4-广播与多播基础" class="headerlink" title="8.4 广播与多播基础"></a>8.4 广播与多播基础</h4><h4 id="8-5-应用层序列号、超时与重传"><a href="#8-5-应用层序列号、超时与重传" class="headerlink" title="8.5 应用层序列号、超时与重传"></a>8.5 应用层序列号、超时与重传</h4><h4 id="8-6-TCP、UDP-的选择与嵌入式场景"><a href="#8-6-TCP、UDP-的选择与嵌入式场景" class="headerlink" title="8.6 TCP、UDP 的选择与嵌入式场景"></a>8.6 TCP、UDP 的选择与嵌入式场景</h4><h2 id="第八阶段：嵌入式网络与-lwIP"><a href="#第八阶段：嵌入式网络与-lwIP" class="headerlink" title="第八阶段：嵌入式网络与 lwIP"></a>第八阶段：嵌入式网络与 lwIP</h2><h3 id="9-lwIP-核心"><a href="#9-lwIP-核心" class="headerlink" title="9. lwIP 核心"></a>9. lwIP 核心</h3><h4 id="9-1-协议栈分层与数据流"><a href="#9-1-协议栈分层与数据流" class="headerlink" title="9.1 协议栈分层与数据流"></a>9.1 协议栈分层与数据流</h4><h4 id="9-2-netif-与网络接口"><a href="#9-2-netif-与网络接口" class="headerlink" title="9.2 netif 与网络接口"></a>9.2 netif 与网络接口</h4><h4 id="9-3-pbuf-与数据缓冲"><a href="#9-3-pbuf-与数据缓冲" class="headerlink" title="9.3 pbuf 与数据缓冲"></a>9.3 pbuf 与数据缓冲</h4><h4 id="9-4-tcp-pcb、udp-pcb-与回调"><a href="#9-4-tcp-pcb、udp-pcb-与回调" class="headerlink" title="9.4 tcp_pcb、udp_pcb 与回调"></a>9.4 tcp_pcb、udp_pcb 与回调</h4><h4 id="9-5-Raw-API"><a href="#9-5-Raw-API" class="headerlink" title="9.5 Raw API"></a>9.5 Raw API</h4><h4 id="9-6-Socket-API"><a href="#9-6-Socket-API" class="headerlink" title="9.6 Socket API"></a>9.6 Socket API</h4><h4 id="9-7-Netconn-API-概览"><a href="#9-7-Netconn-API-概览" class="headerlink" title="9.7 Netconn API 概览"></a>9.7 Netconn API 概览</h4><h3 id="10-嵌入式网络工程"><a href="#10-嵌入式网络工程" class="headerlink" title="10. 嵌入式网络工程"></a>10. 嵌入式网络工程</h3><h4 id="10-1-固定缓冲区、内存池与环形缓冲区"><a href="#10-1-固定缓冲区、内存池与环形缓冲区" class="headerlink" title="10.1 固定缓冲区、内存池与环形缓冲区"></a>10.1 固定缓冲区、内存池与环形缓冲区</h4><h4 id="10-2-定时器、超时与重传"><a href="#10-2-定时器、超时与重传" class="headerlink" title="10.2 定时器、超时与重传"></a>10.2 定时器、超时与重传</h4><h4 id="10-3-RTOS-任务、消息队列与线程安全"><a href="#10-3-RTOS-任务、消息队列与线程安全" class="headerlink" title="10.3 RTOS 任务、消息队列与线程安全"></a>10.3 RTOS 任务、消息队列与线程安全</h4><h4 id="10-4-网络字节序与二进制协议"><a href="#10-4-网络字节序与二进制协议" class="headerlink" title="10.4 网络字节序与二进制协议"></a>10.4 网络字节序与二进制协议</h4><h4 id="10-5-心跳、断线检测与自动重连"><a href="#10-5-心跳、断线检测与自动重连" class="headerlink" title="10.5 心跳、断线检测与自动重连"></a>10.5 心跳、断线检测与自动重连</h4><h4 id="10-6-Link、DHCP、DNS-与网络状态管理"><a href="#10-6-Link、DHCP、DNS-与网络状态管理" class="headerlink" title="10.6 Link、DHCP、DNS 与网络状态管理"></a>10.6 Link、DHCP、DNS 与网络状态管理</h4>
+<h2 id="阶段总结"><a href="#阶段总结" class="headerlink" title="阶段总结"></a>阶段总结</h2><p>至此，本文完成了对 TCP 基本模型、连接管理、可靠传输、流量控制与发送端重传机制的梳理，并结合 CS144 Checkpoint 0–3 实现了 ByteStream、Reassembler、TCP Receiver 和 TCP Sender。</p>
+<p>受当前时间安排限制，网络接口、UDP 与 lwIP 暂不展开。后续在嵌入式项目中实际使用这些内容时，再继续学习和补充记录。</p>
+
     
   </div>
 
@@ -810,7 +808,7 @@
       
       <a href="/tags/TCP/">TCP</a>
       
-      <a href="/tags/UDP/">UDP</a>
+      <a href="/tags/CS144/">CS144</a>
       
       <a href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%BD%91%E7%BB%9C/">嵌入式网络</a>
       
