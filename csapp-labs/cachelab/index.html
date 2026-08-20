@@ -178,7 +178,7 @@
         <div id="content" class="content">
           <article class="post">
   <div class="post-content">
-    <h1 id="The-Memory-Hierarchy"><a href="#The-Memory-Hierarchy" class="headerlink" title="The Memory Hierarchy"></a>The Memory Hierarchy</h1><p>这一章先记住一个矛盾：CPU 很快，内存跟不上。Cache 就夹在 CPU 和内存之间，保存最近可能用到的数据。</p>
+    <h1 id="The-Memory-Hierarchy"><a href="#The-Memory-Hierarchy" class="headerlink" title="The Memory Hierarchy"></a>The Memory Hierarchy</h1><p>一个矛盾：CPU 很快，内存跟不上。Cache 就夹在 CPU 和内存之间，保存最近可能用到的数据。</p>
 <h2 id="1-Load、Store-与主存"><a href="#1-Load、Store-与主存" class="headerlink" title="1. Load、Store 与主存"></a>1. Load、Store 与主存</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">movq 8(%rsp), %rax   # load：内存 -&gt; 寄存器</span><br><span class="line">movq %rax, 8(%rsp)   # store：寄存器 -&gt; 内存</span><br></pre></td></tr></table></figure>
 
 <p>CPU 真正计算时用的是寄存器，内存负责放数据。大致过程：</p>
@@ -305,7 +305,7 @@
 <td>miss，再顶回来</td>
 </tr>
 </tbody></table>
-<p>这里我卡过的点：<code>B = 2 bytes</code>，所以一个 block 里确实有两个字节。只需要 1 个 offset bit，就能用 <code>0/1</code> 区分这两个位置。因此地址 <code>0</code> 和 <code>1</code> 属于同一个 block，先访问 <code>0</code> 后再访问 <code>1</code> 会 hit。</p>
+<p><code>B = 2 bytes</code>，所以一个 block 里确实有两个字节。只需要 1 个 offset bit，就能用 <code>0/1</code> 区分这两个位置。因此地址 <code>0</code> 和 <code>1</code> 属于同一个 block，先访问 <code>0</code> 后再访问 <code>1</code> 会 hit。</p>
 <p>地址 <code>0</code> 和 <code>8</code> 的 set index 都是 <code>00</code>，但 tag 不同。因为这里 <code>E = 1</code>，它们会在 Set 0 里互相替换。</p>
 <h2 id="6-写操作与-dirty-bit"><a href="#6-写操作与-dirty-bit" class="headerlink" title="6. 写操作与 dirty bit"></a>6. 写操作与 dirty bit</h2><p>读操作只要把数据拿到 CPU。写操作多一个问题：Cache 改了，内存什么时候改？</p>
 <h3 id="6-1-Write-hit"><a href="#6-1-Write-hit" class="headerlink" title="6.1 Write hit"></a>6.1 Write hit</h3><p>目标 block 已经在 Cache 中，有两种做法：</p>
@@ -314,7 +314,7 @@
 <p>write-through 简单，但是每次 store 都会占用总线。write-back 可以把同一个 block 的多次修改合成一次写回，但此时 Cache 和内存可能不一样，所以要加 dirty bit：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">valid bit | dirty bit | tag | block data</span><br><span class="line"></span><br><span class="line">dirty = 0：没有欠下一级存储更新，可以直接替换</span><br><span class="line">dirty = 1：Cache 里是新数据，替换前必须先写回</span><br></pre></td></tr></table></figure>
 
-<p>这个取舍和我做 RoCC 卷积加速器时有点像：每算出一个结果就 DMA 写回，逻辑简单，但小块写太密会占总线；先存在 BRAM 或寄存器堆里，攒一批再 burst 出去，事务会少很多。只是思路相似，并不等于 CPU Cache 的 write-back。</p>
+<p>这个trade-off在 RoCC 卷积加速器时类似：每算出一个结果就 DMA 写回，逻辑简单，但小块写太密会占总线；先存在 BRAM 或寄存器堆里，攒一批再 burst 出去，事务会少很多。只是思路相似，并不等于 CPU Cache 的 write-back。</p>
 <h3 id="6-2-Write-miss"><a href="#6-2-Write-miss" class="headerlink" title="6.2 Write miss"></a>6.2 Write miss</h3><p>目标 block 不在 Cache 中：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">write-allocate：先把整个 block 搬进 Cache，再修改</span><br><span class="line">no-write-allocate：不进 Cache，直接写下一级存储</span><br></pre></td></tr></table></figure>
 
@@ -322,14 +322,65 @@
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">write-back    + write-allocate</span><br><span class="line">write-through + no-write-allocate</span><br></pre></td></tr></table></figure>
 
 <p>为什么 write-allocate 要搬整个 block？例如 <code>B = 4 bytes</code>，CPU 只改地址 <code>10</code>，它所属的 block 是地址 <code>8～11</code>。Cache line 要保存整个 block，其他三个没改的字节也不能丢，所以要先把 <code>8～11</code> 全部拿进来，再改地址 <code>10</code>。</p>
-<h3 id="6-3-和-DMA-的关系"><a href="#6-3-和-DMA-的关系" class="headerlink" title="6.3 和 DMA 的关系"></a>6.3 和 DMA 的关系</h3><p>这个是以后写 Linux 驱动真正会碰到的：CPU 和 DMA 都访问内存，但 DMA 不一定经过 CPU Cache。</p>
+<h3 id="6-3-和-DMA-的关系"><a href="#6-3-和-DMA-的关系" class="headerlink" title="6.3 和 DMA 的关系"></a>6.3 和 DMA 的关系</h3><p>CPU 和 DMA 都访问内存，但 DMA 不一定经过 CPU Cache。</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CPU 写，DMA 读：新数据可能还在 Cache，DMA 从内存读到旧数据</span><br><span class="line">DMA 写，CPU 读：内存已经更新，CPU 却命中 Cache 里的旧数据</span><br></pre></td></tr></table></figure>
 
 <p>从 Cache 角度看：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DMA 读取前：CPU 的 dirty 数据要 clean/write back</span><br><span class="line">CPU 读取前：旧 Cache line 要 invalidate</span><br></pre></td></tr></table></figure>
 
 <p>Linux 驱动里通常通过 DMA API 做映射和同步，不应该自己随便操作 Cache。</p>
-<h2 id="7-Cache-性能：为什么-miss-很贵"><a href="#7-Cache-性能：为什么-miss-很贵" class="headerlink" title="7. Cache 性能：为什么 miss 很贵"></a>7. Cache 性能：为什么 miss 很贵</h2><h2 id="8-访问模式：working-set、stride-与-Memory-Mountain"><a href="#8-访问模式：working-set、stride-与-Memory-Mountain" class="headerlink" title="8. 访问模式：working set、stride 与 Memory Mountain"></a>8. 访问模式：working set、stride 与 Memory Mountain</h2><h2 id="9-写出-Cache-friendly-的代码：矩阵乘法与-Blocking"><a href="#9-写出-Cache-friendly-的代码：矩阵乘法与-Blocking" class="headerlink" title="9. 写出 Cache-friendly 的代码：矩阵乘法与 Blocking"></a>9. 写出 Cache-friendly 的代码：矩阵乘法与 Blocking</h2>
+<h2 id="7-Cache-性能：为什么-miss-很贵"><a href="#7-Cache-性能：为什么-miss-很贵" class="headerlink" title="7. Cache 性能：为什么 miss 很贵"></a>7. Cache 性能：为什么 miss 很贵</h2><p>CPU 如果在 L1 Cache 中 hit，通常只需要很少的 cycles；一旦 miss，就要继续访问 L2、L3，甚至 DRAM。CPU 后面的指令如果正好依赖这个数据，就只能等。</p>
+<p>常见指标：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hit rate = 命中次数 / 总访问次数</span><br><span class="line">miss rate = 未命中次数 / 总访问次数</span><br><span class="line">hit rate + miss rate = 1</span><br></pre></td></tr></table></figure>
+
+<p>平均内存访问时间：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">AMAT = hit time + miss rate x miss penalty</span><br><span class="line"></span><br><span class="line">hit time     = 4 cycles</span><br><span class="line">miss rate    = 5%</span><br><span class="line">miss penalty = 100 cycles</span><br><span class="line"></span><br><span class="line">AMAT = 4 + 0.05 x 100 = 9 cycles</span><br></pre></td></tr></table></figure>
+
+<p>虽然只有 5% 的访问 miss，平均时间却从 4 cycles 增加到了 9 cycles。miss rate 看起来不高，也可能把实际访问时间拖慢很多。</p>
+<p>实际处理器还有多级 Cache：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CPU</span><br><span class="line">  ↓ L1 miss</span><br><span class="line">L2</span><br><span class="line">  ↓ L2 miss</span><br><span class="line">L3</span><br><span class="line">  ↓ L3 miss</span><br><span class="line">DRAM</span><br></pre></td></tr></table></figure>
+
+<p>所以 L1 miss 不代表一定访问 DRAM，但每往下一层走一次，代价都会增加。如果被替换的 Cache line 还是 dirty，还要先写回旧 block，再加载新 block。</p>
+<h2 id="8-访问模式：working-set、stride-与-Memory-Mountain"><a href="#8-访问模式：working-set、stride-与-Memory-Mountain" class="headerlink" title="8. 访问模式：working set、stride 与 Memory Mountain"></a>8. 访问模式：working set、stride 与 Memory Mountain</h2><p>Working set 不是程序申请的全部内存，而是程序在一段时间内反复使用的那部分数据。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">working set &lt; L1：大部分访问停在 L1</span><br><span class="line">working set &lt; L2：L1 放不下，但多数还能在 L2 找到</span><br><span class="line">working set &lt; L3：速度继续下降</span><br><span class="line">working set &gt; L3：频繁访问 DRAM</span><br></pre></td></tr></table></figure>
+
+<p>stride 表示连续两次访问之间隔了多少个元素。例如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i += stride) &#123;</span><br><span class="line">    sum += a[i];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>假设一条 Cache line 是 64 bytes，一个 <code>int</code> 是 4 bytes，那么一条 line 可以放 16 个 <code>int</code>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">stride = 1：一条 line 中的 16 个 int 基本都能用到</span><br><span class="line">stride = 2：大约用到其中 8 个</span><br><span class="line">stride = 16：每条 line 通常只用一个 int</span><br><span class="line">stride &gt; 16：每次访问很可能都要换一条 line</span><br></pre></td></tr></table></figure>
+
+<p>所以 stride 越大，空间局部性通常越差。某些固定 stride 还会让地址反复映射到相同的几个 set，额外产生 conflict miss。</p>
+<p>Memory Mountain 就是把 working set、stride 和读取速度画到一起：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">一个方向：working set size</span><br><span class="line">一个方向：stride</span><br><span class="line">高度：内存读取吞吐量</span><br></pre></td></tr></table></figure>
+
+<p>小 working set、小 stride 的区域最高；working set 超过 L1、L2、L3，或者 stride 逐渐变大后，吞吐量就会下降。图上的几个性能平台，大致对应数据主要停留在 L1、L2、L3 和 DRAM 时的速度。</p>
+<h2 id="9-写出-Cache-friendly-的代码：矩阵乘法与-Blocking"><a href="#9-写出-Cache-friendly-的代码：矩阵乘法与-Blocking" class="headerlink" title="9. 写出 Cache-friendly 的代码：矩阵乘法与 Blocking"></a>9. 写出 Cache-friendly 的代码：矩阵乘法与 Blocking</h2><p>C 语言二维数组按行连续存放。对于矩阵乘法：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C[i][j] += A[i][k] * B[k][j];</span><br></pre></td></tr></table></figure>
+
+<p>六种循环顺序不用逐个背，先看最内层循环是谁。</p>
+<p><code>ijk / jik</code> 的最内层是 <code>k</code>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">A[i][k]：沿 A 的一行连续访问</span><br><span class="line">B[k][j]：沿 B 的一列跳跃访问</span><br></pre></td></tr></table></figure>
+
+<p>A 友好，B 不友好，整体不算好。</p>
+<p><code>ikj / kij</code> 的最内层是 <code>j</code>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A[i][k]：同一个值反复使用</span><br><span class="line">B[k][j]：沿 B 的一行连续访问</span><br><span class="line">C[i][j]：沿 C 的一行连续访问</span><br></pre></td></tr></table></figure>
+
+<p>这一组通常最好。可以理解成：先取出一个 <code>A[i][k]</code>，让它依次乘 B 的一整行，并累加到 C 的一整行。</p>
+<p><code>jki / kji</code> 的最内层是 <code>i</code>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">A[i][k]：沿 A 的一列跳跃访问</span><br><span class="line">C[i][j]：沿 C 的一列跳跃访问</span><br></pre></td></tr></table></figure>
+
+<p>两个矩阵都在跨行访问，通常最差。暂时可以这样记：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">内层 j：通常最好</span><br><span class="line">内层 k：一个连续，一个跳跃</span><br><span class="line">内层 i：通常最差</span><br></pre></td></tr></table></figure>
+
+<p>但矩阵很大时，光改循环顺序还不够，因为一整行或整个矩阵仍然放不进 Cache。这时使用 Blocking：把大矩阵切成小块。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">大矩阵</span><br><span class="line">┌────┬────┬────┐</span><br><span class="line">│小块 │小块│小块 │</span><br><span class="line">├────┼────┼────┤</span><br><span class="line">│小块 │小块│小块 │</span><br><span class="line">└────┴────┴────┘</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (ii = <span class="number">0</span>; ii &lt; n; ii += BS)</span><br><span class="line">    <span class="keyword">for</span> (kk = <span class="number">0</span>; kk &lt; n; kk += BS)</span><br><span class="line">        <span class="keyword">for</span> (jj = <span class="number">0</span>; jj &lt; n; jj += BS)</span><br><span class="line">            <span class="comment">// 只计算当前 A、B、C 小块</span></span><br></pre></td></tr></table></figure>
+
+<p>每次只处理能放进 Cache 的几个小块，让刚加载的数据在被替换前多用几次。Blocking 没有减少乘法次数，它减少的是同一批数据被反复从内存加载的次数。</p>
+<p>Cache Lab 的矩阵转置部分做的就是这件事：计算结果不能变，但可以通过调整访问顺序和 block size，把 miss 数量降下来。</p>
+
   </div>
 </article>
         </div>
