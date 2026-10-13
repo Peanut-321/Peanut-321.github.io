@@ -23,8 +23,6 @@
 
 <!-- Website keywords -->
 
-<meta name="keywords" content="FPGA, SRCNN, Vitis HLS, PYNQ, KV260, Peanut&#39;s Notebook" />
-
 
 
 
@@ -91,21 +89,21 @@
       <li class="mobile-menu-item">
         
         
-        首页              </li>
+        Home              </li>
     </a>
     
     <a href="/archives/">
       <li class="mobile-menu-item">
         
         
-        归档              </li>
+        Archives              </li>
     </a>
     
     <a href="/about/">
       <li class="mobile-menu-item">
         
         
-        关于              </li>
+        About              </li>
     </a>
     
     <a href="/friends/">
@@ -131,7 +129,7 @@
           <a class="menu-item-link" href="/">
             
             
-              首页
+              Home
             
           </a>
         </li>
@@ -140,7 +138,7 @@
           <a class="menu-item-link" href="/archives/">
             
             
-              归档
+              Archives
             
           </a>
         </li>
@@ -149,7 +147,7 @@
           <a class="menu-item-link" href="/about/">
             
             
-              关于
+              About
             
           </a>
         </li>
@@ -167,7 +165,7 @@
   
   <div class="lang-switch">
     
-      <a class="lang-switch-link" href="/2026/10/13/SRCNN-FPGA-Accelerated/">EN</a>
+      <a class="lang-switch-link" href="/2026/10/13/SRCNN-FPGA-Accelerated-zh/">中文</a>
     
   </div>
 </nav>  
@@ -190,582 +188,15 @@
       </span>
       
       
-      <span class="post-category">
-        
-        <a href="/categories/FPGA-%E5%8A%A0%E9%80%9F/">FPGA 加速</a>
-        
-      </span>
-      
       
     </div>
   </header>
 
   
-  <div class="post-toc" id="post-toc">
-    <h2 class="post-toc-title">文章目录</h2>
-    <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E9%A1%B9%E7%9B%AE%E6%A6%82%E8%A7%88"><span class="toc-text">0. 项目概览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-SRCNN-%E5%81%9A-FPGA-%E5%8A%A0%E9%80%9F"><span class="toc-text">1. 为什么选择 SRCNN 做 FPGA 加速</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84%E4%B8%8E%E5%8A%9F%E8%83%BD%E5%A5%91%E7%BA%A6"><span class="toc-text">2. 网络结构与功能契约</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%EF%BC%9APS-%E4%B8%8E-PL-%E5%A6%82%E4%BD%95%E5%88%86%E5%B7%A5"><span class="toc-text">3. 系统架构：PS 与 PL 如何分工</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%B7%A5%E4%BD%9C%E9%87%8F%E5%88%86%E6%9E%90%EF%BC%9A%E4%BC%98%E5%8C%96%E5%BA%94%E8%AF%A5%E8%8A%B1%E5%9C%A8%E5%93%AA%E9%87%8C"><span class="toc-text">4. 工作量分析：优化应该花在哪里</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Golden-Reference%EF%BC%9A%E5%85%88%E6%8A%8A%E2%80%9C%E6%AD%A3%E7%A1%AE%E2%80%9D%E5%AE%9A%E4%B9%89%E6%B8%85%E6%A5%9A"><span class="toc-text">5. Golden Reference：先把“正确”定义清楚</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%AE%9A%E7%82%B9%E5%8C%96%EF%BC%9A%E4%BB%8E-float32-%E5%88%B0-ap-fixed"><span class="toc-text">6. 定点化：从 float32 到 ap_fixed</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-HLS-%E5%9F%BA%E7%BA%BF%EF%BC%9A%E5%85%88%E7%BB%BC%E5%90%88%E8%87%AA%E7%84%B6%E5%BE%AA%E7%8E%AF%EF%BC%8C%E5%86%8D%E4%BC%98%E5%8C%96"><span class="toc-text">7. HLS 基线：先综合自然循环，再优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-PL-%E7%AB%AF%E8%AE%BE%E8%AE%A1%E8%AE%B0%E5%BD%95"><span class="toc-text">8. PL 端设计记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-PS-%E7%AB%AF%E4%B8%8E-PYNQ-Host"><span class="toc-text">9. PS 端与 PYNQ Host</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-PL-PS-%E9%9B%86%E6%88%90%E4%B8%8E-Bring-up-%E9%A1%BA%E5%BA%8F"><span class="toc-text">10. PL&#x2F;PS 集成与 Bring-up 顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E5%88%86%E5%B1%82%E9%AA%8C%E8%AF%81%E7%AD%96%E7%95%A5"><span class="toc-text">11. 分层验证策略</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E6%80%A7%E8%83%BD%E4%B8%8E%E8%B5%84%E6%BA%90%E6%B5%8B%E9%87%8F%E6%96%B9%E6%B3%95"><span class="toc-text">12. 性能与资源测量方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-%E5%BD%93%E5%89%8D%E8%BF%9B%E5%BA%A6"><span class="toc-text">13. 当前进度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-%E4%B8%8B%E4%B8%80%E6%AD%A5%E8%AE%A1%E5%88%92"><span class="toc-text">14. 下一步计划</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#15-%E9%98%B6%E6%AE%B5%E6%80%A7%E6%80%BB%E7%BB%93"><span class="toc-text">15. 阶段性总结</span></a></li></ol>
-    </div>
-  </div>
-  
 
   <div class="post-content">
     
-    <blockquote>
-<p>本文是一篇持续更新的项目记录。文中的算法计数来自静态分析；只有带有测试命令、报告或板上日志的数据才视为实测结果。未完成的 HLS 综合、Vivado 集成和 KV260 板级数据会明确标记为 <code>TODO</code>，避免把设计目标误写成最终结果。</p>
-</blockquote>
-<h2 id="0-项目概览"><a href="#0-项目概览" class="headerlink" title="0. 项目概览"></a>0. 项目概览</h2><p>SRCNN（Super-Resolution Convolutional Neural Network）是一个结构简单但计算密集的三层超分辨率网络。这个项目的目标不是重新训练网络，而是把已经确定的 SRCNN 推理过程映射到 FPGA：在 PS（Processing System）端完成图像准备、内存管理和加速器控制，在 PL（Programmable Logic）端完成高吞吐的三层卷积计算。</p>
-<ul>
-<li>Repository：<a target="_blank" rel="noopener" href="https://github.com/Peanut-321/SRCNN-HLS-Accelerator">SRCNN-HLS-Accelerator</a></li>
-<li>Target board：AMD Kria KV260 &#x2F; K26 SOM</li>
-<li>HLS toolchain：Vitis HLS + Vivado</li>
-<li>Host runtime：PYNQ &#x2F; Python</li>
-<li>当前阶段：Golden Reference 和 host 端定点验证已完成；HLS 综合、PL&#x2F;PS 集成与板上性能测试仍在推进</li>
-</ul>
-<h3 id="技术栈"><a href="#技术栈" class="headerlink" title="技术栈"></a>技术栈</h3><table>
-<thead>
-<tr>
-<th>层次</th>
-<th>技术与工具</th>
-<th>在项目中的作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>算法参考</td>
-<td>C++17、CMake、CTest</td>
-<td>实现可读、可复现的 float32 Golden Reference</td>
-</tr>
-<tr>
-<td>独立验证</td>
-<td>Python 3</td>
-<td>从 tensor 文件独立重算卷积，防止 C++ 实现与测试共享同一个错误</td>
-</tr>
-<tr>
-<td>HLS 核心</td>
-<td>C++14、Vitis HLS</td>
-<td>把卷积循环综合为 RTL IP</td>
-</tr>
-<tr>
-<td>数值系统</td>
-<td><code>ap_fixed</code>、<code>ap_int</code></td>
-<td>定点化、累加器位宽推导、舍入和饱和控制</td>
-</tr>
-<tr>
-<td>PL 集成</td>
-<td>Vivado、AXI4-Stream、AXI4-Lite、AXI DMA</td>
-<td>连接 HLS IP、DMA、控制寄存器与 PS 内存</td>
-</tr>
-<tr>
-<td>PS 软件</td>
-<td>PYNQ、Python、NumPy</td>
-<td>加载 overlay、分配连续内存、启动 DMA、轮询完成并检查输出</td>
-</tr>
-<tr>
-<td>验证与度量</td>
-<td>C simulation、RTL co-simulation、板级测试</td>
-<td>建立从软件参考到真实硬件的逐级一致性链</td>
-</tr>
-<tr>
-<td>版本与实验</td>
-<td>Git、GitHub、SHA-256、结果清单</td>
-<td>固定输入、权重、工具版本和每轮优化证据</td>
-</tr>
-</tbody></table>
-<h3 id="仓库结构"><a href="#仓库结构" class="headerlink" title="仓库结构"></a>仓库结构</h3><p>当前仓库按照“参考模型—HLS—测试向量—结果记录”组织：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">SRCNN-HLS-Accelerator/</span><br><span class="line">├── include/srcnn/              # C++ Golden Reference 接口与 tensor I/O</span><br><span class="line">├── src/                        # float32 顺序参考实现</span><br><span class="line">├── hls/</span><br><span class="line">│   ├── include/srcnn_hls/      # 拓扑、定点类型、算术策略与 HLS 接口</span><br><span class="line">│   ├── src/srcnn_hls.cpp       # 可综合的自然循环基线</span><br><span class="line">│   └── scripts/run_hls.tcl     # csynth 与 IP export 入口</span><br><span class="line">├── tests/                      # Golden、float/fixed HLS 与 padding 测试</span><br><span class="line">├── tools/                      # 向量生成、运行器和独立 Python oracle</span><br><span class="line">├── vectors/                    # 固定种子的输入、权重和逐层输出</span><br><span class="line">├── results/                    # 定点误差、工作量与阶段性证据</span><br><span class="line">├── docs/                       # tensor 契约、HLS 设计与版本策略</span><br><span class="line">├── spec.md                     # 功能、接口、验证和测量规格</span><br><span class="line">└── plan.md                     # 当前进度、依赖、风险与下一步</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="1-为什么选择-SRCNN-做-FPGA-加速"><a href="#1-为什么选择-SRCNN-做-FPGA-加速" class="headerlink" title="1. 为什么选择 SRCNN 做 FPGA 加速"></a>1. 为什么选择 SRCNN 做 FPGA 加速</h2><p>SRCNN 只有三层，但一次 <code>255×255</code> 推理包含超过 5 亿次 MAC。卷积的循环边界固定、访存规律明确，同一个权重会在整幅图像上重复使用，相邻窗口也会重复读取大量像素。这些特征很适合通过 FPGA 的并行乘加、片上缓存和流式流水线进行加速。</p>
-<p>CPU 上的朴素实现会反复执行索引计算、边界判断、load&#x2F;store 和串行累加。FPGA 侧则可以把这些工作变成固定的数据通路：line buffer 保留相邻行，window buffer 每拍移动窗口，多组 DSP 并行完成 MAC，层与层之间通过 FIFO 直接传递 feature map。</p>
-<p>真正的挑战并不只是“多放几个乘法器”，而是同时处理以下问题：</p>
-<ul>
-<li>Conv1、Conv2、Conv3 的计算密度差异很大，需要合理分配 DSP；</li>
-<li>中间 feature map 很大，不能直接全部放进片上 BRAM；</li>
-<li>展开 MAC 后，权重和窗口存储必须提供足够的并行读端口；</li>
-<li>定点化必须在资源、吞吐和图像质量之间取得平衡；</li>
-<li>PS&#x2F;PL 之间的 DMA、cache coherence、TLAST 和超时处理必须可靠；</li>
-<li>性能必须区分 kernel-only、DMA 和端到端耗时。</li>
-</ul>
-<hr>
-<h2 id="2-网络结构与功能契约"><a href="#2-网络结构与功能契约" class="headerlink" title="2. 网络结构与功能契约"></a>2. 网络结构与功能契约</h2><p>本项目采用经典的三层 SRCNN。输入是已经完成 bicubic 放大的单通道 <code>255×255</code> tensor，三层均使用 stride 1，并通过 replicate-edge padding 保持空间尺寸不变。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Input [1, 255, 255]</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">Conv1: 9×9, 1 → 64, bias, ReLU</span><br><span class="line">        │ [64, 255, 255]</span><br><span class="line">        ▼</span><br><span class="line">Conv2: 1×1, 64 → 32, bias, ReLU</span><br><span class="line">        │ [32, 255, 255]</span><br><span class="line">        ▼</span><br><span class="line">Conv3: 5×5, 32 → 1, bias, no activation</span><br><span class="line">        │</span><br><span class="line">        ▼</span><br><span class="line">Output [1, 255, 255]</span><br></pre></td></tr></table></figure>
-
-<p>逻辑卷积采用 cross-correlation，即不翻转 kernel：</p>
-<p>$$<br>Y[o,h,w] &#x3D; b_o + \sum_c \sum_i \sum_j<br>W[o,c,i,j]X[c,\operatorname{clamp}(h+i-P_h),\operatorname{clamp}(w+j-P_w)]<br>$$</p>
-<p>计算顺序固定为 <code>accumulator = bias</code>，随后执行 MAC；Conv1 和 Conv2 在完整累加后做 ReLU，Conv3 不做 ReLU、round 或 clamp。激活使用 CHW 布局，权重使用 OIHW 布局，bias 使用 O 布局。</p>
-<table>
-<thead>
-<tr>
-<th>层</th>
-<th>Kernel</th>
-<th align="right">输入&#x2F;输出通道</th>
-<th align="right">Padding 半径</th>
-<th>激活</th>
-<th align="right">每个输出位置的 MAC</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Conv1</td>
-<td><code>9×9</code></td>
-<td align="right"><code>1 → 64</code></td>
-<td align="right">4</td>
-<td>ReLU</td>
-<td align="right">81&#x2F;输出通道，合计 5,184</td>
-</tr>
-<tr>
-<td>Conv2</td>
-<td><code>1×1</code></td>
-<td align="right"><code>64 → 32</code></td>
-<td align="right">0</td>
-<td>ReLU</td>
-<td align="right">64&#x2F;输出通道，合计 2,048</td>
-</tr>
-<tr>
-<td>Conv3</td>
-<td><code>5×5</code></td>
-<td align="right"><code>32 → 1</code></td>
-<td align="right">2</td>
-<td>无</td>
-<td align="right">800</td>
-</tr>
-</tbody></table>
-<p>这里最容易出错的是边界语义。课程部署路径要求 replicate-edge，而早期内部回归还保留 zero-same 和 valid 两种模式。它们只用于检查索引，不应被误当作最终部署行为。</p>
-<hr>
-<h2 id="3-系统架构：PS-与-PL-如何分工"><a href="#3-系统架构：PS-与-PL-如何分工" class="headerlink" title="3. 系统架构：PS 与 PL 如何分工"></a>3. 系统架构：PS 与 PL 如何分工</h2><p>K26 是 Zynq UltraScale+ MPSoC，既包含 ARM 处理器，也包含 FPGA 可编程逻辑。本项目计划按以下方式划分系统：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">                         Kria KV260</span><br><span class="line">┌─────────────────────────────────────────────────────────────┐</span><br><span class="line">│ PS / ARM                                                    │</span><br><span class="line">│  image load → preprocessing → contiguous buffers            │</span><br><span class="line">│       → overlay control → DMA submit/wait → postprocess     │</span><br><span class="line">│                          │                                  │</span><br><span class="line">│                    AXI DMA / DDR                            │</span><br><span class="line">│                          │                                  │</span><br><span class="line">│ PL / FPGA                ▼                                  │</span><br><span class="line">│  AXI input → Conv1 → FIFO → Conv2 → FIFO → Conv3 → AXI out │</span><br><span class="line">│              │                  │                 │         │</span><br><span class="line">│         line/window         1×1 channel       line/window   │</span><br><span class="line">│           buffers            reduction           buffers    │</span><br><span class="line">└─────────────────────────────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
-
-<h3 id="PS-端职责"><a href="#PS-端职责" class="headerlink" title="PS 端职责"></a>PS 端职责</h3><ul>
-<li>读取输入图像和模型参数；</li>
-<li>完成颜色空间转换、bicubic resize、归一化和最终显示等非核心操作；</li>
-<li>加载 <code>.bit/.hwh</code> overlay；</li>
-<li>使用 PYNQ 分配物理连续 buffer，并按硬件数据格式打包；</li>
-<li>配置控制寄存器，启动 MM2S&#x2F;S2MM DMA；</li>
-<li>处理 cache flush&#x2F;invalidate、超时与错误恢复；</li>
-<li>将硬件输出与 Golden Reference 比较，并记录端到端时间。</li>
-</ul>
-<h3 id="PL-端职责"><a href="#PL-端职责" class="headerlink" title="PL 端职责"></a>PL 端职责</h3><ul>
-<li>接收已经预处理好的单通道 tensor；</li>
-<li>使用定点数完成 Conv1、Conv2、Conv3；</li>
-<li>在边界处实现 replicate-edge；</li>
-<li>使用 line buffer&#x2F;window buffer 复用空间数据；</li>
-<li>通过 pipeline、unroll、array partition 和 dataflow 提高吞吐；</li>
-<li>尽量让三层 feature map 在 PL 内以 stream 形式传递，避免写回 DDR；</li>
-<li>输出单通道 SRCNN 结果，并正确产生 AXI stream sideband 信号。</li>
-</ul>
-<p>这一划分让 PL 专注于规则、重复、计算密集的卷积，PS 则保留文件系统、图像处理、内存管理和实验控制等灵活工作。</p>
-<hr>
-<h2 id="4-工作量分析：优化应该花在哪里"><a href="#4-工作量分析：优化应该花在哪里" class="headerlink" title="4. 工作量分析：优化应该花在哪里"></a>4. 工作量分析：优化应该花在哪里</h2><p>对于一帧 <code>255×255</code> 输入，三层都输出同样的空间尺寸。静态计算量如下：</p>
-<table>
-<thead>
-<tr>
-<th>层</th>
-<th align="right">输出元素</th>
-<th align="right">MAC&#x2F;输出</th>
-<th align="right">MAC&#x2F;帧</th>
-<th align="right">占总 MAC</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Conv1</td>
-<td align="right">4,161,600</td>
-<td align="right">81</td>
-<td align="right">337,089,600</td>
-<td align="right">64.54%</td>
-</tr>
-<tr>
-<td>Conv2</td>
-<td align="right">2,080,800</td>
-<td align="right">64</td>
-<td align="right">133,171,200</td>
-<td align="right">25.50%</td>
-</tr>
-<tr>
-<td>Conv3</td>
-<td align="right">65,025</td>
-<td align="right">800</td>
-<td align="right">52,020,000</td>
-<td align="right">9.96%</td>
-</tr>
-<tr>
-<td><strong>Total</strong></td>
-<td align="right">6,307,425</td>
-<td align="right">—</td>
-<td align="right"><strong>522,280,800</strong></td>
-<td align="right">100%</td>
-</tr>
-</tbody></table>
-<p>因此 Conv1 是主要计算热点，Conv3 虽然总计算量较小，却拥有最深的 800 项累加，对累加器位宽和数值误差最敏感。</p>
-<p>中间特征图同样决定了系统架构。在 32-bit 数据下，Conv1 和 Conv2 的 feature map 分别约为 15.88 MiB 和 7.94 MiB，远大于适合整帧驻留 BRAM 的规模。如果两层中间结果都写回 DDR，再由下一层读回，单帧理论最低流量约 50.49 MB；如果三层融合，仅让输入、参数和最终输出跨越 DDR，理想下界约为 0.55 MB。</p>
-<p>这也是后续优先考虑 line buffer + layer fusion + DATAFLOW 的原因：目标不仅是减少 cycle，也要避免 DDR 成为系统瓶颈。</p>
-<hr>
-<h2 id="5-Golden-Reference：先把“正确”定义清楚"><a href="#5-Golden-Reference：先把“正确”定义清楚" class="headerlink" title="5. Golden Reference：先把“正确”定义清楚"></a>5. Golden Reference：先把“正确”定义清楚</h2><h3 id="5-1-顺序-C-参考实现"><a href="#5-1-顺序-C-参考实现" class="headerlink" title="5.1 顺序 C++ 参考实现"></a>5.1 顺序 C++ 参考实现</h3><p>在进行 HLS 优化前，我先实现了一个没有硬件优化语义的 C++17 Golden Reference。它支持三层独立运行、完整网络推理、CHW&#x2F;OIHW tensor 检查、逐层 dump 和固定随机种子。</p>
-<p>当前测试覆盖：</p>
-<ul>
-<li>全零、bias-only 和 all-ones 手算；</li>
-<li>impulse 与 sparse weight，用于检查 kernel 方向和通道映射；</li>
-<li>正负值、ReLU 边界、中心&#x2F;边缘&#x2F;角落；</li>
-<li>same&#x2F;valid padding 对照；</li>
-<li>非方形、非 2 的幂尺寸；</li>
-<li>tensor 短读、多读、layout 和 checksum 错误；</li>
-<li>完整三层随机回归。</li>
-</ul>
-<h3 id="5-2-为什么还需要独立-Python-oracle"><a href="#5-2-为什么还需要独立-Python-oracle" class="headerlink" title="5.2 为什么还需要独立 Python oracle"></a>5.2 为什么还需要独立 Python oracle</h3><p>如果测试向量和被测程序都由同一套 C++ 索引生成，一个系统性 bug 可能同时存在于“答案”和“实现”中。仓库中的 <code>tools/cross_validate_golden.py</code> 不调用 C++ 代码，而是直接从 tensor 文件按卷积定义重新计算每一层。</p>
-<p>验证时不仅检查最大误差，还记录最坏坐标、行列错误分布和 ReLU 的 zero flip。边界错误通常集中在首尾行列，而普通浮点累加噪声会更均匀，这些统计能帮助判断错误来源。</p>
-<h3 id="5-3-当前证据"><a href="#5-3-当前证据" class="headerlink" title="5.3 当前证据"></a>5.3 当前证据</h3><ul>
-<li>14&#x2F;14 Golden 单元测试通过；</li>
-<li>五套固定向量通过独立 oracle；</li>
-<li><code>-ffp-contract=off</code> 下，当前机器上的 O0&#x2F;O3 输出逐位一致；</li>
-<li>官方参考数据验证了 <code>255×255 + replicate-edge + bias-first</code> 功能契约。</li>
-</ul>
-<p>Golden Reference 的作用不是追求速度，而是成为后续 C simulation、RTL co-simulation 和板上输出都必须对齐的数值基准。</p>
-<hr>
-<h2 id="6-定点化：从-float32-到-ap-fixed"><a href="#6-定点化：从-float32-到-ap-fixed" class="headerlink" title="6. 定点化：从 float32 到 ap_fixed"></a>6. 定点化：从 float32 到 <code>ap_fixed</code></h2><p>浮点在验证阶段直观，但在 FPGA 上通常会消耗更多资源并带来更长的数据通路。HLS 实现把拓扑、算术和结构优化分开：</p>
-<ul>
-<li><code>project_config.hpp</code> 保存网络拓扑、动态范围假设和结构参数；</li>
-<li><code>numeric_config.hpp</code> 推导 <code>data_t</code> 和各层 accumulator；</li>
-<li><code>arithmetic.hpp</code> 统一 MAC、ReLU、舍入与饱和语义；</li>
-<li><code>srcnn_hls.cpp</code> 只负责循环结构和索引。</li>
-</ul>
-<p>对于一层含有 $N$ 个乘积的卷积，累加器上界不能只考虑 MAC，还要包括 bias：</p>
-<p>$$<br>|acc|<em>{max} \le N\cdot |X|</em>{max}\cdot |W|<em>{max}+|b|</em>{max}<br>$$</p>
-<p>当前 host 验证使用 <code>ap_fixed&lt;32,24,AP_RND_CONV,AP_SAT&gt;</code>，即 Q24.8。它是为了验证定点链路和测试机制而选择的安全占位格式，不是最终部署格式。正式位宽必须在恢复训练权重和课程图像后，根据逐层动态范围、饱和计数、PSNR&#x2F;SSIM 和综合资源共同决定。</p>
-<p>随机回归向量的阶段性结果如下。由于权重并非训练权重，且这里的 PSNR 使用 <code>R=1</code>，这些数字不能代表最终图像质量。</p>
-<table>
-<thead>
-<tr>
-<th>层</th>
-<th align="right">max abs</th>
-<th align="right">max MAE</th>
-<th align="right">max RMSE</th>
-<th align="right">relative-L2 范围</th>
-<th align="right">narrowing saturation</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Conv1</td>
-<td align="right">0.0340617</td>
-<td align="right">0.00328683</td>
-<td align="right">0.00585480</td>
-<td align="right">0.25499%–0.27560%</td>
-<td align="right">0</td>
-</tr>
-<tr>
-<td>Conv2</td>
-<td align="right">0.146804</td>
-<td align="right">0.0135622</td>
-<td align="right">0.0232854</td>
-<td align="right">0.28420%–0.35468%</td>
-<td align="right">0</td>
-</tr>
-<tr>
-<td>Conv3</td>
-<td align="right">1.94983</td>
-<td align="right">0.591728</td>
-<td align="right">0.690314</td>
-<td align="right">0.27088%–0.62282%</td>
-<td align="right">0</td>
-</tr>
-</tbody></table>
-<p>下一步需要对正式资产分别记录：输入、权重、bias、乘积、各层 accumulator、feature map 和最终输出的位宽、整数位、舍入方式、饱和方式与实际动态范围。</p>
-<hr>
-<h2 id="7-HLS-基线：先综合自然循环，再优化"><a href="#7-HLS-基线：先综合自然循环，再优化" class="headerlink" title="7. HLS 基线：先综合自然循环，再优化"></a>7. HLS 基线：先综合自然循环，再优化</h2><p>当前 HLS top 为 <code>srcnn_hls_top</code>，自然循环顺序为：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">output channel</span><br><span class="line">  └─ output row</span><br><span class="line">      └─ output column</span><br><span class="line">          └─ input channel</span><br><span class="line">              └─ kernel row</span><br><span class="line">                  └─ kernel column</span><br></pre></td></tr></table></figure>
-
-<p>基线版本刻意不加入 <code>PIPELINE</code>、<code>UNROLL</code>、<code>ARRAY_PARTITION</code>、<code>DATAFLOW</code> 或接口 pragma。这样第一次 csynth 可以暴露最原始的 latency、memory port conflict 和资源映射，为后续每项优化提供可比较的起点。</p>
-<p>计划采用的优化顺序为：</p>
-<ol>
-<li><code>baseline-csynth</code>：保存未优化 top 的 schedule、latency、II、clock 和资源报告；</li>
-<li><code>axi-stream-interface</code>：固定 TDATA packing、TKEEP、TLAST 和传输长度；</li>
-<li><code>line-buffer</code>：把重复的 frame 访问替换为滑动窗口；</li>
-<li><code>pipeline</code>：流水化像素&#x2F;窗口循环，定位依赖与存储端口限制；</li>
-<li><code>unroll-partition</code>：按 DSP 预算展开 MAC，并对权重和 buffer 做匹配的 partition；</li>
-<li><code>dataflow</code>：使用 stream&#x2F;FIFO 连接三层，调节 FIFO 深度并排除 deadlock；</li>
-<li><code>board-mvp</code>：导出 IP、生成 bitstream，并在 KV260 上完成正确性和计时；</li>
-<li><code>ablation-report</code>：从最终版本逐项关闭优化，记录至少三组受控对比。</li>
-</ol>
-<p>每个 checkpoint 都应保持相同的输入、权重、padding、目标时钟和测量边界。只要数值回归失败，这个版本就不能成为下一项优化的基础。</p>
-<hr>
-<h2 id="8-PL-端设计记录"><a href="#8-PL-端设计记录" class="headerlink" title="8. PL 端设计记录"></a>8. PL 端设计记录</h2><blockquote>
-<p>本节描述目标架构。接口位宽、展开因子、FIFO 深度和实际时钟要以 Vitis&#x2F;Vivado 报告为准。</p>
-</blockquote>
-<h3 id="8-1-AXI-接口"><a href="#8-1-AXI-接口" class="headerlink" title="8.1 AXI 接口"></a>8.1 AXI 接口</h3><p>计划采用 AXI4-Stream 传输输入与输出，AXI4-Lite 负责启动、状态和必要配置。需要明确记录：</p>
-<ul>
-<li><code>TDATA</code> 位宽与每 beat 打包的元素数；</li>
-<li>signed fixed-point 在 byte stream 中的排列和 endianness；</li>
-<li>非整 beat 尾部的 <code>TKEEP</code>；</li>
-<li>每帧 <code>TLAST</code> 的位置；</li>
-<li>input&#x2F;output&#x2F;weight 的传输长度；</li>
-<li>free-running、<code>ap_ctrl_hs</code> 或其他控制协议；</li>
-<li>reset 极性、DMA 超时和错误恢复策略。</li>
-</ul>
-<h3 id="8-2-Conv1：9×9-空间卷积"><a href="#8-2-Conv1：9×9-空间卷积" class="headerlink" title="8.2 Conv1：9×9 空间卷积"></a>8.2 Conv1：9×9 空间卷积</h3><p>Conv1 占总 MAC 的 64.54%，是并行化的首要目标。流式实现需要保留前 8 行输入，并从 line buffer 中形成 9×9 window。权重只有 5,184 个，原则上可以片上驻留，但具体映射到 BRAM、LUTRAM 还是寄存器阵列要由综合报告确认。</p>
-<p>记录项：</p>
-<ul>
-<li><input disabled="" type="checkbox"> line buffer 的数据类型、bank 数与实际 BRAM&#x2F;LUTRAM；</li>
-<li><input disabled="" type="checkbox"> MAC unroll factor；</li>
-<li><input disabled="" type="checkbox"> pixel loop 的 achieved II；</li>
-<li><input disabled="" type="checkbox"> 64 个输出通道的复用&#x2F;并行策略；</li>
-<li><input disabled="" type="checkbox"> replicate-edge 是否在窗口生成阶段完成；</li>
-<li><input disabled="" type="checkbox"> Conv1 输出速率能否与 Conv2 消费速率匹配。</li>
-</ul>
-<h3 id="8-3-Conv2：1×1-通道混合"><a href="#8-3-Conv2：1×1-通道混合" class="headerlink" title="8.3 Conv2：1×1 通道混合"></a>8.3 Conv2：1×1 通道混合</h3><p>Conv2 不需要空间窗口，但每个输出通道需要归约 64 个输入通道。它更像逐像素的矩阵向量乘法，优化重点是 channel unroll、权重 banking 和 Conv1&#x2F;Conv2 之间的 stream layout。</p>
-<p>记录项：</p>
-<ul>
-<li><input disabled="" type="checkbox"> 每拍输入通道数；</li>
-<li><input disabled="" type="checkbox"> 32 个输出通道的并行度；</li>
-<li><input disabled="" type="checkbox"> 权重 array partition 方式；</li>
-<li><input disabled="" type="checkbox"> 部分和累加树的 latency；</li>
-<li><input disabled="" type="checkbox"> 与 Conv1 stream 的通道顺序转换成本。</li>
-</ul>
-<h3 id="8-4-Conv3：5×5-重建层"><a href="#8-4-Conv3：5×5-重建层" class="headerlink" title="8.4 Conv3：5×5 重建层"></a>8.4 Conv3：5×5 重建层</h3><p>Conv3 需要 4 行 × 32 通道的历史数据，理论 line-buffer payload 为 32,640 个元素。每个输出包含 800 项累加，因此需要重点关注 accumulator 位宽、DSP 复用和 partial sum 的关键路径。</p>
-<p>记录项：</p>
-<ul>
-<li><input disabled="" type="checkbox"> 多通道 line buffer 的 banking；</li>
-<li><input disabled="" type="checkbox"> 5×5×32 MAC 的分组方式；</li>
-<li><input disabled="" type="checkbox"> accumulator 位宽和饱和事件；</li>
-<li><input disabled="" type="checkbox"> achieved II 与 timing slack；</li>
-<li><input disabled="" type="checkbox"> Conv3 无激活时的最终 requantization 策略。</li>
-</ul>
-<h3 id="8-5-三层-DATAFLOW"><a href="#8-5-三层-DATAFLOW" class="headerlink" title="8.5 三层 DATAFLOW"></a>8.5 三层 DATAFLOW</h3><p>三层融合后，Conv1、Conv2 和 Conv3 通过有限深度 FIFO 同时工作。整体吞吐由最慢 stage 决定，因此单独把某一层做到极高并行度不一定有收益。需要用实际 II 反向分配 DSP，使三层生产&#x2F;消费速率尽量平衡。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DMA in → Window1 → Conv1 → FIFO12 → Conv2 → FIFO23 → Window3 → Conv3 → DMA out</span><br></pre></td></tr></table></figure>
-
-<p>FIFO 太浅可能产生 backpressure 或 deadlock，太深则浪费 BRAM。最终深度必须通过 co-simulation 和板上长时间重复运行验证。</p>
-<hr>
-<h2 id="9-PS-端与-PYNQ-Host"><a href="#9-PS-端与-PYNQ-Host" class="headerlink" title="9. PS 端与 PYNQ Host"></a>9. PS 端与 PYNQ Host</h2><p>PS 端不是简单地调用一次函数。一个可靠的 host 程序至少要完成以下状态机：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">load overlay</span><br><span class="line">    ↓</span><br><span class="line">load image / weights</span><br><span class="line">    ↓</span><br><span class="line">preprocess and quantize</span><br><span class="line">    ↓</span><br><span class="line">allocate physically contiguous buffers</span><br><span class="line">    ↓</span><br><span class="line">flush input cache</span><br><span class="line">    ↓</span><br><span class="line">start S2MM receiver before MM2S sender</span><br><span class="line">    ↓</span><br><span class="line">wait with timeout and inspect DMA status</span><br><span class="line">    ↓</span><br><span class="line">invalidate output cache</span><br><span class="line">    ↓</span><br><span class="line">dequantize / postprocess / compare / save</span><br></pre></td></tr></table></figure>
-
-<p>后续 PYNQ 程序需要记录的内容：</p>
-<ul>
-<li>overlay、PYNQ image、Vivado&#x2F;Vitis 的版本组合；</li>
-<li>buffer dtype、shape、对齐和物理地址；</li>
-<li>DMA 提交顺序与每个 transfer 的 byte count；</li>
-<li>权重是每帧传输、启动时加载，还是综合为片上常量；</li>
-<li>cache flush&#x2F;invalidate 的位置；</li>
-<li>timeout 时读取哪些 DMA&#x2F;IP 状态寄存器；</li>
-<li>连续多帧和重复加载 overlay 是否稳定；</li>
-<li>kernel-only 与端到端计时分别如何定义。</li>
-</ul>
-<p>一个计划中的 host 骨架如下，实际 API 以最终 overlay 为准：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">overlay = Overlay(<span class="string">&quot;srcnn.bit&quot;</span>)</span><br><span class="line">dma = overlay.axi_dma</span><br><span class="line"></span><br><span class="line">input_buf = allocate(shape=(INPUT_WORDS,), dtype=np.int32)</span><br><span class="line">output_buf = allocate(shape=(OUTPUT_WORDS,), dtype=np.int32)</span><br><span class="line"></span><br><span class="line">input_buf[:] = quantize(preprocessed_image)</span><br><span class="line">input_buf.flush()</span><br><span class="line"></span><br><span class="line">dma.recvchannel.transfer(output_buf)</span><br><span class="line">dma.sendchannel.transfer(input_buf)</span><br><span class="line">dma.sendchannel.wait()</span><br><span class="line">dma.recvchannel.wait()</span><br><span class="line"></span><br><span class="line">output_buf.invalidate()</span><br><span class="line">result = dequantize(np.asarray(output_buf))</span><br></pre></td></tr></table></figure>
-
-<p>这里的 <code>int32</code>、buffer 数量和传输协议目前只是示意，不能在接口冻结前直接作为最终实现。</p>
-<hr>
-<h2 id="10-PL-PS-集成与-Bring-up-顺序"><a href="#10-PL-PS-集成与-Bring-up-顺序" class="headerlink" title="10. PL&#x2F;PS 集成与 Bring-up 顺序"></a>10. PL&#x2F;PS 集成与 Bring-up 顺序</h2><p>为了避免把算法错误、HLS 接口错误和 DMA 错误混在一起，板级 bring-up 按由简到繁的顺序进行：</p>
-<ol>
-<li>用 <code>out[i] = in[i] + 1</code> dummy kernel 验证 HLS export；</li>
-<li>在 Vivado 中连接 AXI DMA、HLS IP、clock&#x2F;reset 和 PS；</li>
-<li>生成 <code>.bit/.hwh</code>，完成 timing closure 和 DRC；</li>
-<li>在 PYNQ 上验证 dummy 数据逐元素一致；</li>
-<li>重复加载 overlay 和连续传输，检查是否 hang；</li>
-<li>替换为单层 SRCNN，逐层对比 Golden dump；</li>
-<li>接入完整三层 baseline；</li>
-<li>最后启用 DATAFLOW 和高并行版本。</li>
-</ol>
-<p>每一步都保存命令、工具版本、日志、report 和输入 checksum。只有 dummy DMA 链路稳定后，SRCNN 的错误才主要属于数值或算法路径。</p>
-<hr>
-<h2 id="11-分层验证策略"><a href="#11-分层验证策略" class="headerlink" title="11. 分层验证策略"></a>11. 分层验证策略</h2><p>同一套测试向量应依次通过以下验证链：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">手算 / 独立 Python oracle</span><br><span class="line">              ↓</span><br><span class="line">      C++ Golden Reference</span><br><span class="line">              ↓</span><br><span class="line">       HLS C simulation</span><br><span class="line">              ↓</span><br><span class="line">       RTL co-simulation</span><br><span class="line">              ↓</span><br><span class="line">        KV260 board output</span><br></pre></td></tr></table></figure>
-
-<p>每层至少报告：</p>
-<ul>
-<li><code>max_abs_error</code>、MAE、RMSE 和 relative-L2；</li>
-<li>最大误差所在的 <code>(channel, row, column)</code>；</li>
-<li>p50&#x2F;p95&#x2F;p99 absolute error；</li>
-<li>ReLU zero flip 数量；</li>
-<li>输入、权重、bias 和各层 narrowing saturation 数量；</li>
-<li>最终图像相对 float Golden 的 PSNR&#x2F;SSIM；</li>
-<li>如果有 HR ground truth，另外报告算法输出相对 HR 的 PSNR&#x2F;SSIM。</li>
-</ul>
-<p>“FPGA 是否忠实复现 Golden”和“SRCNN 对真实高分辨率图像的质量”是两个不同问题，不能使用同一个 PSNR 混在一起报告。</p>
-<hr>
-<h2 id="12-性能与资源测量方法"><a href="#12-性能与资源测量方法" class="headerlink" title="12. 性能与资源测量方法"></a>12. 性能与资源测量方法</h2><h3 id="12-1-三种时间边界"><a href="#12-1-三种时间边界" class="headerlink" title="12.1 三种时间边界"></a>12.1 三种时间边界</h3><p>后续所有 FPS 和 speedup 都需要注明测量边界：</p>
-<ol>
-<li><strong>Kernel-only</strong>：IP 从 start 到 done；</li>
-<li><strong>Accelerator transaction</strong>：包含 DMA input&#x2F;output；</li>
-<li><strong>End-to-end</strong>：包含预处理、量化、DMA、kernel、反量化和后处理。</li>
-</ol>
-<p>CPU baseline 必须使用同样的输入、权重、数据类型语义和线程设置。否则 speedup 没有可比性。</p>
-<h3 id="12-2-结果记录模板"><a href="#12-2-结果记录模板" class="headerlink" title="12.2 结果记录模板"></a>12.2 结果记录模板</h3><table>
-<thead>
-<tr>
-<th>Version</th>
-<th align="right">Clock</th>
-<th align="right">Latency&#x2F;frame</th>
-<th align="right">FPS</th>
-<th align="right">DSP</th>
-<th align="right">LUT</th>
-<th align="right">FF</th>
-<th align="right">BRAM</th>
-<th align="right">URAM</th>
-<th>Accuracy gate</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Natural-loop baseline</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td>TODO</td>
-</tr>
-<tr>
-<td>+ AXI stream</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td>TODO</td>
-</tr>
-<tr>
-<td>+ line buffer</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td>TODO</td>
-</tr>
-<tr>
-<td>+ pipeline</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td>TODO</td>
-</tr>
-<tr>
-<td>+ unroll&#x2F;partition</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td>TODO</td>
-</tr>
-<tr>
-<td>+ three-layer dataflow</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td align="right">TODO</td>
-<td>TODO</td>
-</tr>
-</tbody></table>
-<h3 id="12-3-消融实验"><a href="#12-3-消融实验" class="headerlink" title="12.3 消融实验"></a>12.3 消融实验</h3><p>最终版本至少反向关闭三项优化，回答这些问题：</p>
-<ul>
-<li>line buffer 实际减少了多少 DDR 流量和 latency？</li>
-<li>pipeline 的 achieved II 是否受 memory port 限制？</li>
-<li>unroll factor 增长时，DSP 与吞吐是否近似线性变化？</li>
-<li>array partition 是否用 LUT&#x2F;BRAM 换来了足够的读带宽？</li>
-<li>DATAFLOW 是否提高了整网吞吐，还是只增加 FIFO 资源？</li>
-<li>更窄的 fixed-point 带来了多少资源收益和图像误差？</li>
-</ul>
-<hr>
-<h2 id="13-当前进度"><a href="#13-当前进度" class="headerlink" title="13. 当前进度"></a>13. 当前进度</h2><p>截至 2026-10-13，仓库状态如下：</p>
-<table>
-<thead>
-<tr>
-<th>阶段</th>
-<th>状态</th>
-<th>已有证据 &#x2F; 下一步</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>功能规格与 255×255 部署契约</td>
-<td>部分完成</td>
-<td>网络、padding、布局已冻结；部分 host&#x2F;接口细节仍待确认</td>
-</tr>
-<tr>
-<td>C++ Golden Reference</td>
-<td>已完成</td>
-<td>单元测试、固定向量、独立 oracle、官方参考数据</td>
-</tr>
-<tr>
-<td>HLS dual-target 自然循环骨架</td>
-<td>Host 范围完成</td>
-<td>float bitwise 回归与 <code>ap_fixed</code> host simulation</td>
-</tr>
-<tr>
-<td>随机向量定点验证</td>
-<td>已完成</td>
-<td>Q24.8 机制验证、逐层误差与饱和统计</td>
-</tr>
-<tr>
-<td>正式权重&#x2F;图像定点冻结</td>
-<td>待完成</td>
-<td>需要恢复正式资产并确定 PSNR&#x2F;SSIM 门限</td>
-</tr>
-<tr>
-<td>Vitis HLS baseline csynth</td>
-<td>待完成</td>
-<td>需要 x86 Vitis 环境、exact part 和 target clock</td>
-</tr>
-<tr>
-<td>AXI stream &#x2F; line buffer &#x2F; pipeline</td>
-<td>待完成</td>
-<td>先建立 baseline 报告，再逐项优化</td>
-</tr>
-<tr>
-<td>Vivado block design &#x2F; bitstream</td>
-<td>待完成</td>
-<td>需要 DMA overlay、timing 与 utilization report</td>
-</tr>
-<tr>
-<td>PYNQ host 与 dummy DMA</td>
-<td>待完成</td>
-<td>需要 KV260 和匹配的 PYNQ image</td>
-</tr>
-<tr>
-<td>SRCNN 板级正确性与性能</td>
-<td>待完成</td>
-<td>完成逐层验证、端到端计时和消融实验</td>
-</tr>
-</tbody></table>
-<p>当前最重要的外部依赖是可运行 Vitis&#x2F;Vivado 的 x86 工具环境和 KV260 板卡。Mac 端可以继续完善数值验证，但不能产生真实的 csynth、implementation 或板级性能结论。</p>
-<hr>
-<h2 id="14-下一步计划"><a href="#14-下一步计划" class="headerlink" title="14. 下一步计划"></a>14. 下一步计划</h2><ul>
-<li><input disabled="" type="checkbox"> 恢复正式训练权重、输入图像和参考输出，完成 P2.2b 定点格式选择；</li>
-<li><input disabled="" type="checkbox"> 确认 KV260 exact part、Vitis&#x2F;Vivado 版本和目标时钟；</li>
-<li><input disabled="" type="checkbox"> 对无 pragma 的 <code>srcnn_hls_top</code> 运行第一次 csynth；</li>
-<li><input disabled="" type="checkbox"> 用 dummy kernel 打通 HLS IP → Vivado BD → PYNQ DMA；</li>
-<li><input disabled="" type="checkbox"> 固定 AXI packing、TLAST、传输长度和控制协议；</li>
-<li><input disabled="" type="checkbox"> 为 Conv1&#x2F;Conv3 实现 line buffer 和 sliding window；</li>
-<li><input disabled="" type="checkbox"> 按实际 DSP&#x2F;BRAM 预算选择三层 unroll factor；</li>
-<li><input disabled="" type="checkbox"> 使用 DATAFLOW 串联三层，并通过 co-simulation 检查 deadlock；</li>
-<li><input disabled="" type="checkbox"> 在 KV260 上完成逐层&#x2F;端到端正确性测试；</li>
-<li><input disabled="" type="checkbox"> 保存 kernel-only、DMA、端到端、资源、功耗与消融结果。</li>
-</ul>
-<h2 id="15-阶段性总结"><a href="#15-阶段性总结" class="headerlink" title="15. 阶段性总结"></a>15. 阶段性总结</h2><p>这个项目目前最有价值的部分，是先建立了一条可信的验证链，再进入硬件优化。SRCNN 的网络结构很短，但 5.22 亿 MAC、约 23.81 MiB 的中间 feature map、三层不平衡的计算密度和 PS&#x2F;PL 数据移动，使它成为一个完整的 FPGA 系统问题，而不只是一个 HLS 循环展开练习。</p>
-<p>后续优化的核心判断标准始终有三个：</p>
-<ol>
-<li>数值结果是否仍然通过冻结的 Golden 与图像质量门限；</li>
-<li>数据是否尽可能在 PL 内复用和流动，而不是频繁往返 DDR；</li>
-<li>吞吐、资源与端到端时间是否都有可重复的实测证据。</li>
-</ol>
-<p>这篇文章会随着 baseline csynth、DMA bring-up、三层流式化和 KV260 实测继续更新。</p>
-
+    
     
   </div>
 
@@ -779,27 +210,13 @@
   
   <footer class="post-footer">
     
-    <div class="post-tags">
-      
-      <a href="/tags/FPGA/">FPGA</a>
-      
-      <a href="/tags/SRCNN/">SRCNN</a>
-      
-      <a href="/tags/Vitis-HLS/">Vitis HLS</a>
-      
-      <a href="/tags/PYNQ/">PYNQ</a>
-      
-      <a href="/tags/KV260/">KV260</a>
-      
-    </div>
-    
       
   <nav class="post-nav">  
       
       
       <a class="next" href="/2026/07/29/csapp-notes/">  
         <span class="next-text nav-default">CSAPP-Note</span>  
-        <span class="prev-text nav-mobile">下一篇</span>  
+        <span class="prev-text nav-mobile">Next</span>  
         <i class="iconfont icon-right"></i>  
       </a>  
       
