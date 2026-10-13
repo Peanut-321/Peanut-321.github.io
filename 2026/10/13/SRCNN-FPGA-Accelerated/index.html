@@ -18,10 +18,12 @@
 
 <!-- Website description -->
 
-<meta name="description" content="SRCNN FPGA- Accelerated" />
+<meta name="description" content="SRCNN FPGA-Accelerated" />
 
 
 <!-- Website keywords -->
+
+<meta name="keywords" content="FPGA, HLS, AXI-DMA, Peanut&#39;s Notebook" />
 
 
 
@@ -65,7 +67,7 @@
   window.config = {"leancloud":{"app_id":null,"app_key":null,"server_url":null,"cdn":null},"toc":{"min_depth":2,"max_depth":2,"list_number":false},"fancybox":true,"latex":false};
 </script>
   
-  <title>SRCNN FPGA- Accelerated - Peanut&#39;s Notebook</title>
+  <title>SRCNN FPGA-Accelerated - Peanut&#39;s Notebook</title>
 
 <meta name="generator" content="Hexo 8.1.2"></head>
 
@@ -178,7 +180,7 @@
   <header class="post-header">
     <h1 class="post-title">
       
-      SRCNN FPGA- Accelerated
+      SRCNN FPGA-Accelerated
       
     </h1>
 
@@ -190,7 +192,7 @@
       
       <span class="post-category">
         
-        <a href="/categories/MyConvAccel/">MyConvAccel</a>
+        <a href="/categories/SRCNN-Accelerater/">SRCNN-Accelerater</a>
         
       </span>
       
@@ -209,7 +211,53 @@
 
   <div class="post-content">
     
-    <h2 id="1-SRCNN-网络结构与计算分析"><a href="#1-SRCNN-网络结构与计算分析" class="headerlink" title="1. SRCNN 网络结构与计算分析"></a>1. SRCNN 网络结构与计算分析</h2><h2 id="2-Golden-Reference-与数值验证"><a href="#2-Golden-Reference-与数值验证" class="headerlink" title="2. Golden Reference 与数值验证"></a>2. Golden Reference 与数值验证</h2><h2 id="3-定点化与-ap-fixed-位宽设计"><a href="#3-定点化与-ap-fixed-位宽设计" class="headerlink" title="3. 定点化与 ap_fixed 位宽设计"></a>3. 定点化与 <code>ap_fixed</code> 位宽设计</h2><h2 id="4-HLS-加速器设计"><a href="#4-HLS-加速器设计" class="headerlink" title="4. HLS 加速器设计"></a>4. HLS 加速器设计</h2><h3 id="4-1-Conv1：9×9-空间卷积"><a href="#4-1-Conv1：9×9-空间卷积" class="headerlink" title="4.1 Conv1：9×9 空间卷积"></a>4.1 Conv1：9×9 空间卷积</h3><h3 id="4-2-Conv2：1×1-通道混合"><a href="#4-2-Conv2：1×1-通道混合" class="headerlink" title="4.2 Conv2：1×1 通道混合"></a>4.2 Conv2：1×1 通道混合</h3><h3 id="4-3-Conv3：5×5-重建层"><a href="#4-3-Conv3：5×5-重建层" class="headerlink" title="4.3 Conv3：5×5 重建层"></a>4.3 Conv3：5×5 重建层</h3><h3 id="4-4-Line-Buffer-与-Sliding-Window"><a href="#4-4-Line-Buffer-与-Sliding-Window" class="headerlink" title="4.4 Line Buffer 与 Sliding Window"></a>4.4 Line Buffer 与 Sliding Window</h3><h3 id="4-5-Pipeline、Unroll-与-DATAFLOW"><a href="#4-5-Pipeline、Unroll-与-DATAFLOW" class="headerlink" title="4.5 Pipeline、Unroll 与 DATAFLOW"></a>4.5 Pipeline、Unroll 与 DATAFLOW</h3><h2 id="5-PL-端-AXI-与-DMA-接口"><a href="#5-PL-端-AXI-与-DMA-接口" class="headerlink" title="5. PL 端 AXI 与 DMA 接口"></a>5. PL 端 AXI 与 DMA 接口</h2><h2 id="6-PS-端-PYNQ-Host"><a href="#6-PS-端-PYNQ-Host" class="headerlink" title="6. PS 端 PYNQ Host"></a>6. PS 端 PYNQ Host</h2><h2 id="7-PL-PS-系统集成"><a href="#7-PL-PS-系统集成" class="headerlink" title="7. PL&#x2F;PS 系统集成"></a>7. PL&#x2F;PS 系统集成</h2><h2 id="8-正确性、性能与资源评估"><a href="#8-正确性、性能与资源评估" class="headerlink" title="8. 正确性、性能与资源评估"></a>8. 正确性、性能与资源评估</h2>
+    <h2 id="1-SRCNN-网络结构与计算分析"><a href="#1-SRCNN-网络结构与计算分析" class="headerlink" title="1. SRCNN 网络结构与计算分析"></a>1. SRCNN 网络结构与计算分析</h2><p>PS 端先通过 Bicubic（双三次插值）将低分辨率图像放大到目标尺寸，PL 端接收形状为 <code>1×255×255</code> 的单通道图像，再通过 SRCNN 的三层卷积改善放大后的模糊细节。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">低分辨率图像 → Bicubic 放大 → SRCNN 三层卷积 → 改善图像细节</span><br></pre></td></tr></table></figure>
+
+<p>Bicubic 根据原图中已有的像素，对放大后新增位置的颜色或亮度进行插值估计。SRCNN 则利用训练得到的卷积权重进一步重建细节，网络输入和输出的空间尺寸均为 <code>255×255</code>。</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>作用</th>
+<th>计算特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Conv1：9×9，1→64</td>
+<td>提取局部特征</td>
+<td>每个输出通道的每个输出像素需要 <code>1×9×9 = 81</code> 次 MAC</td>
+</tr>
+<tr>
+<td>Conv2：1×1，64→32</td>
+<td>混合、映射特征通道</td>
+<td>对同一位置的 64 个通道加权求和，每个输出元素需要 64 次 MAC</td>
+</tr>
+<tr>
+<td>Conv3：5×5，32→1</td>
+<td>重建最终图像</td>
+<td>汇总 32 个通道的 5×5 邻域，每个输出像素需要 <code>32×5×5 = 800</code> 次 MAC</td>
+</tr>
+</tbody></table>
+<p>Conv2 的 1×1 卷积只读取当前空间位置的特征，不直接访问相邻像素。不过，这些特征已经由 Conv1 的 9×9 卷积提取，因此仍包含邻域信息。</p>
+<p>与之前的 RoCC 卷积加速器项目不同，本项目采用 replicate-edge padding 处理边界：越界坐标被限制到最近的有效边缘像素，而不是补零。Conv1 和 Conv3 的 padding 半径分别为 4 和 2，使三层卷积都保持相同的空间尺寸。</p>
+<p>当前卷积采用 cross-correlation（互相关）形式，计算时不翻转 kernel，而是将输入窗口与对应位置的权重逐项相乘并累加。</p>
+<p>数据布局采用以下约定：</p>
+<ul>
+<li>激活张量：CHW，即 <code>[channel][row][column]</code>。</li>
+<li>权重张量：OIHW，即 <code>[output-channel][input-channel][kernel-row][kernel-column]</code>。</li>
+</ul>
+<p>CHW 将每个通道的像素按行连续存储，便于逐行读取并使用 line buffer 缓存历史行。OIHW 则将同一输出通道对应的各输入通道权重连续存储，便于按输出通道组织计算。例如，Conv3 每个输入通道的 5×5 权重先展开为 25 个连续元素，再依次排列 32 个输入通道，共 800 个权重。</p>
+<p>对于一帧 <code>255×255</code> 输入，三层的精确 MAC 数及其占比如下：</p>
+<ul>
+<li>Conv1：337,089,600 MAC，约 64.5%</li>
+<li>Conv2：133,171,200 MAC，约 25.5%</li>
+<li>Conv3：52,020,000 MAC，约 10.0%</li>
+<li>总计：522,280,800 MAC</li>
+</ul>
+<p>Conv1 占据约 64.5% 的计算量，是吞吐优化的主要目标；Conv3 每个输出像素需要累加 800 项，对累加器位宽和数值精度的要求更高。</p>
+<p>另一个关键瓶颈是中间特征图（feature map）的存储与传输。按每个元素 32 bit 计算，Conv1 和 Conv2 的输出分别约为 <strong>15.88 MiB</strong> 和 <strong>7.94 MiB</strong>。若每层都将结果写回 DDR，再由下一层读入，会产生大量数据传输并消耗内存带宽。因此，后续 HLS 设计计划采用 line buffer、sliding window 和 <code>DATAFLOW</code>，让 Conv1→Conv2→Conv3 的中间数据尽量通过 PL 内的 FIFO 传递，减少 DDR 读写。</p>
+<h2 id="2-Golden-Reference-与数值验证"><a href="#2-Golden-Reference-与数值验证" class="headerlink" title="2. Golden Reference 与数值验证"></a>2. Golden Reference 与数值验证</h2><h2 id="3-定点化与-ap-fixed-位宽设计"><a href="#3-定点化与-ap-fixed-位宽设计" class="headerlink" title="3. 定点化与 ap_fixed 位宽设计"></a>3. 定点化与 <code>ap_fixed</code> 位宽设计</h2><h2 id="4-HLS-加速器设计"><a href="#4-HLS-加速器设计" class="headerlink" title="4. HLS 加速器设计"></a>4. HLS 加速器设计</h2><h3 id="4-1-Conv1：9×9-空间卷积"><a href="#4-1-Conv1：9×9-空间卷积" class="headerlink" title="4.1 Conv1：9×9 空间卷积"></a>4.1 Conv1：9×9 空间卷积</h3><h3 id="4-2-Conv2：1×1-通道混合"><a href="#4-2-Conv2：1×1-通道混合" class="headerlink" title="4.2 Conv2：1×1 通道混合"></a>4.2 Conv2：1×1 通道混合</h3><h3 id="4-3-Conv3：5×5-重建层"><a href="#4-3-Conv3：5×5-重建层" class="headerlink" title="4.3 Conv3：5×5 重建层"></a>4.3 Conv3：5×5 重建层</h3><h3 id="4-4-Line-Buffer-与-Sliding-Window"><a href="#4-4-Line-Buffer-与-Sliding-Window" class="headerlink" title="4.4 Line Buffer 与 Sliding Window"></a>4.4 Line Buffer 与 Sliding Window</h3><h3 id="4-5-Pipeline、Unroll-与-DATAFLOW"><a href="#4-5-Pipeline、Unroll-与-DATAFLOW" class="headerlink" title="4.5 Pipeline、Unroll 与 DATAFLOW"></a>4.5 Pipeline、Unroll 与 DATAFLOW</h3><h2 id="5-PL-端-AXI-与-DMA-接口"><a href="#5-PL-端-AXI-与-DMA-接口" class="headerlink" title="5. PL 端 AXI 与 DMA 接口"></a>5. PL 端 AXI 与 DMA 接口</h2><h2 id="6-PS-端-PYNQ-Host"><a href="#6-PS-端-PYNQ-Host" class="headerlink" title="6. PS 端 PYNQ Host"></a>6. PS 端 PYNQ Host</h2><h2 id="7-PL-PS-系统集成"><a href="#7-PL-PS-系统集成" class="headerlink" title="7. PL&#x2F;PS 系统集成"></a>7. PL&#x2F;PS 系统集成</h2><h2 id="8-正确性、性能与资源评估"><a href="#8-正确性、性能与资源评估" class="headerlink" title="8. 正确性、性能与资源评估"></a>8. 正确性、性能与资源评估</h2>
     
   </div>
 
@@ -222,6 +270,16 @@
 
   
   <footer class="post-footer">
+    
+    <div class="post-tags">
+      
+      <a href="/tags/FPGA/">FPGA</a>
+      
+      <a href="/tags/HLS/">HLS</a>
+      
+      <a href="/tags/AXI-DMA/">AXI-DMA</a>
+      
+    </div>
     
       
   <nav class="post-nav">  
