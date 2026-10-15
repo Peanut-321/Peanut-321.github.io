@@ -211,43 +211,62 @@
 
   <div class="post-content">
     
-    <h2 id="1-SRCNN-网络结构与计算分析"><a href="#1-SRCNN-网络结构与计算分析" class="headerlink" title="1. SRCNN 网络结构与计算分析"></a>1. SRCNN 网络结构与计算分析</h2><p>PS 端先通过 Bicubic（双三次插值）将低分辨率图像放大到目标尺寸，PL 端接收形状为 <code>1×255×255</code> 的单通道图像，再通过 SRCNN 的三层卷积改善放大后的模糊细节。</p>
+    <h2 id="1-SRCNN-网络结构与计算分析"><a href="#1-SRCNN-网络结构与计算分析" class="headerlink" title="1. SRCNN 网络结构与计算分析"></a>1. SRCNN 网络结构与计算分析</h2><blockquote>
+<ul>
+<li>输入、逐层输出和权重的 tensor shape 分别是什么？stride、padding、bias 和激活如何定义？</li>
+<li>单通道的含义、输入数值范围与预处理契约是什么？哪些细节已经确认？</li>
+<li>每个输出元素和整帧 MAC 数如何推导？参数量、特征图容量如何计算？</li>
+<li>CHW&#x2F;OIHW 如何映射到内存？空间与通道的数据复用机会分别在哪里？</li>
+<li>哪些结论来自静态计算，哪些瓶颈还需要综合或板上测量确认？</li>
+</ul>
+</blockquote>
+<p>PS 端先通过 Bicubic（双三次插值），根据原图已有的像素估计新增位置的像素值，将低分辨率图像放大到目标尺寸。PL 端接收形状为 <code>1×255×255</code> 的单通道图像，再利用 SRCNN 的三层卷积重建图像细节。</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">低分辨率图像 → Bicubic 放大 → SRCNN 三层卷积 → 改善图像细节</span><br></pre></td></tr></table></figure>
 
-<p>Bicubic 根据原图中已有的像素，对放大后新增位置的颜色或亮度进行插值估计。SRCNN 则利用训练得到的卷积权重进一步重建细节，网络输入和输出的空间尺寸均为 <code>255×255</code>。</p>
+<p>网络输入和输出的空间尺寸均为 <code>255×255</code>，三层的作用与输出形状如下：</p>
 <table>
 <thead>
 <tr>
 <th>层</th>
 <th>作用</th>
-<th>计算特点</th>
+<th>输出形状</th>
+<th>激活</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>Conv1：9×9，1→64</td>
 <td>提取局部特征</td>
-<td>每个输出通道的每个输出像素需要 <code>1×9×9 = 81</code> 次 MAC</td>
+<td><code>64×255×255</code></td>
+<td>ReLU</td>
 </tr>
 <tr>
 <td>Conv2：1×1，64→32</td>
 <td>混合、映射特征通道</td>
-<td>对同一位置的 64 个通道加权求和，每个输出元素需要 64 次 MAC</td>
+<td><code>32×255×255</code></td>
+<td>ReLU</td>
 </tr>
 <tr>
 <td>Conv3：5×5，32→1</td>
 <td>重建最终图像</td>
-<td>汇总 32 个通道的 5×5 邻域，每个输出像素需要 <code>32×5×5 = 800</code> 次 MAC</td>
+<td><code>1×255×255</code></td>
+<td>无</td>
 </tr>
 </tbody></table>
 <p>Conv2 的 1×1 卷积只读取当前空间位置的特征，不直接访问相邻像素。不过，这些特征已经由 Conv1 的 9×9 卷积提取，因此仍包含邻域信息。</p>
-<p>与之前的 RoCC 卷积加速器项目不同，本项目采用 replicate-edge padding 处理边界：越界坐标被限制到最近的有效边缘像素，而不是补零。Conv1 和 Conv3 的 padding 半径分别为 4 和 2，使三层卷积都保持相同的空间尺寸。</p>
+<p>本项目采用 replicate-edge padding 处理边界：越界坐标被限制到最近的有效边缘像素，而不是补零。Conv1 和 Conv3 的 padding 半径分别为 4 和 2，使三层卷积都保持相同的空间尺寸。</p>
 <p>当前卷积采用 cross-correlation（互相关）形式，计算时不翻转 kernel，而是将输入窗口与对应位置的权重逐项相乘并累加。</p>
 <p>数据布局采用以下约定：</p>
 <ul>
 <li>激活张量：CHW，即 <code>[channel][row][column]</code>。</li>
 <li>权重张量：OIHW，即 <code>[output-channel][input-channel][kernel-row][kernel-column]</code>。</li>
 </ul>
-<p>CHW 将每个通道的像素按行连续存储，便于逐行读取并使用 line buffer 缓存历史行。OIHW 则将同一输出通道对应的各输入通道权重连续存储，便于按输出通道组织计算。例如，Conv3 每个输入通道的 5×5 权重先展开为 25 个连续元素，再依次排列 32 个输入通道，共 800 个权重。</p>
+<p>CHW 将每个通道的像素按行连续存储，便于逐行读取并使用 line buffer 缓存历史行。OIHW 则将同一输出通道对应的各输入通道权重连续存储，便于按输出通道组织计算。</p>
+<p>每帧的 MAC 数由输出空间尺寸、输入&#x2F;输出通道数和卷积核尺寸共同决定：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MAC/帧 = Hout × Wout × Cout × Cin × Kh × Kw</span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>Hout</code>、<code>Wout</code> 是输出的高和宽，<code>Cout</code>、<code>Cin</code> 是输出和输入通道数，<code>Kh</code>、<code>Kw</code> 是卷积核的高和宽。以 Conv1 为例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">255 × 255 × 64 × 1 × 9 × 9 = 337,089,600 MAC</span><br></pre></td></tr></table></figure>
+
 <p>对于一帧 <code>255×255</code> 输入，三层的精确 MAC 数及其占比如下：</p>
 <ul>
 <li>Conv1：337,089,600 MAC，约 64.5%</li>
@@ -255,9 +274,347 @@
 <li>Conv3：52,020,000 MAC，约 10.0%</li>
 <li>总计：522,280,800 MAC</li>
 </ul>
-<p>Conv1 占据约 64.5% 的计算量，是吞吐优化的主要目标；Conv3 每个输出像素需要累加 800 项，对累加器位宽和数值精度的要求更高。</p>
-<p>另一个关键瓶颈是中间特征图（feature map）的存储与传输。按每个元素 32 bit 计算，Conv1 和 Conv2 的输出分别约为 <strong>15.88 MiB</strong> 和 <strong>7.94 MiB</strong>。若每层都将结果写回 DDR，再由下一层读入，会产生大量数据传输并消耗内存带宽。因此，后续 HLS 设计计划采用 line buffer、sliding window 和 <code>DATAFLOW</code>，让 Conv1→Conv2→Conv3 的中间数据尽量通过 PL 内的 FIFO 传递，减少 DDR 读写。</p>
-<h2 id="2-Golden-Reference-与数值验证"><a href="#2-Golden-Reference-与数值验证" class="headerlink" title="2. Golden Reference 与数值验证"></a>2. Golden Reference 与数值验证</h2><h2 id="3-定点化与-ap-fixed-位宽设计"><a href="#3-定点化与-ap-fixed-位宽设计" class="headerlink" title="3. 定点化与 ap_fixed 位宽设计"></a>3. 定点化与 <code>ap_fixed</code> 位宽设计</h2><h2 id="4-HLS-加速器设计"><a href="#4-HLS-加速器设计" class="headerlink" title="4. HLS 加速器设计"></a>4. HLS 加速器设计</h2><h3 id="4-1-Conv1：9×9-空间卷积"><a href="#4-1-Conv1：9×9-空间卷积" class="headerlink" title="4.1 Conv1：9×9 空间卷积"></a>4.1 Conv1：9×9 空间卷积</h3><h3 id="4-2-Conv2：1×1-通道混合"><a href="#4-2-Conv2：1×1-通道混合" class="headerlink" title="4.2 Conv2：1×1 通道混合"></a>4.2 Conv2：1×1 通道混合</h3><h3 id="4-3-Conv3：5×5-重建层"><a href="#4-3-Conv3：5×5-重建层" class="headerlink" title="4.3 Conv3：5×5 重建层"></a>4.3 Conv3：5×5 重建层</h3><h3 id="4-4-Line-Buffer-与-Sliding-Window"><a href="#4-4-Line-Buffer-与-Sliding-Window" class="headerlink" title="4.4 Line Buffer 与 Sliding Window"></a>4.4 Line Buffer 与 Sliding Window</h3><h3 id="4-5-Pipeline、Unroll-与-DATAFLOW"><a href="#4-5-Pipeline、Unroll-与-DATAFLOW" class="headerlink" title="4.5 Pipeline、Unroll 与 DATAFLOW"></a>4.5 Pipeline、Unroll 与 DATAFLOW</h3><h2 id="5-PL-端-AXI-与-DMA-接口"><a href="#5-PL-端-AXI-与-DMA-接口" class="headerlink" title="5. PL 端 AXI 与 DMA 接口"></a>5. PL 端 AXI 与 DMA 接口</h2><h2 id="6-PS-端-PYNQ-Host"><a href="#6-PS-端-PYNQ-Host" class="headerlink" title="6. PS 端 PYNQ Host"></a>6. PS 端 PYNQ Host</h2><h2 id="7-PL-PS-系统集成"><a href="#7-PL-PS-系统集成" class="headerlink" title="7. PL&#x2F;PS 系统集成"></a>7. PL&#x2F;PS 系统集成</h2><h2 id="8-正确性、性能与资源评估"><a href="#8-正确性、性能与资源评估" class="headerlink" title="8. 正确性、性能与资源评估"></a>8. 正确性、性能与资源评估</h2>
+<p>Conv1 占据约 64.5% 的计算量，是优先考虑的计算优化对象；Conv3 每个输出像素需要累加 800 项，需要重点关注累加器位宽和数值精度。实际吞吐瓶颈还需结合综合报告和板上测量确认。</p>
+<p>每层的参数由卷积权重和 bias 组成，其数量为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">权重数 = Cout × Cin × Kh × Kw</span><br><span class="line">bias 数 = Cout</span><br></pre></td></tr></table></figure>
+
+<p>三层合计包含 <strong>8,032 个权重和 97 个 bias</strong>。相比参数量，中间特征图的容量更大，因此需要重点分析其存储与传输成本。</p>
+<p>按每个元素 32 bit 计算，Conv1 和 Conv2 的输出特征图（feature map）分别约为 <strong>15.88 MiB</strong> 和 <strong>7.94 MiB</strong>。若每层都将结果写回 DDR，再由下一层读入，会产生大量数据传输并消耗内存带宽。</p>
+<h2 id="2-Golden-Reference-与数值验证"><a href="#2-Golden-Reference-与数值验证" class="headerlink" title="2. Golden Reference 与数值验证"></a>2. Golden Reference 与数值验证</h2><blockquote>
+<p>写作问题清单：</p>
+<ul>
+<li>Golden 的功能契约、数据布局、累加顺序与逐层输出是什么？</li>
+<li>如何使用手算和独立 oracle 验证 Golden 自身？</li>
+<li>测试是否覆盖边缘、角落、通道映射、负数、ReLU 和非法输入？</li>
+<li>比较哪些误差指标？容差如何确定？失败如何定位到具体层和坐标？</li>
+<li>如何固定输入、权重、随机种子、checksum 和工具版本，保证可复现？</li>
+</ul>
+</blockquote>
+<h3 id="2-1-功能契约与数据布局"><a href="#2-1-功能契约与数据布局" class="headerlink" title="2.1 功能契约与数据布局"></a>2.1 功能契约与数据布局</h3><p>Golden Reference 提供 SRCNN 的软件参考结果，作为后续 HLS 仿真和 FPGA 输出的比较基准。本节以课程提交版 Golden 为准：输入是已完成 Bicubic 放大的单通道图像，形状为 <code>1×255×255</code>，计算采用 float32。</p>
+<p>三层卷积均采用 stride 1，并按 cross-correlation（互相关）形式计算，即不翻转 kernel。Conv1 和 Conv3 分别使用半径为 4 和 2 的 replicate-edge padding，越界坐标读取最近的有效边缘像素；Conv2 的卷积核为 1×1，不需要 padding。</p>
+<p>激活张量采用 CHW 布局，权重采用 OIHW 布局，每个输出通道对应一个 bias：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">激活：[channel][row][column]</span><br><span class="line">权重：[output-channel][input-channel][kernel-row][kernel-column]</span><br><span class="line">Bias：[output-channel]</span><br></pre></td></tr></table></figure>
+
+<p>每个输出元素采用 bias-first 累加顺序：先用对应输出通道的 bias 初始化累加器，再按照输入通道、kernel 行、kernel 列的顺序逐项乘加。Conv1 和 Conv2 在完成全部累加后执行 ReLU；Conv3 直接输出累加结果，不执行额外激活。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">accumulator = bias[o]</span><br><span class="line">accumulator += weight × input   // 遍历输入通道与 kernel</span><br><span class="line">output = activation(accumulator)</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-手算与独立-Oracle-验证"><a href="#2-2-手算与独立-Oracle-验证" class="headerlink" title="2.2 手算与独立 Oracle 验证"></a>2.2 手算与独立 Oracle 验证</h3><p>Golden 自身也可能存在计算错误，因此需要通过结果可预测的手算用例和独立实现进行交叉检查。</p>
+<p><strong>全一测试</strong></p>
+<p>对每层分别注入全一输入，将权重全部设为 1、bias 设为 0。此时，每个输出元素等于参与累加的乘积数量：</p>
+<table>
+<thead>
+<tr>
+<th>单层测试</th>
+<th align="right">每个输出元素的预期值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Conv1</td>
+<td align="right"><code>1×9×9 = 81</code></td>
+</tr>
+<tr>
+<td>Conv2</td>
+<td align="right"><code>64×1×1 = 64</code></td>
+</tr>
+<tr>
+<td>Conv3</td>
+<td align="right"><code>32×5×5 = 800</code></td>
+</tr>
+</tbody></table>
+<p>采用 replicate-edge padding 时，边缘位置重复读取的仍是数值为 1 的像素，因此边缘与中心的结果相同。这个测试用于检查累加项数与边界处理。上述预期值针对独立的单层测试；三层连续运行时，后一层接收前一层的输出，不能直接套用这些数值。</p>
+<p><strong>Bias-only 测试</strong></p>
+<p>对每层分别注入全零输入，并设置非零 bias。由于所有乘积均为零，输出只由 bias 和激活函数决定：Conv1 和 Conv2 应输出 <code>max(0, bias[o])</code>，Conv3 应直接输出 <code>bias[o]</code>，包括负值。测试同时使用正、负 bias，以检查偏置是否正确应用于各输出通道，以及 ReLU 是否只作用于 Conv1 和 Conv2。</p>
+<p><strong>独立 Oracle 验证</strong></p>
+<p>手算用例只能覆盖部分情况，因此还需要独立的 Python Oracle 交叉检查 C++ Golden。两者读取相同的输入、权重和 bias，但 Python 独立实现卷积索引、边界处理、累加与激活逻辑，不调用 C++ 的计算函数，以减少共享同一实现错误的可能。</p>
+<p>这里需要区分验证范围：仓库现有 Python Oracle 覆盖内部 zero-same&#x2F;valid 回归向量，其通过结论不能直接用于课程提交版的 replicate-edge 路径，后者需要对应的手算用例与参考输出验证。</p>
+<p>除上述用例外，还需要检查以下行为；是否已经覆盖，应以实际测试代码和运行记录为准：</p>
+<table>
+<thead>
+<tr>
+<th>测试</th>
+<th>主要检查目标</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>中心、边缘和角落</td>
+<td>Padding 与空间索引</td>
+</tr>
+<tr>
+<td>单个非零输入、非对称权重</td>
+<td>Kernel 方向与输出位置</td>
+</tr>
+<tr>
+<td>指定输入&#x2F;输出通道的稀疏权重</td>
+<td>通道映射与 OIHW 索引</td>
+</tr>
+<tr>
+<td>正负输入、权重和 bias</td>
+<td>有符号计算与 ReLU</td>
+</tr>
+<tr>
+<td>非法形状、错误元素数量或损坏文件</td>
+<td>输入检查与错误提示</td>
+</tr>
+</tbody></table>
+<h3 id="2-3-数值比较与错误定位"><a href="#2-3-数值比较与错误定位" class="headerlink" title="2.3 数值比较与错误定位"></a>2.3 数值比较与错误定位</h3><p>比较时，先检查逐层输出形状，再按元素检查数值误差。浮点结果可能因累加顺序和舍入产生微小差异，因此采用绝对容差与相对容差结合的判定方式：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">abs(golden - oracle) &lt;= atol + rtol × abs(oracle)</span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>atol</code> 是绝对误差容限，主要约束接近零的参考值；<code>rtol</code> 是相对误差容限，允许误差随参考值的大小变化。容差应依据数据类型、累加深度和独立验证结果预先确定，不能为了使失败结果通过而临时放宽。</p>
+<p>比较失败时，先找到最早出现差异的层，再记录对应的通道、行、列、参考值、被测值和绝对误差。边缘或角落集中出错时，优先检查 padding；特定通道出错时，优先检查权重布局与通道索引；位置整体偏移时，优先检查窗口坐标。对硬件实现，还需要检查流水线对齐。这些分布用于缩小排查范围，最终仍需结合代码和测试确认原因。</p>
+<h3 id="2-4-可复现性"><a href="#2-4-可复现性" class="headerlink" title="2.4 可复现性"></a>2.4 可复现性</h3><p>为区分代码改动与测试条件变化带来的影响，每次测试应固定输入、参数和运行配置，并保存以下信息：</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>怎么做</th>
+<th>为什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>输入</td>
+<td>保存测试 tensor，记录 shape、数据类型和预处理方式</td>
+<td>确保每次计算的是同一组像素值</td>
+</tr>
+<tr>
+<td>权重与 bias</td>
+<td>保存相同版本的参数文件</td>
+<td>参数改变，输出就会改变</td>
+</tr>
+<tr>
+<td>随机种子</td>
+<td>生成随机向量时指定 seed</td>
+<td>便于重新生成测试数据</td>
+</tr>
+<tr>
+<td>Checksum</td>
+<td>为文件或 tensor 计算校验值</td>
+<td>检查数据是否被改动或损坏</td>
+</tr>
+<tr>
+<td>工具版本</td>
+<td>记录代码 commit、编译器版本和编译选项</td>
+<td>工具与选项可能影响浮点结果</td>
+</tr>
+</tbody></table>
+<p>固定随机种子时，还应记录生成程序和随机数算法，并保存生成后的数据。校验值用于确认数据内容未变，不代表数据本身正确；复现测试时还需使用相同的运行命令和比较容差。</p>
+<h2 id="3-定点化与-ap-fixed-位宽设计"><a href="#3-定点化与-ap-fixed-位宽设计" class="headerlink" title="3. 定点化与 ap_fixed 位宽设计"></a>3. 定点化与 <code>ap_fixed</code> 位宽设计</h2><blockquote>
+<p>写作问题清单：</p>
+<ul>
+<li>输入、权重、bias 和各层输出的真实动态范围如何获取？校准数据是否具有代表性？</li>
+<li>数据、乘积和各层 accumulator 的总位宽与整数位宽如何推导？</li>
+<li>舍入、溢出、饱和及层间重新量化发生在哪里？如何统计饱和事件？</li>
+<li>定点结果相对 float Golden 的误差如何传播？如何区分实现误差与图像质量？</li>
+<li>不同位宽在精度、DSP、存储和时序之间有什么取舍？最终选择依据是什么？</li>
+</ul>
+</blockquote>
+<h3 id="3-1-动态范围与位宽分配"><a href="#3-1-动态范围与位宽分配" class="headerlink" title="3.1 动态范围与位宽分配"></a>3.1 动态范围与位宽分配</h3><p>定点化的核心问题是：<strong>如何用有限位宽覆盖数值范围，同时保留足够的小数精度？</strong></p>
+<p>对于 <code>ap_fixed&lt;W, I&gt;</code>，<code>W</code> 为总位宽，<code>I</code> 为包含符号位的整数位宽，小数位宽为 <code>W−I</code>。总位宽固定时，增加整数位可以扩大表示范围，但会减少小数位，使量化间隔增大。</p>
+<p>因此，位宽设计首先需要分析动态范围：使用正式权重和代表性输入，记录输入、各层权重与 bias、Conv1&#x2F;2 激活前的累加值、激活后输出，以及 Conv3 输出的最小值和最大值。观测范围用于了解实际数据分布，还需要结合保守范围推导检查溢出风险。</p>
+<p>乘法的完整结果通常需要更宽的表示；若过早缩窄，会损失中间精度。计算通路因此采用以下组织方式：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">输入、权重</span><br><span class="line">    ↓</span><br><span class="line">较宽的乘积</span><br><span class="line">    ↓</span><br><span class="line">较宽的 accumulator</span><br><span class="line">    ↓ 完成累加和激活</span><br><span class="line">转换为较窄的层输出</span><br></pre></td></tr></table></figure>
+
+<p>累加器还需要为多项相加保留足够的整数位。Conv3 每个输出元素包含 800 项乘加，尤其需要关注累加过程中的范围；具体位宽仍取决于输入、权重和 bias 的大小，不能仅由累加项数决定。</p>
+<h3 id="3-2-舍入、饱和与层间量化"><a href="#3-2-舍入、饱和与层间量化" class="headerlink" title="3.2 舍入、饱和与层间量化"></a>3.2 舍入、饱和与层间量化</h3><p>将宽结果转换为较窄类型时，需要分别处理小数精度和整数范围。<code>AP_RND_CONV</code> 采用最近舍入，恰好位于中点时选择偶数编码，以减少固定方向的舍入偏差；<code>AP_SAT</code> 则将越界结果限制在目标类型的最大值或最小值，避免回绕。</p>
+<p>例如，<code>ap_fixed&lt;16, 4, AP_RND_CONV, AP_SAT&gt;</code> 显式指定了总位宽、整数位宽、舍入方式和饱和方式。饱和事件需要单独统计：转换前的宽值超过目标最大值时记录上溢饱和，低于目标最小值时记录下溢饱和。</p>
+<p>层间量化发生在累加结果转换为层输出类型时。例如，accumulator 有 20 位小数，而下一层输入只有 10 位小数，那么保存当前层输出时就需要舍入到新的精度：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">wide_acc_t</span> accumulator = ...;</span><br><span class="line"><span class="type">data_t</span> output = accumulator;</span><br></pre></td></tr></table></figure>
+<p>Conv1&#x2F;2 的处理顺序为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">宽位累加 → ReLU → 转换为层输出类型 → 下一层</span><br></pre></td></tr></table></figure>
+<p>Conv3 不执行 ReLU，其处理顺序为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">宽位累加 → 转换为最终输出类型</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-精度与硬件成本的取舍"><a href="#3-3-精度与硬件成本的取舍" class="headerlink" title="3.3 精度与硬件成本的取舍"></a>3.3 精度与硬件成本的取舍</h3><p>位宽会同时影响数值精度、运算资源、存储和时序，需要结合精度实验与硬件实现进行比较：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">候选类型</span><br><span class="line">→ 正式图像上的逐层精度与饱和检查</span><br><span class="line">→ HLS 综合</span><br><span class="line">→ 比较资源、II 与时序</span><br><span class="line">→ 板上验证</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>位宽较小时</th>
+<th>位宽较大时</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>精度</td>
+<td>可用小数位较少，量化误差可能增大；整数位不足还会溢出</td>
+<td>能保留更多精度或覆盖更大范围</td>
+</tr>
+<tr>
+<td>DSP</td>
+<td>乘法器可能更省资源，具体取决于 DSP 端口及综合映射</td>
+<td>宽乘法可能需要多个 DSP</td>
+</tr>
+<tr>
+<td>存储</td>
+<td>权重、特征图和 FIFO 占用更小</td>
+<td>BRAM&#x2F;URAM 和数据传输需求更大</td>
+</tr>
+<tr>
+<td>时序</td>
+<td>较窄的运算通常更容易满足时钟要求</td>
+<td>加法、乘法及布线可能更复杂，需要更多流水级</td>
+</tr>
+</tbody></table>
+<p>总位宽固定时，主要取舍是表示范围与小数精度；总位宽变化时，还会影响存储容量和运算成本。实际 DSP、BRAM 和时序收益取决于器件结构与综合映射，需要以报告为准。</p>
+<h3 id="3-4-本项目的-Q20-12-选择依据"><a href="#3-4-本项目的-Q20-12-选择依据" class="headerlink" title="3.4 本项目的 Q20.12 选择依据"></a>3.4 本项目的 Q20.12 选择依据</h3><p>本项目保持 32-bit 数据字，将部分整数位分配给小数位，以提高精度。以下结果来自正式提供的 14 张图像，包括一张 Set5 图像和十三张 Set14 图像，并非完整基准集。</p>
+<p>工程筛选条件为：每张图相对 float 的重建 PSNR 绝对变化不超过 0.1 dB，定点输出与 float 输出的一致性 PSNR 至少为 50 dB，同时通过饱和检查和正式模型的范围验证。</p>
+<table>
+<thead>
+<tr>
+<th>格式</th>
+<th align="right">小数精度</th>
+<th align="right">相对 float 的最大单图重建 PSNR 变化</th>
+<th align="right">最低定点&#x2F;浮点一致性 PSNR</th>
+<th>筛选结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Q24.8</td>
+<td align="right"><code>1/256</code></td>
+<td align="right">9.631357 dB</td>
+<td align="right">25.621040 dB</td>
+<td>不通过</td>
+</tr>
+<tr>
+<td>Q22.10</td>
+<td align="right"><code>1/1024</code></td>
+<td align="right">0.140636 dB</td>
+<td align="right">50.212929 dB</td>
+<td>不通过</td>
+</tr>
+<tr>
+<td><strong>Q20.12</strong></td>
+<td align="right"><strong><code>1/4096</code></strong></td>
+<td align="right"><strong>0.004187 dB</strong></td>
+<td align="right"><strong>60.621163 dB</strong></td>
+<td><strong>通过</strong></td>
+</tr>
+<tr>
+<td>Q18.14</td>
+<td align="right"><code>1/16384</code></td>
+<td align="right">0.001065 dB</td>
+<td align="right">77.116276 dB</td>
+<td>通过</td>
+</tr>
+</tbody></table>
+<p>这里的“重建 PSNR 变化”比较两种实现各自相对高分辨率真值的图像质量；“定点&#x2F;浮点一致性 PSNR”则直接比较定点与 float 输出，衡量实现误差。</p>
+<p>Q24.8 将 Conv1 中 1,205 个原本非零的权重量化为零，而 Q20.12 降至 117 个，Conv1 权重总数为 5,184。增加小数位保留了更多小权重信息。Q20.12 的三层累加器分别采用 31、37、44 bit，均保留 24 位小数。</p>
+<p>Q18.14 的数值一致性更高，但 Q20.12 已满足工程精度门限，是已测试配置中小数位最少的通过者，因此被选入后续硬件验证。Q18.14 尚未完成同等硬件评估，不能据此认定 Q20.12 是所有候选格式中的最优方案。</p>
+<p>精度通过后，还需要检查调度与实现结果。第一次切换至 Q20.12 时，Conv1 MAC 循环的 II 从 1 增至 2，MAC pipeline 的 DSP 从 16 降至 8，吞吐随之下降。随后保持相同数值规则，将引用辅助函数中的 <code>+=</code> 改为直接写回表达式，改变 HLS 识别的累加反馈结构，恢复了 II&#x3D;1 和 16 个 MAC pipeline DSP，输出仍逐位一致。</p>
+<p>最终布线后的完整设计资源如下：</p>
+<table>
+<thead>
+<tr>
+<th>资源</th>
+<th align="right">Q24.8</th>
+<th align="right">Q20.12</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DSP</td>
+<td align="right">86</td>
+<td align="right">86</td>
+</tr>
+<tr>
+<td>LUT</td>
+<td align="right">15,739</td>
+<td align="right">15,986</td>
+</tr>
+<tr>
+<td>FF</td>
+<td align="right">16,456</td>
+<td align="right">17,546</td>
+</tr>
+<tr>
+<td>BRAM tile 等效数量</td>
+<td align="right">97</td>
+<td align="right">97.5</td>
+</tr>
+</tbody></table>
+<p>Q20.12 在 5 ns、约 200 MHz 下通过布线时序，setup WNS 为 +0.107 ns。两种格式的数据字均为 32 bit，因此存储和传输宽度没有减小，资源占用也基本相近。两次独立实现运行存在布局布线差异，小幅资源变化不能全部归因于数值格式。</p>
+<p>选择 Q20.12 的主要依据，是在保持 32-bit 数据接口和相近硬件成本的情况下改善数值精度。该格式通过正式图像的精度筛选、范围检查、RTL 验证、布线时序和板级一致性验证；累加反馈调度的修复也消除了格式切换引起的 Conv1 吞吐退化。</p>
+<h2 id="4-HLS-加速器设计"><a href="#4-HLS-加速器设计" class="headerlink" title="4. HLS 加速器设计"></a>4. HLS 加速器设计</h2><blockquote>
+<p>写作问题清单：</p>
+<ul>
+<li>为什么选择当前架构？与自然循环、整帧缓存或分块方案相比有什么取舍？</li>
+<li>数据通路、控制通路和存储分别如何划分？数据流顺序如何定义？</li>
+<li>目标吞吐和实际资源预算如何决定各层并行度？</li>
+</ul>
+</blockquote>
+<h3 id="4-1-Conv1：9×9-空间卷积"><a href="#4-1-Conv1：9×9-空间卷积" class="headerlink" title="4.1 Conv1：9×9 空间卷积"></a>4.1 Conv1：9×9 空间卷积</h3><blockquote>
+<ul>
+<li>64 个输出通道与 81 项 MAC 如何并行或复用？权重如何缓存和提供读带宽？</li>
+<li>Conv1 的输出顺序、输出速率与边界处理如何实现？</li>
+</ul>
+</blockquote>
+<h3 id="4-2-Conv2：1×1-通道混合"><a href="#4-2-Conv2：1×1-通道混合" class="headerlink" title="4.2 Conv2：1×1 通道混合"></a>4.2 Conv2：1×1 通道混合</h3><blockquote>
+<ul>
+<li>64 项通道归约如何组织？32 个输出通道如何共享乘法器与输入数据？</li>
+<li>Conv1 的输出顺序是否匹配 Conv2 的读取顺序？是否需要缓存或重排？</li>
+</ul>
+</blockquote>
+<h3 id="4-3-Conv3：5×5-重建层"><a href="#4-3-Conv3：5×5-重建层" class="headerlink" title="4.3 Conv3：5×5 重建层"></a>4.3 Conv3：5×5 重建层</h3><blockquote>
+<ul>
+<li>32 个通道的空间窗口如何组织？800 项归约如何分组和流水化？</li>
+<li>如何处理部分和、累加精度与最终输出转换？</li>
+</ul>
+</blockquote>
+<h3 id="4-4-Line-Buffer-与-Sliding-Window"><a href="#4-4-Line-Buffer-与-Sliding-Window" class="headerlink" title="4.4 Line Buffer 与 Sliding Window"></a>4.4 Line Buffer 与 Sliding Window</h3><blockquote>
+<ul>
+<li>历史行、窗口寄存器与 halo 分别需要多少存储？边缘像素如何复制？</li>
+<li>存储如何 banking&#x2F;partition？读写端口是否满足并行需求？</li>
+<li>每帧启动、窗口填充、尾部排空与反压时如何保持坐标和数据一致？</li>
+</ul>
+</blockquote>
+<h3 id="4-5-Pipeline、Unroll-与-DATAFLOW"><a href="#4-5-Pipeline、Unroll-与-DATAFLOW" class="headerlink" title="4.5 Pipeline、Unroll 与 DATAFLOW"></a>4.5 Pipeline、Unroll 与 DATAFLOW</h3><blockquote>
+<ul>
+<li>pragma 放在哪个循环或函数？预期效果与 achieved II 有何差异？</li>
+<li>循环依赖、累加反馈和存储端口分别如何限制 II？</li>
+<li>各层生产与消费速率如何平衡？FIFO 深度如何确定并验证无死锁？</li>
+<li>每项优化分别增加多少资源、改善多少吞吐？</li>
+</ul>
+</blockquote>
+<h2 id="5-PL-端-AXI-与-DMA-接口"><a href="#5-PL-端-AXI-与-DMA-接口" class="headerlink" title="5. PL 端 AXI 与 DMA 接口"></a>5. PL 端 AXI 与 DMA 接口</h2><blockquote>
+<p>写作问题清单：</p>
+<ul>
+<li>控制寄存器、启动、完成、错误和复位协议如何定义？</li>
+<li>TDATA 位宽、元素打包、字节序、TKEEP 和 TLAST 如何约定？</li>
+<li>输入、输出与权重通过什么路径传输？DMA byte count、对齐和 burst 如何设置？</li>
+<li>如何应对反压、尾包、超时与错误恢复？有效带宽如何测量？</li>
+</ul>
+</blockquote>
+<h2 id="6-PS-端-PYNQ-Host"><a href="#6-PS-端-PYNQ-Host" class="headerlink" title="6. PS 端 PYNQ Host"></a>6. PS 端 PYNQ Host</h2><blockquote>
+<p>写作问题清单：</p>
+<ul>
+<li>PS&#x2F;PL 任务如何划分？图像预处理、参数加载、量化和后处理由谁完成？</li>
+<li>overlay 与连续内存 buffer 如何管理？dtype、shape 和打包是否匹配硬件？</li>
+<li>cache flush&#x2F;invalidate、DMA 启动顺序、等待和超时如何处理？</li>
+<li>连续多帧、重复运行与 overlay reload 是否可靠？软件开销如何记录？</li>
+</ul>
+</blockquote>
+<h2 id="7-PL-PS-系统集成"><a href="#7-PL-PS-系统集成" class="headerlink" title="7. PL&#x2F;PS 系统集成"></a>7. PL&#x2F;PS 系统集成</h2><blockquote>
+<p>写作问题清单：</p>
+<ul>
+<li>HLS IP 如何封装并接入 Vivado block design？时钟、复位和地址如何配置？</li>
+<li>如何先用 dummy kernel 验证 DMA，再逐层接入完整网络？</li>
+<li>综合、Implementation、DRC 与 timing report 分别发现了什么问题？如何解决？</li>
+<li>ILA 应观察哪些握手、状态和数据？如何定位板上停滞或输出错误？</li>
+<li>板卡、工具、镜像与 bitstream 版本如何记录，怎样复现上板流程？</li>
+</ul>
+</blockquote>
+<h2 id="8-正确性、性能与资源评估"><a href="#8-正确性、性能与资源评估" class="headerlink" title="8. 正确性、性能与资源评估"></a>8. 正确性、性能与资源评估</h2><blockquote>
+<p>写作问题清单：</p>
+<ul>
+<li>Golden、HLS C simulation、RTL co-simulation 与板上输出如何逐级对齐？</li>
+<li>CPU baseline、kernel-only、DMA transaction 与端到端耗时的测量边界是什么？</li>
+<li>如何计算 FPS、GOPS 与 speedup？MAC 是否按两次标量运算计数？</li>
+<li>实际时钟、LUT&#x2F;FF&#x2F;BRAM&#x2F;URAM&#x2F;DSP、DDR 带宽如何限制性能？</li>
+<li>如何用消融实验验证每项优化的贡献？测试次数和波动如何报告？</li>
+<li>若测量功耗，测量范围与方法是什么？如何计算每帧能耗及能效？</li>
+<li>实测瓶颈在哪里？若迁移到 ASIC，哪些结构需要重新设计？</li>
+</ul>
+</blockquote>
+
     
   </div>
 
