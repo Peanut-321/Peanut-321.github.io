@@ -398,7 +398,6 @@
 </tbody></table>
 <p>固定随机种子时，还应记录生成程序和随机数算法，并保存生成后的数据。校验值用于确认数据内容未变，不代表数据本身正确；复现测试时还需使用相同的运行命令和比较容差。</p>
 <h2 id="3-定点化与-ap-fixed-位宽设计"><a href="#3-定点化与-ap-fixed-位宽设计" class="headerlink" title="3. 定点化与 ap_fixed 位宽设计"></a>3. 定点化与 <code>ap_fixed</code> 位宽设计</h2><blockquote>
-<p>写作问题清单：</p>
 <ul>
 <li>输入、权重、bias 和各层输出的真实动态范围如何获取？校准数据是否具有代表性？</li>
 <li>数据、乘积和各层 accumulator 的总位宽与整数位宽如何推导？</li>
@@ -534,13 +533,88 @@
 <p>Q20.12 在 5 ns、约 200 MHz 下通过布线时序，setup WNS 为 +0.107 ns。两种格式的数据字均为 32 bit，因此存储和传输宽度没有减小，资源占用也基本相近。两次独立实现运行存在布局布线差异，小幅资源变化不能全部归因于数值格式。</p>
 <p>选择 Q20.12 的主要依据，是在保持 32-bit 数据接口和相近硬件成本的情况下改善数值精度。该格式通过正式图像的精度筛选、范围检查、RTL 验证、布线时序和板级一致性验证；累加反馈调度的修复也消除了格式切换引起的 Conv1 吞吐退化。</p>
 <h2 id="4-HLS-加速器设计"><a href="#4-HLS-加速器设计" class="headerlink" title="4. HLS 加速器设计"></a>4. HLS 加速器设计</h2><blockquote>
-<p>写作问题清单：</p>
 <ul>
 <li>为什么选择当前架构？与自然循环、整帧缓存或分块方案相比有什么取舍？</li>
 <li>数据通路、控制通路和存储分别如何划分？数据流顺序如何定义？</li>
 <li>目标吞吐和实际资源预算如何决定各层并行度？</li>
 </ul>
 </blockquote>
+<p>当前架构以减少中间特征图的存储与传输、复用卷积窗口中的像素为主要目标。按每个元素 32 bit 计算，Conv1 和 Conv2 的中间特征图分别约为 15.88 MiB 和 7.94 MiB。若它们每帧都写回 DDR，再由下一层读入，仅中间结果就会产生约 47.63 MiB 的额外传输；若全部缓存到片上，则需要过大的存储容量。因此，本项目采用行缓存与层间流式连接的架构。</p>
+<p><strong>数据通路</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">DDR 输入</span><br><span class="line">   ↓ DMA MM2S</span><br><span class="line">AXI-Stream</span><br><span class="line">   ↓ axis_to_scalar</span><br><span class="line">input_pixels FIFO</span><br><span class="line">   ↓ Conv1</span><br><span class="line">conv1_features FIFO</span><br><span class="line">   ↓ Conv2</span><br><span class="line">conv2_features FIFO</span><br><span class="line">   ↓ Conv3</span><br><span class="line">output_pixels FIFO</span><br><span class="line">   ↓ scalar_to_axis</span><br><span class="line">AXI-Stream</span><br><span class="line">   ↓ DMA S2MM</span><br><span class="line">DDR 输出</span><br></pre></td></tr></table></figure>
+<p>其中，<code>axis_to_scalar</code> 将 AXI-Stream 数据转换为内部数值流，<code>scalar_to_axis</code> 则将计算结果封装为 AXI-Stream 输出。Conv1 和 Conv3 内部使用 line buffer 与 window 复用邻域数据，中间特征通过 FIFO 传递给下一层。</p>
+<p><strong>模型参数</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DDR 中的权重和 bias</span><br><span class="line">   ↓ HLS 的 m_axi_model_mem</span><br><span class="line">各层本地参数数组</span><br><span class="line">   ↓</span><br><span class="line">卷积计算</span><br></pre></td></tr></table></figure>
+<p>这一结构具有以下特点：</p>
+<ul>
+<li><strong>层间直接传递结果。</strong> Conv1 无需先生成完整特征图并写回 DDR，而是通过 FIFO 将结果交给 Conv2，再由 Conv2 交给 Conv3。<code>DATAFLOW</code> 允许各阶段重叠执行，实际吞吐仍受各层计算速率和反压限制。</li>
+<li><strong>缓存当前计算所需的数据。</strong> 行缓存与滑动窗口复用相邻窗口中的像素，同时需要管理窗口更新、边界复制和数据有效性。</li>
+<li><strong>适合固定尺寸、顺序扫描的工作负载。</strong> 当前网络采用固定的 <code>255×255</code> 输入与 stride 1，能够按空间位置顺序处理数据。</li>
+</ul>
+<p>这套架构减少了整帧中间缓存和 DDR 往返，代价是增加了数据顺序、FIFO、反压及层间速率匹配的设计复杂度。</p>
+<p><strong>图像与模型的访问路径</strong></p>
+<p>PL 中有两类能够主动访问 DDR 的模块：AXI DMA，以及 HLS 加速器自身的 AXI master 接口。它们分别负责图像传输和模型参数读取：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">              DDR</span><br><span class="line">               │</span><br><span class="line">      ┌────────┴─────────┐</span><br><span class="line">      │                  │</span><br><span class="line">  AXI DMA          HLS AXI master</span><br><span class="line">      │                  │</span><br><span class="line">输入/输出图像         权重与 bias</span><br><span class="line">      │                  │</span><br><span class="line">AXI-Stream          本地参数数组</span><br><span class="line">      └────────┬─────────┘</span><br><span class="line">               │</span><br><span class="line">            卷积计算</span><br></pre></td></tr></table></figure>
+
+<p>在图像路径中，PS 配置 DMA 的 buffer 地址与传输长度。DMA 从 DDR 读取输入，经 AXI-Stream 送入加速器；计算完成后，再接收加速器的输出流并写回 DDR。</p>
+<p>在模型路径中，PS 将模型的 DDR 地址写入加速器的 AXI-Lite 控制寄存器。加速器内部通过以下形式读取参数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conv1_weights[...] = model[index];</span><br></pre></td></tr></table></figure>
+<p>HLS 将数组访问转换为 <code>m_axi_model_mem</code> 接口上的 AXI4 读请求。加速器主动发出地址，从 DDR 读取权重与 bias，保存到各层本地参数数组，这一过程不经过 AXI DMA。</p>
+<p>两条路径最终都经存储互联和 PS 的 HP0 接口访问 DDR，但访问发起方和加速器接口不同：</p>
+<table>
+<thead>
+<tr>
+<th>数据</th>
+<th>搬运方</th>
+<th>加速器接口</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>输入图像</td>
+<td>AXI DMA</td>
+<td>AXI-Stream</td>
+</tr>
+<tr>
+<td>权重、bias</td>
+<td>HLS IP 自己</td>
+<td>AXI memory-mapped 接口</td>
+</tr>
+<tr>
+<td>输出图像</td>
+<td>AXI DMA 负责写回</td>
+<td>加速器先输出 AXI-Stream</td>
+</tr>
+</tbody></table>
+<p>PS 负责配置地址、传输长度与启动命令，实际传输由 PL 中的硬件执行。每次调用先由 <code>load_runtime_model()</code> 完成参数加载，再进入流式推理；模型加载位于 <code>DATAFLOW</code> 区域之外。</p>
+<p>内部特征流按“空间位置优先、通道依次输出”的顺序传递：Conv1 在同一位置输出 64 个通道后，再处理下一个位置；Conv2 则在同一位置接收这 64 个通道并输出 32 个通道。这与 Golden 的 CHW 内存布局不同，验证时需要按逻辑坐标对应数据。</p>
+<p><strong>并行度的选择</strong></p>
+<p>并行度选择以各层计算量和对照实验为依据，并结合 DSP、存储端口和时序结果验证其可实现性。Conv1 最终采用 OC4 结构：将 64 个输出通道分为 16 组，每组同时计算 4 个通道。四个 lane 共享当前窗口像素，分别读取各自的权重并更新独立累加器；权重数组沿 lane 维度分为四个独立 bank，为四路计算提供并行读取能力。</p>
+<p>各层的选择依据与 Q20.12 综合结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>当前选择</th>
+<th>选择依据</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Conv1</strong></td>
+<td>OC4，四个输出通道并行</td>
+<td>占总 MAC 的 64.5%，优先优化；OC2→OC4 实验中，Conv1 估算延迟下降约 48.7%，该 top 总延迟下降约 33.5%</td>
+</tr>
+<tr>
+<td><strong>Conv2</strong></td>
+<td>保留现有通道归约结构</td>
+<td>综合得到归约循环 II&#x3D;2、64 DSP；没有进一步的受控并行度扫描</td>
+</tr>
+<tr>
+<td><strong>Conv3</strong></td>
+<td>复用乘加资源</td>
+<td>占总 MAC 约 10%，保留复用结构；综合使用 5 DSP，没有展开因子的全面对照实验</td>
+</tr>
+</tbody></table>
+<p>OC2&#x2F;OC4 的延迟对比来自前期独立 line-buffer top，不能直接作为最终流式设计的板上延迟。DSP 数量和 II 则是对应计算结构的综合结果，其中 II 表示指定循环的启动间隔，并不等于整层输出一个像素所需的周期数。</p>
 <h3 id="4-1-Conv1：9×9-空间卷积"><a href="#4-1-Conv1：9×9-空间卷积" class="headerlink" title="4.1 Conv1：9×9 空间卷积"></a>4.1 Conv1：9×9 空间卷积</h3><blockquote>
 <ul>
 <li>64 个输出通道与 81 项 MAC 如何并行或复用？权重如何缓存和提供读带宽？</li>
