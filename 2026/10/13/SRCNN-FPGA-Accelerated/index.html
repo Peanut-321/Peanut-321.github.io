@@ -584,32 +584,96 @@
 </tr>
 </tbody></table>
 <p>OC2&#x2F;OC4 的延迟对比来自前期独立 line-buffer top，不能直接作为最终流式设计的板上延迟。DSP 数量和 II 则是对应计算结构的综合结果，其中 II 表示指定循环的启动间隔，并不等于整层输出一个像素所需的周期数。</p>
-<h3 id="4-1-Conv1：9×9-空间卷积"><a href="#4-1-Conv1：9×9-空间卷积" class="headerlink" title="4.1 Conv1：9×9 空间卷积"></a>4.1 Conv1：9×9 空间卷积</h3><blockquote>
+<h3 id="4-1-三层卷积的计算组织"><a href="#4-1-三层卷积的计算组织" class="headerlink" title="4.1 三层卷积的计算组织"></a>4.1 三层卷积的计算组织</h3><p>本节围绕一个空间位置的计算，说明每层读取哪些数据、怎样累加，以及按什么顺序将结果交给下一层。三层的通道数和卷积核尺寸不同，因此采用不同的计算组织方式。</p>
+<p><strong>Conv1：9×9 空间卷积</strong></p>
+<blockquote>
 <ul>
 <li>64 个输出通道与 81 项 MAC 如何并行或复用？权重如何缓存和提供读带宽？</li>
 <li>Conv1 的输出顺序、输出速率与边界处理如何实现？</li>
 </ul>
 </blockquote>
-<h3 id="4-2-Conv2：1×1-通道混合"><a href="#4-2-Conv2：1×1-通道混合" class="headerlink" title="4.2 Conv2：1×1 通道混合"></a>4.2 Conv2：1×1 通道混合</h3><blockquote>
+<p>Conv1 的输入只有一个通道。计算位置 <code>(h,w)</code> 时，先准备以该位置为中心的 9×9 窗口，共 81 个像素值。</p>
+<p>OC4 将 64 个输出通道分为 16 组，每组同时计算 4 个通道。四个累加器分别以对应通道的 bias 初始化，再使用同一个窗口像素与各自的权重进行乘加：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">当前窗口的一个像素 x</span><br><span class="line">    ├→ × 通道 0 的权重 → sum0</span><br><span class="line">    ├→ × 通道 1 的权重 → sum1</span><br><span class="line">    ├→ × 通道 2 的权重 → sum2</span><br><span class="line">    └→ × 通道 3 的权重 → sum3</span><br></pre></td></tr></table></figure>
+<p>接着取窗口的下一个像素，继续更新四个累加器。遍历完 81 个像素后，四个通道完成计算，经过 ReLU 和输出类型转换，再依次写入 FIFO，然后处理下一组通道：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">固定当前 9×9 窗口</span><br><span class="line">    ↓</span><br><span class="line">通道 0～3：四路同时各累加 81 项 → 输出四个值</span><br><span class="line">    ↓</span><br><span class="line">通道 4～7：换权重和 bias，各累加 81 项 → 输出四个值</span><br><span class="line">    ↓</span><br><span class="line">……</span><br><span class="line">    ↓</span><br><span class="line">通道 60～63：各累加 81 项 → 输出四个值</span><br><span class="line">    ↓</span><br><span class="line">当前位置的 64 个通道全部完成</span><br><span class="line">    ↓</span><br><span class="line">窗口向右移动一格，再重复上述过程</span><br></pre></td></tr></table></figure>
+<p>这里包含两种复用：</p>
+<ul>
+<li><strong>输入复用</strong>：同一个窗口值同时用于四个通道，整个窗口保留到 16 组全部计算完成。</li>
+<li><strong>计算资源复用</strong>：四个 lane 依次处理 16 组通道，无需为 64 个通道各放置一套计算电路。</li>
+</ul>
+<p>最终 MAC 内循环达到 II&#x3D;1，即每拍可启动下一个窗口位置的四路 MAC，并不表示每拍完成一个输出像素。</p>
+<p><strong>Conv2：1×1 通道混合</strong></p>
+<blockquote>
 <ul>
 <li>64 项通道归约如何组织？32 个输出通道如何共享乘法器与输入数据？</li>
 <li>Conv1 的输出顺序是否匹配 Conv2 的读取顺序？是否需要缓存或重排？</li>
 </ul>
 </blockquote>
-<h3 id="4-3-Conv3：5×5-重建层"><a href="#4-3-Conv3：5×5-重建层" class="headerlink" title="4.3 Conv3：5×5 重建层"></a>4.3 Conv3：5×5 重建层</h3><blockquote>
+<p>Conv1 在同一空间位置依次输出通道 0～63，Conv2 按相同顺序读取，因此无需缓存完整的 Conv1 特征图或进行整帧重排。</p>
+<p>对每个位置，Conv2 先用 bias 初始化 32 个累加器，再读取通道 0 的值 <code>x0</code>，将它用于全部 32 个输出通道的部分和更新：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sum[0] = bias[0]</span><br><span class="line">sum[1] = bias[1]</span><br><span class="line">…</span><br><span class="line">sum[31] = bias[31]</span><br><span class="line">---------------------</span><br><span class="line">sum[0]  += x0 × W[0][0]</span><br><span class="line">sum[1]  += x0 × W[1][0]</span><br><span class="line">…</span><br><span class="line">sum[31] += x0 × W[31][0]</span><br></pre></td></tr></table></figure>
+<p>随后读取 <code>x1</code> 并重复更新，直到读完 64 个输入通道。此时，每个 <code>sum[o]</code> 都完成了 64 项累加，再经过 ReLU 和输出类型转换，依次输出 32 个结果。</p>
+<p>每个输入值只从 FIFO 读取一次，却参与 32 个输出通道的计算。这里描述的是数据复用关系，是否同拍执行由 HLS 调度决定。</p>
+<p>最终综合结果中，该阶段使用 64 个 DSP，通道归约循环达到 II&#x3D;2。</p>
+<p><strong>Conv3：5×5 重建层</strong></p>
+<blockquote>
 <ul>
 <li>32 个通道的空间窗口如何组织？800 项归约如何分组和流水化？</li>
 <li>如何处理部分和、累加精度与最终输出转换？</li>
 </ul>
 </blockquote>
-<h3 id="4-4-Line-Buffer-与-Sliding-Window"><a href="#4-4-Line-Buffer-与-Sliding-Window" class="headerlink" title="4.4 Line Buffer 与 Sliding Window"></a>4.4 Line Buffer 与 Sliding Window</h3><blockquote>
+<p>Conv3 先保存多通道邻域，再复用计算资源完成重建。Conv2 在每个位置输出 32 个特征，而 Conv3 需要这 32 个通道各自的 5×5 邻域，共 800 个数：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">当前行缓存：[32][255]       接收 Conv2 送来的一行数据</span><br><span class="line">历史行缓存：4 行 × 32 通道   保存之前四行，并包含左右 padding 的列宽</span><br><span class="line">窗口：     [32][5][5]      保存本次计算所需的 800 个值</span><br></pre></td></tr></table></figure>
+
+<p>例如，计算输出 <code>(10,10)</code>，需要每个通道第 8～12 行、第 8～12 列的数据。当前行提供第 12 行，历史行缓存提供前四行；窗口保留最近五列，组成完整的 5×5 区域。32 个通道的窗口值分别乘以对应权重，累加 800 项，再转换为最终输出类型，不执行 ReLU。</p>
+<p>先接收完整一行，再更新历史行和窗口，因此输入到达后不会立刻产生输出。它保留了必要的行缓存，但省去了完整中间特征图的存储与 DDR 往返。</p>
+<h3 id="4-2-Line-Buffer-与-Sliding-Window"><a href="#4-2-Line-Buffer-与-Sliding-Window" class="headerlink" title="4.2 Line Buffer 与 Sliding Window"></a>4.2 Line Buffer 与 Sliding Window</h3><blockquote>
 <ul>
 <li>历史行、窗口寄存器与 halo 分别需要多少存储？边缘像素如何复制？</li>
 <li>存储如何 banking&#x2F;partition？读写端口是否满足并行需求？</li>
 <li>每帧启动、窗口填充、尾部排空与反压时如何保持坐标和数据一致？</li>
 </ul>
 </blockquote>
-<h3 id="4-5-Pipeline、Unroll-与-DATAFLOW"><a href="#4-5-Pipeline、Unroll-与-DATAFLOW" class="headerlink" title="4.5 Pipeline、Unroll 与 DATAFLOW"></a>4.5 Pipeline、Unroll 与 DATAFLOW</h3><blockquote>
+<p>输入按行到达，而卷积需要同时访问多行、多列的数据，因此使用当前行、历史行和窗口三类存储。以 Conv1 为例：</p>
+<ol>
+<li><strong>当前行缓存 <code>row[255]</code></strong>：先接收一整行的 255 个像素，再交给窗口生成逻辑处理。</li>
+<li><strong>历史行缓存 <code>line_buffer[8][263]</code></strong>：保留前八行，与当前行一起提供九行数据。列宽包含左右各四列 padding，因此为 <code>255+8=263</code>。</li>
+<li><strong>当前窗口 <code>window[9][9]</code></strong>：保存本次卷积需要的 81 个值。向右移动一格时，丢弃最左一列，保留其余 72 个值，再从当前行和历史行补入右侧新的一列，共 9 个值。</li>
+</ol>
+<p>Conv3 采用相同方式，但需要保存 32 个通道的 5×5 邻域。两层的数组尺寸如下：</p>
+<table>
+<thead>
+<tr>
+<th>存储</th>
+<th>Conv1</th>
+<th>Conv3</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>当前行缓存</td>
+<td><code>[255]</code></td>
+<td><code>[32][255]</code></td>
+</tr>
+<tr>
+<td>历史行缓存</td>
+<td><code>[8][263]</code></td>
+<td><code>[4][32][259]</code></td>
+</tr>
+<tr>
+<td>当前窗口</td>
+<td><code>[9][9]</code></td>
+<td><code>[32][5][5]</code></td>
+</tr>
+</tbody></table>
+<p>边界采用 replicate-edge：上下重复首末行，左右重复首末列，补出的边界区域称为 halo。Conv3 左右各扩展两列，因此历史行缓存的列宽为 <code>255+4=259</code>。这些边界值在处理过程中生成，无需在 DDR 中另外保存完整的扩展图像。</p>
+<p><strong>启动与窗口有效性</strong></p>
+<p>每帧先清零历史行和窗口，并重新初始化扩展行计数。Conv1 收集满 9 行、9 列扩展数据后，才计算第一个有效位置；Conv3 则需要 5 行、5 列。换行时不清空窗口，而是在行首先移入新列，待上一行残留的列全部被替换后再恢复计算。初始化清零用于清理旧数据，实际边界仍由边缘复制生成。</p>
+<p><strong>帧尾与反压</strong></p>
+<p>最后一行输入结束后，Conv1 额外重复末行 4 次，Conv3 重复 2 次，完成底部边界计算。随后还需将流水线和 FIFO 中的结果全部传出，因此输入接收结束不等于整帧处理结束。</p>
+<p>FIFO 满时，<code>write()</code> 等待空位；FIFO 空时，<code>read()</code> 等待新数据。其他阶段仍可处理已有数据，直到各自遇到阻塞，因此反压逐级传播，而非整条流水线立即同时暂停。</p>
+<p>AXI-Stream 只有在 <code>TVALID &amp;&amp; TREADY</code> 时才完成一拍传输，类似 Chisel 的 <code>.fire</code>。输出受阻时，当前数据和附带标记必须保持稳定。<code>scalar_to_axis()</code> 为第 65,025 个输出像素设置 <code>TLAST=1</code>；这一拍完成握手后，整帧输出才传输结束。</p>
+<h3 id="4-3-Pipeline、Unroll-与-DATAFLOW"><a href="#4-3-Pipeline、Unroll-与-DATAFLOW" class="headerlink" title="4.3 Pipeline、Unroll 与 DATAFLOW"></a>4.3 Pipeline、Unroll 与 DATAFLOW</h3><blockquote>
 <ul>
 <li>pragma 放在哪个循环或函数？预期效果与 achieved II 有何差异？</li>
 <li>循环依赖、累加反馈和存储端口分别如何限制 II？</li>
