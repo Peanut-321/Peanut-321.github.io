@@ -681,6 +681,173 @@
 <li>每项优化分别增加多少资源、改善多少吞吐？</li>
 </ul>
 </blockquote>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>作用</th>
+<th>本项目中的例子</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>PIPELINE</code></td>
+<td>让同一循环的不同迭代重叠执行</td>
+<td>输入&#x2F;输出格式转换循环</td>
+</tr>
+<tr>
+<td><code>UNROLL</code></td>
+<td>展开循环，生成多路计算结构</td>
+<td>Conv1 的四个 lane</td>
+</tr>
+<tr>
+<td><code>DATAFLOW</code></td>
+<td>让不同处理阶段并行工作</td>
+<td>输入转换、Conv1&#x2F;2&#x2F;3、输出转换</td>
+</tr>
+</tbody></table>
+<p><code>PIPELINE II=1</code> 表达每拍启动一次循环迭代的目标，实际实现的启动间隔则由综合报告中的 achieved II 确认：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">pragma</span> HLS PIPELINE II=1</span></span><br></pre></td></tr></table></figure>
+
+<p>对于输入&#x2F;输出转换循环，目标是在数据和下游空间都可用时，每拍处理一个元素；遇到反压仍需等待。下面通过两个实际案例，说明时序约束与循环反馈如何影响实现。</p>
+<p><strong>案例一：Conv1 的 5 ns 时序收敛</strong></p>
+<p>200 MHz 时钟的周期为 5 ns，两个寄存器之间的组合逻辑必须在可用的时序预算内完成：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">寄存器输出 → 地址计算、数据选择、逻辑运算 → 下一级寄存器</span><br></pre></td></tr></table></figure>
+
+<p>若数据未能在采样时钟边沿前按要求稳定，就可能被错误采样。早期循环行缓存版本虽然通过功能验证，但 HLS 时序估算未达标：</p>
+<table>
+<thead>
+<tr>
+<th>Conv1 早期循环行缓存</th>
+<th align="right">HLS slack</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5 ns 约束</td>
+<td align="right">−0.61 ns</td>
+</tr>
+<tr>
+<td>6 ns 约束</td>
+<td align="right">−0.27 ns</td>
+</tr>
+</tbody></table>
+<p>层级报告将瓶颈定位到 Conv1 行缓存子模块，因此优先检查该模块的代码和生成结构，而非同时修改其他层。</p>
+<p>当时 Conv1 使用循环行 bank，根据 <code>head</code> 与 <code>kernel_row</code> 选择物理 bank。由此提出假设：运行时的行 bank 计算与数据选择可能增加路径延迟，能否通过固定每个 bank 的角色，减少动态选择？</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">修改前：新值覆盖最旧位置，其他数据不动；读取时根据 head 找到对应行。</span><br><span class="line">修改后：新值写入 Bank 0，旧 Bank 0 的值传到 Bank 1，以此类推。</span><br></pre></td></tr></table></figure>
+
+<p>修改后的 Bank 0 始终保存最近一行，Bank 1 保存再早一行。数据按当前列依次传递，无需运行时切换行 bank 的角色。完成数值回归后，重新综合得到：</p>
+<table>
+<thead>
+<tr>
+<th>行缓存结构</th>
+<th align="right">5 ns slack</th>
+<th align="right">6 ns slack</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>循环 bank</td>
+<td align="right">−0.61 ns</td>
+<td align="right">−0.27 ns</td>
+</tr>
+<tr>
+<td>固定历史行</td>
+<td align="right">−0.54 ns</td>
+<td align="right">+0.08 ns</td>
+</tr>
+</tbody></table>
+<p>6 ns 已通过，但 5 ns 仍失败，因此这次修改只改善了部分问题，尚未达到目标。继续检查新的 Conv1&#x2F;MAC 路径，发现通用实现还支持 valid、zero-same 和 replicate-edge。对于 zero-padding，代码需要判断坐标是否越界，以决定执行 MAC 还是跳过该项：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">判断 padding 模式 → 检查坐标 → 决定更新 sum，或保留原 sum</span><br></pre></td></tr></table></figure>
+
+<p>正式部署只使用 replicate-edge，因此下一步尝试将模式固定在编译期：</p>
+<ul>
+<li><strong>运行时参数</strong>：电路生成后再选择模式，HLS 仍需保留其他模式的支持逻辑。</li>
+<li><strong>编译期常量</strong>：生成电路时已确定模式，可以删除不可能执行的分支。</li>
+</ul>
+<p>代码使用模板参数区分通用版本与部署特化版本：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="type">bool</span> ReplicateOnly&gt;</span><br></pre></td></tr></table></figure>
+
+<p>当 <code>ReplicateOnly=true</code> 时，删除运行时模式选择和 zero-padding 跳过逻辑，仍保留边缘复制需要的坐标处理。新旧版本逐层结果一致，绑定报告也确认预期的多余判断已被移除：</p>
+<table>
+<thead>
+<tr>
+<th>5 ns 下的指标</th>
+<th align="right">修改前</th>
+<th align="right">特化后</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Top slack</td>
+<td align="right">−0.54 ns</td>
+<td align="right"><strong>+0.05 ns</strong></td>
+</tr>
+<tr>
+<td>Conv1&#x2F;MAC slack</td>
+<td align="right">−0.54 ns</td>
+<td align="right"><strong>+0.23 ns</strong></td>
+</tr>
+<tr>
+<td>LUT</td>
+<td align="right">14,855</td>
+<td align="right">13,982</td>
+</tr>
+<tr>
+<td>FF</td>
+<td align="right">7,973</td>
+<td align="right">7,661</td>
+</tr>
+<tr>
+<td>DSP</td>
+<td align="right">13</td>
+<td align="right">13</td>
+</tr>
+<tr>
+<td>MAC II</td>
+<td align="right">1</td>
+<td align="right">1</td>
+</tr>
+</tbody></table>
+<p>这次修改保持 DSP 数量和 MAC II 不变，改善了控制与选择路径，使 5 ns 下的 HLS slack 转正。随后最差路径转移到 Conv3。这里记录的是 HLS 时序估算，最终是否满足目标时钟仍需由 Vivado 布线时序确认。</p>
+<p><strong>案例二：Q20.12 的累加反馈路径修复</strong></p>
+<p>另一次问题出现在 Q20.12 的 Conv1 MAC 循环中：累加反馈跨越两个调度状态，使 achieved II 从 1 退化为 2。</p>
+<p>原实现通过辅助函数更新累加器：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arithmetic::<span class="built_in">accumulate_product</span>(sums[lane], weight, window_value);</span><br></pre></td></tr></table></figure>
+
+<p>计算 <code>sum₂</code> 必须先得到 <code>sum₁</code>，因此两种写法都需要累加反馈，而非辅助函数额外引入了这条回路：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">旧 sum → 加上乘积 → 饱和处理 → 写回新 sum</span><br><span class="line">   ↑                              │</span><br><span class="line">   └──── 下一次累加使用新值 ────────┘</span><br></pre></td></tr></table></figure>
+
+<p>调度报告显示，辅助函数版本在反馈路径中多出一层选择逻辑，相关操作跨越两个状态：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">状态 6：加法、饱和处理、额外选择，路径延迟 3.226 ns</span><br><span class="line">状态 7：累加器写回，路径延迟 0.427 ns</span><br></pre></td></tr></table></figure>
+
+<p>目标周期为 5 ns，扣除 1.35 ns clock uncertainty 后，HLS 的调度预算为 3.65 ns。这里的问题是反馈跨两个调度状态，不能将不同状态的延迟简单相加，作为一条实际组合路径的延迟。</p>
+<p>将更新改为直接赋值后：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sums[lane] = sums[lane] + weight * window_value;</span><br></pre></td></tr></table></figure>
+
+<p>新调度将加法、饱和选择和写回放入同一状态，路径延迟为 3.235 ns，额外选择逻辑消失，最终恢复 II&#x3D;1。数值规则与饱和策略保持不变，RTL 输出仍逐位一致。</p>
+<p>DSP 从 8 增至 16，反映了运算资源共享程度的变化：II&#x3D;2 时使用两组宽乘法器，共 8 个 DSP；恢复 II&#x3D;1 后使用四组，共 16 个 DSP，以支持更高的启动速率。</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th align="right">修改前 II&#x3D;2</th>
+<th align="right">修改后 II&#x3D;1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Conv1 MAC 循环延迟</td>
+<td align="right">166 cycles</td>
+<td align="right">84 cycles</td>
+</tr>
+<tr>
+<td>MAC pipeline DSP</td>
+<td align="right">8</td>
+<td align="right">16</td>
+</tr>
+<tr>
+<td>相同 13×17 RTL 用例的 start-to-done 延迟</td>
+<td align="right">694,967 cycles</td>
+<td align="right">478,077 cycles</td>
+</tr>
+</tbody></table>
+<p>按 200 MHz 换算，该小图 RTL 用例的延迟从约 3.475 ms 降至 2.390 ms，减少约 31.2%。按这段延迟倒数计算，处理速率提高约 45.4%；该数值不包含主机调用间隔，也不代表完整 255×255 图像的板上吞吐提升。</p>
 <h2 id="5-PL-端-AXI-与-DMA-接口"><a href="#5-PL-端-AXI-与-DMA-接口" class="headerlink" title="5. PL 端 AXI 与 DMA 接口"></a>5. PL 端 AXI 与 DMA 接口</h2><blockquote>
 <p>写作问题清单：</p>
 <ul>
