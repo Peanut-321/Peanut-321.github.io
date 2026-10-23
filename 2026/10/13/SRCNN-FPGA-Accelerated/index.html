@@ -849,7 +849,6 @@
 </tbody></table>
 <p>按 200 MHz 换算，该小图 RTL 用例的延迟从约 3.475 ms 降至 2.390 ms，减少约 31.2%。按这段延迟倒数计算，处理速率提高约 45.4%；该数值不包含主机调用间隔，也不代表完整 255×255 图像的板上吞吐提升。</p>
 <h2 id="5-PL-端-AXI-与-DMA-接口"><a href="#5-PL-端-AXI-与-DMA-接口" class="headerlink" title="5. PL 端 AXI 与 DMA 接口"></a>5. PL 端 AXI 与 DMA 接口</h2><blockquote>
-<p>写作问题清单：</p>
 <ul>
 <li>控制寄存器、启动、完成、错误和复位协议如何定义？</li>
 <li>TDATA 位宽、元素打包、字节序、TKEEP 和 TLAST 如何约定？</li>
@@ -857,8 +856,106 @@
 <li>如何应对反压、尾包、超时与错误恢复？有效带宽如何测量？</li>
 </ul>
 </blockquote>
+<p>PS 与 PL 通过以下 AXI 接口连接，方向表示访问请求的发起方：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>谁主动发起访问</th>
+<th>本项目中的用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>HPM0 &#x2F; HPM1</strong></td>
+<td>PS → PL</td>
+<td>CPU 读写 DMA、SRCNN 的控制寄存器</td>
+</tr>
+<tr>
+<td><strong>HP0</strong></td>
+<td>PL → PS 存储系统</td>
+<td>DMA 或加速器访问 DDR</td>
+</tr>
+<tr>
+<td><strong>HPC0</strong></td>
+<td>PL → PS 存储系统</td>
+<td>同样用于访问 DDR，并支持缓存一致性访问能力</td>
+</tr>
+</tbody></table>
+<p>最终板级版本使用 HPM1 访问控制寄存器，使用 HPC0 访问 DDR。</p>
+<h3 id="5-1-控制寄存器、启动与状态协议"><a href="#5-1-控制寄存器、启动与状态协议" class="headerlink" title="5.1 控制寄存器、启动与状态协议"></a>5.1 控制寄存器、启动与状态协议</h3><p>PS 通过 AXI-Lite 读写 DMA 和 SRCNN 的控制寄存器，配置地址、发出启动命令并检查状态。图像由 DMA 搬运，模型参数由 SRCNN 的 AXI master 读取。</p>
+<p>两个 IP 各有一段控制地址：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DMA 基地址：   0xB0000000</span><br><span class="line">SRCNN 基地址： 0xB0010000</span><br></pre></td></tr></table></figure>
+
+<p>IP 内部通过偏移区分寄存器。例如，SRCNN 的 CTRL 位于 <code>0xB0010000+0x00</code>。控制地址用于找到寄存器，与图像、模型在 DDR 中的 buffer 地址不同。</p>
+<p>模型物理地址为 64 bit，控制接口的数据宽度为 32 bit，因此分两次写入：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kernel.write(<span class="number">0x10</span>, model_address &amp; <span class="number">0xFFFFFFFF</span>)  <span class="comment"># 低 32 位</span></span><br><span class="line">kernel.write(<span class="number">0x14</span>, model_address &gt;&gt; <span class="number">32</span>)         <span class="comment"># 高 32 位</span></span><br></pre></td></tr></table></figure>
+
+<p>这两次写入仅配置模型位置。随后通过偏移 <code>0x00</code> 的 CTRL 寄存器控制执行：</p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>名称</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>bit 0</td>
+<td><code>ap_start</code></td>
+<td>请求启动</td>
+</tr>
+<tr>
+<td>bit 1</td>
+<td><code>ap_done</code></td>
+<td>本次执行完成</td>
+</tr>
+<tr>
+<td>bit 2</td>
+<td><code>ap_idle</code></td>
+<td>当前空闲</td>
+</tr>
+<tr>
+<td>bit 3</td>
+<td><code>ap_ready</code></td>
+<td>可以接受启动请求</td>
+</tr>
+</tbody></table>
+<p><strong>完整启动顺序</strong></p>
+<p>主机准备好 buffer 后，按以下顺序启动。输入和输出各包含 65,025 个 32-bit 元素，传输长度均为 <code>260,100 bytes</code>。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">复位 DMA，等待复位完成，启用 MM2S 与 S2MM 通道</span><br><span class="line">    ↓</span><br><span class="line">检查 SRCNN idle，写入模型物理地址</span><br><span class="line">    ↓</span><br><span class="line">配置 S2MM：输出 buffer 地址，接收长度 260,100 bytes</span><br><span class="line">    ↓</span><br><span class="line">启动 SRCNN：设置 ap_start，开始模型加载与后续计算</span><br><span class="line">    ↓</span><br><span class="line">配置 MM2S：输入 buffer 地址，发送长度 260,100 bytes</span><br><span class="line">    ↓</span><br><span class="line">轮询 SRCNN 与 DMA，等待计算和传输完成</span><br></pre></td></tr></table></figure>
+
+<p>配置 DMA 时，先写 buffer 物理地址，最后写长度以提交传输。先准备 S2MM，使输出产生时已有接收通道；SRCNN 在输入尚未到达时，通过 Stream 握手等待。</p>
+<p><strong>完成判断</strong></p>
+<p>程序同时等待 SRCNN 的 <code>ap_done</code>、MM2S idle 和 S2MM idle，并检查传输长度寄存器，确认计算与 DMA 传输均已完成。</p>
+<p><code>ap_done</code> 读取后会清除，因此轮询时用软件变量保留曾经观察到的完成状态：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">done |= <span class="built_in">bool</span>(kernel.read(<span class="number">0x00</span>) &amp; <span class="number">0x2</span>)</span><br></pre></td></tr></table></figure>
+
+<p>SRCNN 未定义独立的错误状态寄存器，传输异常通过 DMA 错误位和超时检查发现。DMA 可以通过自身控制寄存器复位；SRCNN 与互联的整体复位则属于 PL 复位或 overlay 重新加载，不能与 DMA 局部复位等同。</p>
+<h3 id="5-2-AXI-Stream-数据格式"><a href="#5-2-AXI-Stream-数据格式" class="headerlink" title="5.2 AXI-Stream 数据格式"></a>5.2 AXI-Stream 数据格式</h3><p><strong>1. TDATA：每次成功握手传输一个 32-bit 像素数值</strong></p>
+<p>输入、输出接口均使用以下类型：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> <span class="type">axis_word_t</span> = ap_axiu&lt;<span class="number">32</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&gt;;</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>32</code> 表示 TDATA 的位宽。本项目不将多个像素打包进同一拍，而是每次成功握手传输一个像素的数值；这不代表每个时钟周期都能完成一次传输。</p>
+<p>最终 Q20.12 版本传输的是定点数的原始位模式。例如，数值 <code>1.0</code> 编码为 <code>4096</code>，对应 <code>0x00001000</code>。接收端按 Q20.12 格式解释这些位，而不是将其作为整数 <code>4096</code> 使用。</p>
+<p>主机 buffer 采用小端字节序，因此 <code>0x00001000</code> 在 DDR 中按地址递增存放为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">低地址 → 高地址：00 10 00 00</span><br></pre></td></tr></table></figure>
+
+<p>这里描述的是一个数值在内存中的字节排列；AXI-Stream 每次仍传输完整的 32 bit，并不是分四拍发送。</p>
+<p><strong>2. TKEEP &#x2F; TSTRB：约定各字节的有效性与类型</strong></p>
+<p>32-bit TDATA 包含 4 个字节，TKEEP 与 TSTRB 各用 4 bit，分别对应这些字节：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">TDATA： [字节3][字节2][字节1][字节0]</span><br><span class="line">TKEEP：    1      1      1      1    = 0xF</span><br><span class="line">TSTRB：    1      1      1      1    = 0xF</span><br></pre></td></tr></table></figure>
+
+<p>TKEEP 标记哪些字节应保留；对于保留的字节，TSTRB 区分数据字节与位置字节。本项目每拍都传输完整的 4 字节数值，不使用位置字节，因此输出的 TKEEP 与 TSTRB 均设置为 <code>0xF</code>，最后一拍也不例外。</p>
+<p><strong>3. TLAST：标记整帧的最后一拍</strong></p>
+<p>输入、输出图像均为 255×255，共 65,025 个像素，因此帧格式约定为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">第 1～65,024 拍：TLAST = 0</span><br><span class="line">第 65,025 拍：   TLAST = 1</span><br></pre></td></tr></table></figure>
+
+<p>TLAST 表示整帧结束，而不是每行结束。输出端由 <code>scalar_to_axis()</code> 为最后一个结果设置 TLAST；输入端的 <code>axis_to_scalar()</code> 则按固定的 65,025 个元素读取，不依靠输入 TLAST 判断帧结束，因此主机仍必须配置正确的发送长度。</p>
+<p><strong>4. TVALID &#x2F; TREADY：握手成功才算完成传输</strong></p>
+<p>只有 <code>TVALID=1</code> 且 <code>TREADY=1</code> 的时钟上升沿，才完成一拍传输：前者表示发送方提供了有效数据，后者表示接收方能够接收。</p>
+<p>当 <code>TVALID=1</code>、<code>TREADY=0</code> 时，发送方必须保持 TVALID，并保持 TDATA、TKEEP、TSTRB 和 TLAST 不变，直到握手完成。因此，即使最后一拍已经设置 <code>TLAST=1</code>，只要接收方尚未就绪，这一拍就仍未传输完成。</p>
+<h3 id="5-3-数据路径与-DMA-配置"><a href="#5-3-数据路径与-DMA-配置" class="headerlink" title="5.3 数据路径与 DMA 配置"></a>5.3 数据路径与 DMA 配置</h3><h3 id="5-4-反压、错误恢复与带宽测量"><a href="#5-4-反压、错误恢复与带宽测量" class="headerlink" title="5.4 反压、错误恢复与带宽测量"></a>5.4 反压、错误恢复与带宽测量</h3><p>等待过程中检查 DMA 错误位并设置超时，避免无限阻塞。发生错误或超时时，不能只复位 DMA 后立即释放 buffer：SRCNN 的 AXI master 可能仍在读取模型。runner 会尝试重新加载 overlay，确认硬件停止活动后再释放内存；恢复失败则保留 buffer，要求进一步复位或重新上电。</p>
 <h2 id="6-PS-端-PYNQ-Host"><a href="#6-PS-端-PYNQ-Host" class="headerlink" title="6. PS 端 PYNQ Host"></a>6. PS 端 PYNQ Host</h2><blockquote>
-<p>写作问题清单：</p>
 <ul>
 <li>PS&#x2F;PL 任务如何划分？图像预处理、参数加载、量化和后处理由谁完成？</li>
 <li>overlay 与连续内存 buffer 如何管理？dtype、shape 和打包是否匹配硬件？</li>
@@ -867,7 +964,6 @@
 </ul>
 </blockquote>
 <h2 id="7-PL-PS-系统集成"><a href="#7-PL-PS-系统集成" class="headerlink" title="7. PL&#x2F;PS 系统集成"></a>7. PL&#x2F;PS 系统集成</h2><blockquote>
-<p>写作问题清单：</p>
 <ul>
 <li>HLS IP 如何封装并接入 Vivado block design？时钟、复位和地址如何配置？</li>
 <li>如何先用 dummy kernel 验证 DMA，再逐层接入完整网络？</li>
@@ -877,7 +973,6 @@
 </ul>
 </blockquote>
 <h2 id="8-正确性、性能与资源评估"><a href="#8-正确性、性能与资源评估" class="headerlink" title="8. 正确性、性能与资源评估"></a>8. 正确性、性能与资源评估</h2><blockquote>
-<p>写作问题清单：</p>
 <ul>
 <li>Golden、HLS C simulation、RTL co-simulation 与板上输出如何逐级对齐？</li>
 <li>CPU baseline、kernel-only、DMA transaction 与端到端耗时的测量边界是什么？</li>
